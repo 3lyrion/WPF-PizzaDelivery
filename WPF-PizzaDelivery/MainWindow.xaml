@@ -3,10 +3,78 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WPF_PizzaDelivery"
         x:Class="WPF_PizzaDelivery.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1200" Width="1000"
-        Style="{StaticResource MaterialDesignWindow}">
-    <Grid/>
+        Title="Доставка пиццы" Height="720" Width="1280"
+        Style="{StaticResource MaterialDesignWindow}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto" MinWidth="960" MinHeight="540" WindowStyle="ThreeDBorderWindow">
+    <Border Padding="10,10">
+        <Grid>
+            <materialDesign:Card HorizontalAlignment="Left" Width="110" />
+            <materialDesign:Card Margin="135,0,0,0" />
+            <TabControl HorizontalAlignment="Left" Margin="5,0,0,0.33" TabStripPlacement="Left" Width="1248">
+                <TabItem Width="100" MinWidth="100" Height="100" Margin="0" MinHeight="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <TabItem.Header>
+                        <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" />
+                    </TabItem.Header>
+                    <Border Padding="40,10,10,10">
+                        <Grid Margin="0,-0.017,0,0.313" Width="1096">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Row="0" Grid.Column="0" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="250">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="200" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Button Grid.Row="0" Width="200" Height="200" Margin="0">
+                                    <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="150" />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Image Grid.Row="0" Source="HamNCheese.png" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            
+                                        </Image>
+                                        <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Ветчина и сыр
+                                        </Label>
+                                        <Label Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            от 389 р.
+                                        </Label>
+                                    </Grid>
+                                </Button>
+                                <Button Grid.Row="1" Margin="0,0,0.348,0"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </TabItem>
+                <TabItem MinWidth="100" Width="100" Height="100" Margin="0" MinHeight="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TabItem.Header>
+                        <materialDesign:PackIcon Kind="CartOutline" Width="70" Height="70" />
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem MinWidth="100" Width="100" Height="100" Margin="0" MinHeight="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TabItem.Header>
+                        <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" />
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
 </Window>
