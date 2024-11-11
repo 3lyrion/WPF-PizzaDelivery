@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace WPF_PizzaDelivery
 {
@@ -20,9 +22,18 @@ namespace WPF_PizzaDelivery
     /// </summary>
     public partial class MainWindow : Window
     {
+        const string PHONE_NUMBER_ALPHABET = "1234567890+";
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Login_TB_PhoneNumber_onTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var tb = sender as TextBox;
+
+            tb.Text = Regex.Replace(tb.Text, "[^0-9+]", "");
         }
     }
 }

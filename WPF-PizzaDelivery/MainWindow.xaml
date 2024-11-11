@@ -23,54 +23,60 @@
                 <TabControl HorizontalAlignment="Left" TabStripPlacement="Left" Width="1248" Style="{StaticResource MaterialDesignNavigationRailTabControl}" Background="White">
                     <TabItem Width="100" MinWidth="100" Height="100" Margin="0" MinHeight="100" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <TabItem.Header>
-                            <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" />
+                            <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
                         <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
-                                    <RowDefinition MinHeight="300"/>
-                                    <RowDefinition MinHeight="300"/>
+                                    <RowDefinition MinHeight="300" Height="100*"/>
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <materialDesign:Card Grid.Row="0" Grid.ColumnSpan="3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                                <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Content="Меню" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
                                             <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <Grid Grid.Row="1" Grid.Column="0" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="250">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="200" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
-                                        <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ScrollViewer Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="250">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="150" />
-                                                <RowDefinition />
+                                                <RowDefinition Height="200" />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <Image Grid.Row="0" Source="HamNCheese.png" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="150" />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <Image Grid.Row="0" Source="HamNCheese.png" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                                            </Image>
-                                            <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                Ветчина и сыр
-                                            </Label>
-                                            <Label Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                от 389 р.
-                                            </Label>
+                                                    </Image>
+                                                    <Label Grid.Row="1" Content="Ветчина и сыр" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold">
+                                                    </Label>
+                                                    <Label Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        от 389 р.
+                                                    </Label>
+                                                </Grid>
+                                            </Button>
+                                            <Button Grid.Row="1" Margin="0,0,0.348,0">
+                                                Выбрать
+                                            </Button>
                                         </Grid>
-                                    </Button>
-                                    <Button Grid.Row="1" Margin="0,0,0.348,0">
-                                        Выбрать
-                                    </Button>
-                                </Grid>
+                                    </Grid>
+                                </ScrollViewer>
                             </Grid>
                         </Border>
                     </TabItem>
@@ -82,8 +88,8 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
-                                    <RowDefinition MinHeight="500"/>
-                                    <RowDefinition MinHeight="100"/>
+                                    <RowDefinition MinHeight="525"/>
+                                    <RowDefinition MinHeight="75"/>
                                 </Grid.RowDefinitions>
                                 <materialDesign:Card Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Content="Корзина" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
@@ -92,79 +98,128 @@
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <Border Grid.Row="1" Padding="10,10">
-                                    <StackPanel>
-                                        <materialDesign:Card Width="500" Height="150" Padding="10,10">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition MinHeight="100" />
-                                                    <RowDefinition />
-                                                </Grid.RowDefinitions>
+                                <Border Grid.Row="1" Padding="20,20">
+                                    <ScrollViewer Width="600">
+                                        <StackPanel>
+                                            <materialDesign:Card Width="500" Height="150" Padding="10,10">
                                                 <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition />
-                                                        <ColumnDefinition Width="50" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Image Grid.Row="0" Source="HamNCheese.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    <Grid Grid.Column="1">
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition />
-                                                            <RowDefinition />
-                                                        </Grid.RowDefinitions>
-                                                        <Label FontWeight="Bold" FontSize="20">
-                                                            Ветчина и сыр
-                                                        </Label>
-                                                        <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Background="White" Foreground="#E55C6370">
-                                                            30 см, традиционное тесто
-                                                        </Label>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition MinHeight="100" />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border Padding="7.5, 7.5">
+                                                            <Image Grid.Row="0" Source="HamNCheese.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <Grid Grid.Column="1">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition />
+                                                            </Grid.RowDefinitions>
+                                                            <Label FontWeight="Bold" FontSize="20">
+                                                                Ветчина и сыр
+                                                            </Label>
+                                                            <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Background="White" Foreground="#E55C6370">
+                                                                30 см, традиционное тесто
+                                                            </Label>
+                                                        </Grid>
+                                                        <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0.087,3,0,45.139" MinWidth="32" MinHeight="32" Height="32" Foreground="Black" Width="50">
+                                                            <materialDesign:PackIcon  Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
+                                                        </Button>
                                                     </Grid>
-                                                    <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0.087,3,0,45.139" MinWidth="32" MinHeight="32" Height="32" Foreground="Black" Width="50">
-                                                        <materialDesign:PackIcon  Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
-                                                    </Button>
+                                                    <Grid Grid.Row="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="260" />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="18">
+                                                            389 р.
+                                                        </Label>
+                                                        <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            Изменить
+                                                        </Button>
+                                                        <Grid Grid.Column="2">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2" Margin="0,0,36.461,0.052">
+                                                            </Button>
+                                                            <Label Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
+                                                            </Label>
+                                                            <Button Grid.Column="1" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="8" FontWeight="Bold" Grid.ColumnSpan="2" Margin="36.27,0,0.191,0.052">
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid Grid.Row="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="260" />
-                                                        <ColumnDefinition />
-                                                        <ColumnDefinition />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label>
-                                                        389 р.
-                                                    </Label>
-                                                    <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        Изменить
-                                                    </Button>
-                                                </Grid>
-                                            </Grid>
-                                        </materialDesign:Card>
-                                    </StackPanel>
+                                            </materialDesign:Card>
+                                        </StackPanel>
+                                    </ScrollViewer>    
                                 </Border>
+                                <Button Grid.Row="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
+                                    Оформить заказ
+                                </Button>
                             </Grid>
                         </Border>
                     </TabItem>
                     <TabItem MinWidth="100" Width="100" Height="100" Margin="0" MinHeight="100" VerticalAlignment="Top" HorizontalAlignment="Left">
                         <TabItem.Header>
-                            <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" />
+                            <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" FontSize="36" />
                         </TabItem.Header>
                         <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                     <RowDefinition MinHeight="300"/>
-                                    <RowDefinition MinHeight="300"/>
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <materialDesign:Card Grid.Row="0" Grid.ColumnSpan="3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                                <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Content="Профиль" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
                                             <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
                                         </Label.Effect>
                                     </Label>
+                                </materialDesign:Card>
+                                <materialDesign:Card Grid.Row="1" Padding="20, 0, 20, 20" Width="600" Height="300">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="60"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Label Content="Войти" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                            <Label.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
+                                            </Label.Effect>
+                                        </Label>
+                                        <Border Grid.Row="1" Padding="10, 10, 10, 10">
+                                            <Grid >
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Content="Номер телефона:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                
+                                                </Label>
+                                                <TextBox Grid.Column="1" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Width="270" TextChanged="Login_TB_PhoneNumber_onTextChanged"/>
+                                                <Label Grid.Row="1" Content="Пароль:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                                <PasswordBox Grid.Row="1" Grid.Column="1" Padding="10" Width="270" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                <Button Grid.Row="2" Grid.ColumnSpan="2" Width="300" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">
+                                                    Войти
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
                                 </materialDesign:Card>
                             </Grid>
                         </Border>
