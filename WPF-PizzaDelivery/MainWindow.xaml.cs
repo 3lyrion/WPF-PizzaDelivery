@@ -19,6 +19,45 @@ using MD = MaterialDesignThemes.Wpf;
 
 namespace WPF_PizzaDelivery
 {
+    public class MarginSetter
+    {
+        public static readonly DependencyProperty marginProperty =
+            DependencyProperty.RegisterAttached("Margin", typeof(Thickness), typeof(MarginSetter), new UIPropertyMetadata(new Thickness(), onMarginChanged));
+
+        public static Thickness getMargin(DependencyObject obj)
+        {
+            return (Thickness)obj.GetValue(marginProperty);
+        }
+
+        public static void setMargin(DependencyObject obj, Thickness value)
+        {
+            obj.SetValue(marginProperty, value);
+        }
+
+        public static void onMarginChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var panel = sender as Panel;
+
+            if (panel == null) return;
+
+            panel.Loaded += new RoutedEventHandler(onLoad);
+        }
+
+        static void onLoad(object sender, RoutedEventArgs e)
+        {
+            var panel = sender as Panel;
+
+            foreach (var child in panel.Children)
+            {
+                var fe = child as FrameworkElement;
+
+                if (fe == null) continue;
+
+                fe.Margin = MarginSetter.getMargin(panel);
+            }
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -34,14 +73,13 @@ namespace WPF_PizzaDelivery
         void load()
         {
             loadMenuPage();
+            loadCartPage();
         }
 
         void loadMenuPage()
         {
             var table = FindName("Menu_GRD_Pizzas") as Grid;
-            var grd = table.FindName("Menu_GRD_Pizza") as Grid;
-            grd.Visibility = Visibility.Hidden;
-
+            table.Children.Clear();
 
             for (int i = 0; i < 10; i++)
             {
@@ -148,6 +186,8 @@ namespace WPF_PizzaDelivery
         {
             var stack = FindName("Cart_SP_Orders") as StackPanel;
 
+            stack.Children.Clear();
+
             for (int i = 0; i < 10; i++)
             {
                 var card = new MD.Card
@@ -160,13 +200,7 @@ namespace WPF_PizzaDelivery
                 stack.Children.Add(card);
 
                 {
-                    var grid = new Grid
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Width = 200,
-                        Height = 200
-                    };
+                    var grid = new Grid { };
 
                     card.Content = grid;
 
@@ -174,82 +208,156 @@ namespace WPF_PizzaDelivery
                         grid.RowDefinitions.Add(new RowDefinition { MinHeight = 100 });
                         grid.RowDefinitions.Add(new RowDefinition { });
 
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { });
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
-
-                        var bd = new Border { Padding = new Thickness(7.5) };
-                        {
-                            var img = new Image
-                            {
-                                Source = new BitmapImage(new Uri("HamNCheese.png", UriKind.Relative)),
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center
-                            };
-
-                            bd.Child = img;
-                        }
-
-                        grid.Children.Add(bd);
-
-                        var grid1 = new Grid
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Width = 200,
-                            Height = 200
-                        };
-
-                        Grid.SetColumn(grid1, 1);
+                        var grid1 = new Grid { };
                         grid.Children.Add(grid1);
 
                         {
-                            grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(40) });
-                            grid1.RowDefinitions.Add(new RowDefinition { });
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { });
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
+
+                            var bd = new Border { Padding = new Thickness(7.5) };
+                            {
+                                var img = new Image
+                                {
+                                    Source = new BitmapImage(new Uri("HamNCheese.png", UriKind.Relative)),
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center
+                                };
+
+                                bd.Child = img;
+                            }
+
+                            grid1.Children.Add(bd);
+
+                            var grid2 = new Grid { };
+
+                            Grid.SetColumn(grid2, 1);
+                            grid1.Children.Add(grid2);
+
+                            {
+                                grid2.RowDefinitions.Add(new RowDefinition { Height = new GridLength(40) });
+                                grid2.RowDefinitions.Add(new RowDefinition { });
+
+                                var lbl = new Label
+                                {
+                                    Content = "Ветчина и сыр",
+                                    FontWeight = FontWeights.Bold,
+                                    FontSize = 20
+                                };
+
+                                grid2.Children.Add(lbl);
+
+                                lbl = new Label
+                                {
+                                    Content = "30 см, традиционное тесто",
+                                    FontWeight = FontWeights.Bold,
+                                    FontSize = 13,
+                                    Foreground = new SolidColorBrush(Colors.Gray)
+                                };
+
+                                Grid.SetRow(lbl, 1);
+                                grid2.Children.Add(lbl);
+                            }
+
+                            var btn = new Button
+                            {
+                                Content = new MD.PackIcon { Kind = MD.PackIconKind.Close },
+                                Style = FindResource("MaterialDesignFlatButton") as Style,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Padding = new Thickness(0),
+                                Margin = new Thickness(0, 0, 0, 45),
+                                Width = 32,
+                                Height = 32,
+                                Foreground = new SolidColorBrush(Colors.Black)
+                            };
+
+                            Grid.SetColumn(btn, 2);
+                            grid1.Children.Add(btn);
+                        }
+
+                        grid1 = new Grid { };
+
+                        Grid.SetRow(grid1, 1);
+                        grid.Children.Add(grid1);
+
+                        {
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(260) });
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { });
+                            grid1.ColumnDefinitions.Add(new ColumnDefinition { });
 
                             var lbl = new Label
                             {
-                                Content = "Ветчина и сыр",
+                                Content = "389 р.",
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                VerticalAlignment = VerticalAlignment.Center,
                                 FontWeight = FontWeights.Bold,
-                                FontSize = 20
+                                FontSize = 18
                             };
 
                             grid1.Children.Add(lbl);
 
-                            lbl = new Label
+                            var btn = new Button
                             {
-                                Content = "30 см, традиционное тесто",
+                                Content = "Изменить",
+                                Style = FindResource("MaterialDesignFlatButton") as Style,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
                                 FontWeight = FontWeights.Bold,
-                                FontSize = 13,
-                                Foreground = new SolidColorBrush(Colors.Gray)
+                                FontSize = 16
                             };
 
-                            Grid.SetRow(lbl, 1);
-                            grid1.Children.Add(lbl);
-                        }
+                            Grid.SetColumn(btn, 1);
+                            grid1.Children.Add(btn);
 
-                        var btn = new Button
-                        {
-                            Style = FindResource("MaterialDesignFlatButton") as Style,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Padding = new Thickness(0),
-                            Margin = new Thickness(0, 0, 0, 45),
-                            Width = 32,
-                            Height = 32,
-                            Foreground = new SolidColorBrush(Colors.Black)
-                        };
+                            var grid2 = new Grid { };
 
-                        Grid.SetColumn(btn, 2);
-                        grid.Children.Add(btn);
+                            Grid.SetColumn(grid2, 2);
+                            grid1.Children.Add(grid2);
 
-                        {
-                            var icon = new MD.PackIcon
                             {
-                                Kind = MD.PackIconKind.Close
-                            };
+                                grid2.ColumnDefinitions.Add(new ColumnDefinition { });
+                                grid2.ColumnDefinitions.Add(new ColumnDefinition { });
+                                grid2.ColumnDefinitions.Add(new ColumnDefinition { });
 
-                            btn.Content = icon;
+                                btn = new Button
+                                {
+                                    Content = new MD.PackIcon { Kind = MD.PackIconKind.Minus },
+                                    Style = FindResource("MaterialDesignFlatButton") as Style,
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    Padding = new Thickness(0),
+                                    Width = 30
+                                };
+
+                                grid2.Children.Add(btn);
+
+                                lbl = new Label
+                                {
+                                    Content = "1",
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    FontWeight = FontWeights.Bold,
+                                    FontSize = 18
+                                };
+
+                                Grid.SetColumn(lbl, 1);
+                                grid2.Children.Add(lbl);
+
+                                btn = new Button
+                                {
+                                    Content = new MD.PackIcon { Kind = MD.PackIconKind.Plus },
+                                    Style = FindResource("MaterialDesignFlatButton") as Style,
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    Padding = new Thickness(0),
+                                    Width = 30
+                                };
+
+                                Grid.SetColumn(btn, 2);
+                                grid2.Children.Add(btn);
+                            }
                         }
                     }
                 }

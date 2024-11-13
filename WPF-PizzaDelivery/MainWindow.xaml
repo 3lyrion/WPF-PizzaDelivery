@@ -16,6 +16,9 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto" MinWidth="960" MinHeight="540" WindowStyle="ThreeDBorderWindow">
+    <!--<Window.Resources>
+        <local:MarginSetter x:Key="MarginSetter" />
+    </Window.Resources>-->
     <Border Padding="10,10">
         <Grid>
             <Grid.RowDefinitions>
@@ -109,6 +112,11 @@
                                 <Border Grid.Row="1" Padding="20,20">
                                     <ScrollViewer Width="600">
                                         <StackPanel x:Name="Cart_SP_Orders">
+                                            <StackPanel.Resources>
+                                                <Style TargetType="materialDesign:Card">
+                                                    <Setter Property="Margin" Value="0, 0, 0, 10" />
+                                                </Style>
+                                            </StackPanel.Resources>
                                             <materialDesign:Card Width="500" Height="150" Padding="10,10">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
@@ -158,11 +166,11 @@
                                                                 <ColumnDefinition />
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
-                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2" Margin="0,0,36.461,0.052">
+                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" >
                                                             </Button>
                                                             <Label Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
                                                             </Label>
-                                                            <Button Grid.Column="1" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="8" FontWeight="Bold" Grid.ColumnSpan="2" Margin="36.27,0,0.191,0.052">
+                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                             </Button>
                                                         </Grid>
                                                     </Grid>
