@@ -108,7 +108,7 @@
                                 </materialDesign:Card>
                                 <Border Grid.Row="1" Padding="20,20">
                                     <ScrollViewer Width="600">
-                                        <StackPanel>
+                                        <StackPanel x:Name="Cart_SP_Orders">
                                             <materialDesign:Card Width="500" Height="150" Padding="10,10">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
@@ -122,7 +122,7 @@
                                                             <ColumnDefinition Width="50" />
                                                         </Grid.ColumnDefinitions>
                                                         <Border Padding="7.5, 7.5">
-                                                            <Image Grid.Row="0" Source="HamNCheese.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Image Source="HamNCheese.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <Grid Grid.Column="1">
                                                             <Grid.RowDefinitions>
@@ -132,11 +132,11 @@
                                                             <Label FontWeight="Bold" FontSize="20">
                                                                 Ветчина и сыр
                                                             </Label>
-                                                            <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Background="White" Foreground="#E55C6370">
+                                                            <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray">
                                                                 30 см, традиционное тесто
                                                             </Label>
                                                         </Grid>
-                                                        <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0.087,3,0,45.139" MinWidth="32" MinHeight="32" Height="32" Foreground="Black" Width="50">
+                                                        <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" MinWidth="32" MinHeight="32" Height="32" Foreground="Black" Width="50">
                                                             <materialDesign:PackIcon  Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
                                                         </Button>
                                                     </Grid>
