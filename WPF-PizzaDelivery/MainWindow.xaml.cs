@@ -16,9 +16,11 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using MD = MaterialDesignThemes.Wpf;
+using WPF_PizzaDelivery.Util;
 
 namespace WPF_PizzaDelivery
 {
+    /*
     public class MarginSetter
     {
         public static readonly DependencyProperty marginProperty =
@@ -57,6 +59,47 @@ namespace WPF_PizzaDelivery
             }
         }
     }
+    
+    public class Util
+    {
+        public static T querySelector<T>(DependencyObject top, Func<T, bool> rule) where T : DependencyObject
+        {
+            if (top is T)
+                return top as T;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(top); i++)
+            {
+                var child = VisualTreeHelper.GetChild(top, i);
+
+                if (child is T)
+                {
+                    var tChild = child as T;
+
+                    if (rule(tChild))
+                        return tChild;
+                }
+
+                return querySelector(child, rule);
+            }
+
+            return top as T;
+        }
+
+        public List<T> querySelectorAll<T>(DependencyObject top, Func<T, bool> rule) where T : DependencyObject
+        {
+
+        }
+    }
+    
+
+    public struct Order
+    {
+        public int id { get; set; }
+        public int basePrice { get; set; }
+        public int totalPrice { get; set; }
+        public int count { get; set; }
+    }
+    */
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -133,7 +176,7 @@ namespace WPF_PizzaDelivery
 
                                 var img = new Image
                                 {
-                                    Source = new BitmapImage(new Uri("HamNCheese.png", UriKind.Relative)),
+                                    Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName["Песто"] + ".png", UriKind.Absolute)),
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
                                     Width = 145,
@@ -289,6 +332,7 @@ namespace WPF_PizzaDelivery
 
                             var lbl = new Label
                             {
+                                Name = "Order_LBL_Price",
                                 Content = "389 р.",
                                 HorizontalAlignment = HorizontalAlignment.Left,
                                 VerticalAlignment = VerticalAlignment.Center,
@@ -330,11 +374,13 @@ namespace WPF_PizzaDelivery
                                     Padding = new Thickness(0),
                                     Width = 30
                                 };
+                                btn.Click += Order_BTN_Minus_onClick;
 
                                 grid2.Children.Add(btn);
 
                                 lbl = new Label
                                 {
+                                    Name = "Order_LBL_PizzaCount",
                                     Content = "1",
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
@@ -354,6 +400,7 @@ namespace WPF_PizzaDelivery
                                     Padding = new Thickness(0),
                                     Width = 30
                                 };
+                                btn.Click += Order_BTN_Plus_onClick;
 
                                 Grid.SetColumn(btn, 2);
                                 grid2.Children.Add(btn);
@@ -362,6 +409,27 @@ namespace WPF_PizzaDelivery
                     }
                 }
             }
+        }
+
+        void updatePrices()
+        {
+            var lbl_total = FindName("Cart_LBL_TotalPrice") as Label;
+            var sp_orders = FindName("Cart_SP_Orders") as StackPanel;
+            var labels = sp_orders.Children.OfType<Label>();
+
+            var total = 0;
+            var prices = labels.Where(e => e.Name == "Order_LBL_Price").ToArray();
+            var counts = labels.Where(e => e.Name == "Order_LBL_PizzaCount").ToArray();
+
+            for (int i = 0; i < prices.Length; i++)
+            {
+                var price = int.Parse(prices[i].Content as string);
+                var count = int.Parse(counts[i].Content as string);
+
+                total += price * count;
+            }
+
+            lbl_total.Content = total.ToString();
         }
 
         private void Login_TB_PhoneNumber_onTextChanged(object sender, TextChangedEventArgs e)
@@ -387,6 +455,37 @@ namespace WPF_PizzaDelivery
 
             vb_login.Visibility = Visibility.Visible;
             vb_reg.Visibility = Visibility.Hidden;
+        }
+
+        private void Order_BTN_Minus_onClick(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var lbl_count = ((Grid)btn.Parent).Children.OfType<Label>().First();
+
+            var count = int.Parse(lbl_count.Content as string);
+
+            if (count > 0)
+            {
+                count--;
+
+                lbl_count.Content = count.ToString();
+
+                updatePrices();
+            }
+        }
+
+        private void Order_BTN_Plus_onClick(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var lbl_count = ((Grid)btn.Parent).Children.OfType<Label>().First();
+
+            var count = int.Parse(lbl_count.Content as string);
+
+            count++;
+
+            lbl_count.Content = count.ToString();
+
+            updatePrices();
         }
     }
 }

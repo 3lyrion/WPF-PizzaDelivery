@@ -166,11 +166,11 @@
                                                                 <ColumnDefinition />
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
-                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Click="Order_BTN_Minus_onClick" >
                                                             </Button>
-                                                            <Label Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
+                                                            <Label x:Name="Order_LBL_PizzaCount" Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
                                                             </Label>
-                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Click="Order_BTN_Plus_onClick">
                                                             </Button>
                                                         </Grid>
                                                     </Grid>
@@ -188,7 +188,7 @@
                                     <Label HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">
                                         Сумма заказа:
                                     </Label>
-                                    <Label  Grid.Column="1" FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold">
+                                    <Label Grid.Column="1" x:Name="Cart_LBL_TotalPrice" FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold">
                                         389 р.
                                     </Label>
                                     <Button Grid.Column="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">

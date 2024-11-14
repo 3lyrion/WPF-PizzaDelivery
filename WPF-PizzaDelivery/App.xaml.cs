@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using SV = Interfaces.Service;
+using Ninject;
 
 namespace WPF_PizzaDelivery
 {
@@ -13,5 +15,23 @@ namespace WPF_PizzaDelivery
     /// </summary>
     public partial class App : Application
     {
+        [STAThread]
+        static void Main()
+        {
+            var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
+
+            SV.IClient clientService = kernel.Get<SV.IClient>();
+            SV.ICourier courierService = kernel.Get<SV.ICourier>();
+            SV.IDough doughService = kernel.Get<SV.IDough>();
+            SV.IOrder orderService = kernel.Get<SV.IOrder>();
+            SV.IPizza pizzaService = kernel.Get<SV.IPizza>();
+            SV.IPizza_Order pizzaOrderService = kernel.Get<SV.IPizza_Order>();
+            SV.IPizza_Size pizzaSizeService = kernel.Get<SV.IPizza_Size>();
+            SV.IReport reportService = kernel.Get<SV.IReport>();
+
+            var application = new App();
+            application.InitializeComponent();
+            application.Run();
+        }
     }
 }
