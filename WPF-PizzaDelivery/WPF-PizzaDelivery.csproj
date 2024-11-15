@@ -144,9 +144,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="HamNCheese.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{b6018738-c894-4abf-8daf-683e075632a0}</Project>
       <Name>BLL</Name>
@@ -159,6 +156,12 @@
       <Project>{eb77f5a0-2abf-45f5-9edf-746af222508a}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\DoubleChicken.png" />
+    <Resource Include="Media\HamNCheese.png" />
+    <Resource Include="Media\Hawaiian.png" />
+    <Resource Include="Media\Pesto.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.5.1.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.5.1.0\build\MaterialDesignThemes.targets')" />

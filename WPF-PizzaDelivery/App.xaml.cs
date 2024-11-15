@@ -18,6 +18,15 @@ namespace WPF_PizzaDelivery
         [STAThread]
         static void Main()
         {
+            var application = new App();
+            application.InitializeComponent();
+            application.Run();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
             SV.IClient clientService = kernel.Get<SV.IClient>();
@@ -29,9 +38,19 @@ namespace WPF_PizzaDelivery
             SV.IPizza_Size pizzaSizeService = kernel.Get<SV.IPizza_Size>();
             SV.IReport reportService = kernel.Get<SV.IReport>();
 
-            var application = new App();
-            application.InitializeComponent();
-            application.Run();
+            var window = new MainWindow
+            (
+                clientService,
+                courierService,
+                doughService,
+                orderService,
+                pizzaService,
+                pizzaOrderService,
+                pizzaSizeService,
+                reportService
+            );
+
+            window.Show();
         }
     }
 }

@@ -34,7 +34,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
-                        <Border Padding="10,10,10,10">
+                        <Border x:Name="Page_Menu" Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
@@ -92,7 +92,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="CartOutline" Width="70" Height="70" />
                         </TabItem.Header>
-                        <Border Padding="10,10,10,10" Width="auto">
+                        <Border x:Name="Page_Cart" Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
@@ -181,16 +181,13 @@
                                 </Border>
                                 <Grid Grid.Row="2" Width="600">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="220" />
-                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="320" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Label HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">
-                                        Сумма заказа:
+                                    <Label x:Name="Cart_LBL_TotalPrice" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">
+                                        Сумма заказа: 389 р.
                                     </Label>
-                                    <Label Grid.Column="1" x:Name="Cart_LBL_TotalPrice" FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold">
-                                        389 р.
-                                    </Label>
+  
                                     <Button Grid.Column="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
                                         Оформить заказ
                                     </Button>
@@ -202,7 +199,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" FontSize="36" />
                         </TabItem.Header>
-                        <Border Padding="10,10,10,10">
+                        <Border x:Name="Page_Profile" Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>

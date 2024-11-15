@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using MD = MaterialDesignThemes.Wpf;
+using DTO = Interfaces.DTO;
+using SV = Interfaces.Service;
 using WPF_PizzaDelivery.Util;
 
 namespace WPF_PizzaDelivery
@@ -106,8 +108,45 @@ namespace WPF_PizzaDelivery
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        SV.IClient clientService;
+        SV.ICourier courierService;
+        SV.IDough doughService;
+        SV.IOrder orderService;
+        SV.IPizza pizzaService;
+        SV.IPizza_Order pizzaOrderService;
+        SV.IPizza_Size pizzaSizeService;
+        SV.IReport reportService;
+
+        List<DTO.Dough> allDough;
+        List<DTO.Order> allOrders;
+        List<DTO.Pizza> allPizzas;
+        List<DTO.Pizza_Order> allPizzaOrders;
+        List<DTO.Pizza_Size> allPizzaSizes;
+
+        FrameworkElement menuPage;
+        FrameworkElement cartPage;
+        FrameworkElement profilePage;
+
+        public MainWindow(
+            SV.IClient theClientService,
+            SV.ICourier theCourierService,
+            SV.IDough theDoughService,
+            SV.IOrder theOrderService,
+            SV.IPizza thePizzaService,
+            SV.IPizza_Order thePizzaOrderService,
+            SV.IPizza_Size thePizzaSizeService,
+            SV.IReport theReportService
+        )
         {
+            clientService = theClientService;
+            courierService = theCourierService;
+            doughService = theDoughService;
+            orderService = theOrderService;
+            pizzaService = thePizzaService;
+            pizzaOrderService = thePizzaOrderService;
+            pizzaSizeService = thePizzaSizeService;
+            reportService = theReportService;
+
             InitializeComponent();
 
             load();
@@ -115,8 +154,22 @@ namespace WPF_PizzaDelivery
 
         void load()
         {
+            loadMembers();
             loadMenuPage();
             loadCartPage();
+        }
+
+        void loadMembers()
+        {
+            allDough = doughService.getAllDough();
+            allOrders = orderService.getAllOrders();
+            allPizzaOrders = pizzaOrderService.getAllPO();
+            allPizzas = pizzaService.getAllPizzas();
+            allPizzaSizes = pizzaSizeService.getAllSizes();
+
+            menuPage = FindName("Page_Menu") as FrameworkElement;
+            cartPage = FindName("Page_Cart") as FrameworkElement;
+            profilePage = FindName("Page_Profile") as FrameworkElement;
         }
 
         void loadMenuPage()
@@ -124,104 +177,115 @@ namespace WPF_PizzaDelivery
             var table = FindName("Menu_GRD_Pizzas") as Grid;
             table.Children.Clear();
 
-            for (int i = 0; i < 10; i++)
+            for (int c = 1; c < allPizzas.Count; c++)
             {
                 var row = new RowDefinition { Height = new GridLength(300) };
 
                 table.RowDefinitions.Add(row);
             }
 
-            for (int i = 0; i < table.RowDefinitions.Count; i++)
-            {
-                for (int j = 0; j < table.ColumnDefinitions.Count; j++)
-                {
-                    //var pizza = XamlReader.Parse(XamlWriter.Save(grd)) as Grid;
+            var ROW_CAP = table.RowDefinitions.Count;
+            var COL_CAP = table.ColumnDefinitions.Count;
 
-                    var pizza = new Grid
+            int i = 0;
+            int j = 0;
+
+            foreach (var pizzaDto in allPizzas)
+            {
+                var pizza = new Grid
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Width = 200,
+                    Height = 250
+                };
+
+                {
+                    pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
+                    pizza.RowDefinitions.Add(new RowDefinition { });
+
+                    var btn = new Button
+                    {
+                        Width = 200,
+                        Height = 200,
+                        Style = FindResource("MaterialDesignFlatLightButton") as Style
+                    };
+
+                    pizza.Children.Add(btn);
+
+                    var grid = new Grid
                     {
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                         Width = 200,
-                        Height = 250
+                        Height = 200
                     };
 
+                    btn.Content = grid;
+
                     {
-                        pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
-                        pizza.RowDefinitions.Add(new RowDefinition { });
+                        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(150) });
+                        grid.RowDefinitions.Add(new RowDefinition { });
+                        grid.RowDefinitions.Add(new RowDefinition { });
 
-                        var btn = new Button
+                        var img = new Image
                         {
-                            Width = 200,
-                            Height = 200,
-                            Style = FindResource("MaterialDesignFlatLightButton") as Style
+                            Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName[pizzaDto.name] + ".png", UriKind.Relative)),
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Width = 145,
+                            Height = 145,
+                            Stretch = Stretch.UniformToFill
                         };
 
-                        pizza.Children.Add(btn);
+                        grid.Children.Add(img);
 
+                        var lbl = new Label
                         {
-                            var grid = new Grid
-                            {
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center,
-                                Width = 200,
-                                Height = 200
-                            };
-
-                            btn.Content = grid;
-
-                            {
-                                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(150) });
-                                grid.RowDefinitions.Add(new RowDefinition { });
-                                grid.RowDefinitions.Add(new RowDefinition { });
-
-                                var img = new Image
-                                {
-                                    Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName["Песто"] + ".png", UriKind.Absolute)),
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    Width = 145,
-                                    Height = 145,
-                                    Stretch = Stretch.UniformToFill
-                                };
-
-                                grid.Children.Add(img);
-
-                                var lbl = new Label
-                                {
-                                    Content = "Ветчина и сыр",
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    FontWeight = FontWeights.SemiBold
-                                };
-
-                                Grid.SetRow(lbl, 1);
-                                grid.Children.Add(lbl);
-
-                                lbl = new Label
-                                {
-                                    Content = "от 389 р.",
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Center
-                                };
-
-                                Grid.SetRow(lbl, 2);
-                                grid.Children.Add(lbl);
-                            }
-                        }
-
-                        btn = new Button
-                        {
-                            Content = "Выбрать"
+                            Content = pizzaDto.name,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            FontWeight = FontWeights.SemiBold
                         };
 
-                        Grid.SetRow(btn, 1);
-                        pizza.Children.Add(btn);
+                        Grid.SetRow(lbl, 1);
+                        grid.Children.Add(lbl);
+
+                        lbl = new Label
+                        {
+                            Content = "от " + string.Format("{0:C2}", pizzaDto.cost),
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
+
+                        Grid.SetRow(lbl, 2);
+                        grid.Children.Add(lbl);
                     }
 
-                    Grid.SetRow(pizza, i);
-                    Grid.SetColumn(pizza, j);
-                    table.Children.Add(pizza);
+                    btn = new Button
+                    {
+                        Content = "Выбрать"
+                    };
+
+                    Grid.SetRow(btn, 1);
+                    pizza.Children.Add(btn);
                 }
+
+                Grid.SetRow(pizza, i);
+                Grid.SetColumn(pizza, j);
+                table.Children.Add(pizza);
+
+                if (j + 1 >= COL_CAP)
+                {
+                    j = 0;
+
+                    if (i + 1 >= ROW_CAP)
+                        i = 0;
+
+                    else i++;
+                }
+
+                else j++;
             }
         }
 
@@ -231,8 +295,15 @@ namespace WPF_PizzaDelivery
 
             stack.Children.Clear();
 
-            for (int i = 0; i < 10; i++)
+            var orderDto = allOrders.First();
+            var poDtos = allPizzaOrders.FindAll(e => e.order_id == orderDto.id);
+
+            foreach (var poDto in poDtos)
             {
+                var doughDto = allDough.First(e => e.id == poDto.dough_id);
+                var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
+                var sizeDto  = allPizzaSizes.First(e => e.id == poDto.size_id);
+
                 var card = new MD.Card
                 {
                     Width = 500,
@@ -263,7 +334,7 @@ namespace WPF_PizzaDelivery
                             {
                                 var img = new Image
                                 {
-                                    Source = new BitmapImage(new Uri("HamNCheese.png", UriKind.Relative)),
+                                    Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName[pizzaDto.name] + ".png", UriKind.Relative)),
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center
                                 };
@@ -284,7 +355,7 @@ namespace WPF_PizzaDelivery
 
                                 var lbl = new Label
                                 {
-                                    Content = "Ветчина и сыр",
+                                    Content = pizzaDto.name,
                                     FontWeight = FontWeights.Bold,
                                     FontSize = 20
                                 };
@@ -293,7 +364,7 @@ namespace WPF_PizzaDelivery
 
                                 lbl = new Label
                                 {
-                                    Content = "30 см, традиционное тесто",
+                                    Content = $"{sizeDto.name} {sizeDto.size} см, {doughDto.name} тесто",
                                     FontWeight = FontWeights.Bold,
                                     FontSize = 13,
                                     Foreground = new SolidColorBrush(Colors.Gray)
@@ -333,7 +404,7 @@ namespace WPF_PizzaDelivery
                             var lbl = new Label
                             {
                                 Name = "Order_LBL_Price",
-                                Content = "389 р.",
+                                Content = string.Format("{0:C2}", pizzaDto.cost), /*$"{poDto.cost.Value} р."*/
                                 HorizontalAlignment = HorizontalAlignment.Left,
                                 VerticalAlignment = VerticalAlignment.Center,
                                 FontWeight = FontWeights.Bold,
@@ -381,7 +452,7 @@ namespace WPF_PizzaDelivery
                                 lbl = new Label
                                 {
                                     Name = "Order_LBL_PizzaCount",
-                                    Content = "1",
+                                    Content = poDto.quantity.ToString(),
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
                                     FontWeight = FontWeights.Bold,
@@ -409,6 +480,9 @@ namespace WPF_PizzaDelivery
                     }
                 }
             }
+
+            var lbl_total = profilePage.FindName("Cart_LBL_TotalPrice") as Label;
+            lbl_total.Content = "Сумма заказа: " + string.Format("{0:C2}", orderDto.cost);
         }
 
         void updatePrices()
