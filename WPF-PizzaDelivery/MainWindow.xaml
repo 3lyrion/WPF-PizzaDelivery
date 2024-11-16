@@ -30,7 +30,7 @@
             <materialDesign:Card HorizontalAlignment="Left" Width="110" Visibility="Hidden" />
             <materialDesign:Card Padding="0.33,0.33">
                 <TabControl TabStripPlacement="Left" Style="{StaticResource MaterialDesignNavigationRailTabControl}" Background="White">
-                    <TabItem Margin="0">
+                    <TabItem Width="100" Height="100">
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
@@ -47,7 +47,7 @@
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <ScrollViewer Grid.Row="1">
+                                <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
                                     <Grid x:Name="Menu_GRD_Pizzas">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -88,7 +88,7 @@
                             </Grid>
                         </Border>
                     </TabItem>
-                    <TabItem MinWidth="100" Width="100" Height="100" Margin="0" MinHeight="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TabItem Width="100" Height="100">
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="CartOutline" Width="70" Height="70" />
                         </TabItem.Header>
@@ -110,7 +110,7 @@
                                     </Label>
                                 </materialDesign:Card>
                                 <Border Grid.Row="1" Padding="20,20">
-                                    <ScrollViewer Width="600">
+                                    <ScrollViewer Width="600" Visibility="Visible" VerticalScrollBarVisibility="Auto">
                                         <StackPanel x:Name="Cart_SP_Orders">
                                             <StackPanel.Resources>
                                                 <Style TargetType="materialDesign:Card">
@@ -154,7 +154,7 @@
                                                             <ColumnDefinition />
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
-                                                        <Label HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="18">
+                                                        <Label HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15">
                                                             389 р.
                                                         </Label>
                                                         <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -166,12 +166,10 @@
                                                                 <ColumnDefinition />
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
-                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Click="Order_BTN_Minus_onClick" >
-                                                            </Button>
+                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
                                                             <Label x:Name="Order_LBL_PizzaCount" Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
                                                             </Label>
-                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Click="Order_BTN_Plus_onClick">
-                                                            </Button>
+                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
@@ -184,10 +182,10 @@
                                         <ColumnDefinition Width="320" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Label x:Name="Cart_LBL_TotalPrice" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">
+                                    <Label x:Name="Cart_LBL_TotalPrice" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="Bold">
                                         Сумма заказа: 389 р.
                                     </Label>
-  
+
                                     <Button Grid.Column="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
                                         Оформить заказ
                                     </Button>
@@ -195,7 +193,7 @@
                             </Grid>
                         </Border>
                     </TabItem>
-                    <TabItem MinWidth="100" Width="100" Height="100" Margin="0" MinHeight="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TabItem Width="100" Height="100">
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" FontSize="36" />
                         </TabItem.Header>

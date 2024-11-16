@@ -7,13 +7,18 @@ namespace Interfaces.DTO
 {
     public class Order
     {
+        public delegate void CostChangeHandler();
+        public event CostChangeHandler? costChange;
+
+        decimal m_cost;
+
         public Order() { }
 
         public Order(DM.Order order)
         {
             id = order.id;
             creation_date = order.creation_date;
-            cost = order.cost;
+            if (order.cost.HasValue) cost = order.cost.Value;
             address = order.address;
             //status_id = order.status.id;
             client_id = order.client.id;
@@ -26,7 +31,17 @@ namespace Interfaces.DTO
 
         public DateTime? creation_date { get; set; }
 
-        public decimal? cost { get; set; }
+        public decimal cost
+        {
+            get { return m_cost; }
+
+            set
+            {
+                m_cost = value;
+
+                costChange?.Invoke();
+            }
+        }
 
         public string address { get; set; }
 
