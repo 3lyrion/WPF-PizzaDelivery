@@ -7,8 +7,8 @@
     <ProjectGuid>{B6018738-C894-4ABF-8DAF-683E075632A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lab4_BLL</RootNamespace>
-    <AssemblyName>Lab4_BLL</AssemblyName>
+    <RootNamespace>BLL</RootNamespace>
+    <AssemblyName>BLL</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
