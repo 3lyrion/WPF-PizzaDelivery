@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,38 @@ using WPF_PizzaDelivery.Util;
 
 namespace WPF_PizzaDelivery
 {
+    public class PizzaImagePathConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string)
+                return Media.directory + Media.pizzaNameToFileName[value as string] + ".png";
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PizzaMenuPriceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is decimal)
+                return "от " + string.Format("{0:C2}", (decimal)value);
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public partial class MainWindow : Window
     {
         SV.IClient clientService;
@@ -95,6 +128,10 @@ namespace WPF_PizzaDelivery
 
         void loadMenuPage()
         {
+            var ic = menuPage.FindName("Menu_IC_Pizzas") as ItemsControl;
+            ic.ItemsSource = allPizzas;
+
+            /*
             var table = menuPage.FindName("Menu_GRD_Pizzas") as Grid;
             table.Children.Clear();
 
@@ -105,7 +142,6 @@ namespace WPF_PizzaDelivery
 
             foreach (var pizzaDto in allPizzas)
             {
-                /*
                 var card = new MD.Card
                 {
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -114,199 +150,200 @@ namespace WPF_PizzaDelivery
                     Height = 275,
                     Padding = new Thickness(25, 10, 25, 0)
                 };
-                */
-                var pizza = new Grid
+                
+            
+            var pizza = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Width = 200,
+                Height = 250,
+            };
+
+            //card.Content = pizza;
+
+            Grid.SetRow(pizza, i);
+            Grid.SetColumn(pizza, j);
+            table.Children.Add(pizza);
+
+            {
+                pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
+                pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) });
+
+                var btn = new Button
+                {
+                    Width = 200,
+                    Height = 200,
+                    Style = FindResource("MaterialDesignFlatLightButton") as Style
+                };
+
+                pizza.Children.Add(btn);
+
+                var grid = new Grid
                 {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     Width = 200,
-                    Height = 250,
+                    Height = 200
                 };
 
-                //card.Content = pizza;
-
-                Grid.SetRow(pizza, i);
-                Grid.SetColumn(pizza, j);
-                table.Children.Add(pizza);
+                btn.Content = grid;
 
                 {
-                    pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
-                    pizza.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) });
+                    grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(150) });
+                    grid.RowDefinitions.Add(new RowDefinition { });
+                    grid.RowDefinitions.Add(new RowDefinition { });
 
-                    var btn = new Button
+                    var img = new Image
                     {
-                        Width = 200,
-                        Height = 200,
-                        Style = FindResource("MaterialDesignFlatLightButton") as Style
+                        Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName[pizzaDto.name] + ".png", UriKind.Relative)),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Width = 145,
+                        Height = 145,
+                        Stretch = Stretch.UniformToFill
                     };
 
-                    pizza.Children.Add(btn);
+                    grid.Children.Add(img);
 
-                    var grid = new Grid
+                    var lbl = new Label
+                    {
+                        Content = pizzaDto.name,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        FontWeight = FontWeights.SemiBold
+                    };
+
+                    Grid.SetRow(lbl, 1);
+                    grid.Children.Add(lbl);
+
+                    lbl = new Label
+                    {
+                        Content = "от " + string.Format("{0:C2}", pizzaDto.cost),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+
+                    Grid.SetRow(lbl, 2);
+                    grid.Children.Add(lbl);
+                }
+
+                var btn_select = new Button
+                {
+                    Content = "Выбрать"
+                };
+
+                Grid.SetRow(btn_select, 1);
+                pizza.Children.Add(btn_select);
+
+                grid = new Grid { Visibility = Visibility.Hidden };
+                Grid.SetRow(grid, 1);
+                pizza.Children.Add(grid);
+
+                Label lbl_quantity;
+                Button btn_minus;
+                Button btn_plus;
+
+                {
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { });
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { });
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { });
+
+                    btn_minus = new Button
+                    {
+                        Content = new MD.PackIcon { Kind = MD.PackIconKind.Minus },
+                        Style = FindResource("MaterialDesignFlatButton") as Style,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Padding = new Thickness(0),
+                        Width = 30
+                    };
+
+                    grid.Children.Add(btn_minus);
+
+                    lbl_quantity = new Label
                     {
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
-                        Width = 200,
-                        Height = 200
+                        FontWeight = FontWeights.Bold,
+                        FontSize = 18
                     };
 
-                    btn.Content = grid;
+                    Grid.SetColumn(lbl_quantity, 1);
+                    grid.Children.Add(lbl_quantity);
 
+                    btn_plus = new Button
                     {
-                        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(150) });
-                        grid.RowDefinitions.Add(new RowDefinition { });
-                        grid.RowDefinitions.Add(new RowDefinition { });
-
-                        var img = new Image
-                        {
-                            Source = new BitmapImage(new Uri(Media.directory + Media.pizzaNameToFileName[pizzaDto.name] + ".png", UriKind.Relative)),
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Width = 145,
-                            Height = 145,
-                            Stretch = Stretch.UniformToFill
-                        };
-
-                        grid.Children.Add(img);
-
-                        var lbl = new Label
-                        {
-                            Content = pizzaDto.name,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            FontWeight = FontWeights.SemiBold
-                        };
-
-                        Grid.SetRow(lbl, 1);
-                        grid.Children.Add(lbl);
-
-                        lbl = new Label
-                        {
-                            Content = "от " + string.Format("{0:C2}", pizzaDto.cost),
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center
-                        };
-
-                        Grid.SetRow(lbl, 2);
-                        grid.Children.Add(lbl);
-                    }
-
-                    var btn_select = new Button
-                    {
-                        Content = "Выбрать"
+                        Content = new MD.PackIcon { Kind = MD.PackIconKind.Plus },
+                        Style = FindResource("MaterialDesignFlatButton") as Style,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Padding = new Thickness(0),
+                        Width = 30
                     };
 
-                    Grid.SetRow(btn_select, 1);
-                    pizza.Children.Add(btn_select);
-
-                    grid = new Grid { Visibility = Visibility.Hidden };
-                    Grid.SetRow(grid, 1);
-                    pizza.Children.Add(grid);
-
-                    Label lbl_quantity;
-                    Button btn_minus;
-                    Button btn_plus;
-
-                    {
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { });
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { });
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { });
-
-                        btn_minus = new Button
-                        {
-                            Content = new MD.PackIcon { Kind = MD.PackIconKind.Minus },
-                            Style = FindResource("MaterialDesignFlatButton") as Style,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Padding = new Thickness(0),
-                            Width = 30
-                        };
-
-                        grid.Children.Add(btn_minus);
-
-                        lbl_quantity = new Label
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            FontWeight = FontWeights.Bold,
-                            FontSize = 18
-                        };
-
-                        Grid.SetColumn(lbl_quantity, 1);
-                        grid.Children.Add(lbl_quantity);
-
-                        btn_plus = new Button
-                        {
-                            Content = new MD.PackIcon { Kind = MD.PackIconKind.Plus },
-                            Style = FindResource("MaterialDesignFlatButton") as Style,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Padding = new Thickness(0),
-                            Width = 30
-                        };
-
-                        Grid.SetColumn(btn_plus, 2);
-                        grid.Children.Add(btn_plus);
-                    }
-
-                    btn_select.Click += (s, e) =>
-                    {
-                        var poDto = new DTO.Pizza_Order
-                        {
-                            dough_id = 1,
-                            pizza_id = pizzaDto.id,
-                            order_id = curOrder.id,
-                            quantity = 1,
-                            size_id = 1
-                        };
-
-                        lbl_quantity.Content = poDto.quantity.ToString();
-                        poDto.quantityChange += () =>
-                        {
-                            lbl_quantity.Content = poDto.quantity.ToString();
-                        };
-
-                        btn_minus.Click += (s, e) =>
-                        {
-                            decreasePizzaOrderQuantity(poDto);
-                            updateOrderPrice();
-                        };
-
-                        btn_plus.Click += (s, e) =>
-                        {
-                            increasePizzaOrderQuantity(poDto);
-                            updateOrderPrice();
-                        };
-
-                        addPizzaOrder(poDto);
-
-                        btn_select.Visibility = Visibility.Hidden;
-                        grid.Visibility = Visibility.Visible;
-                    };
-
-                    pizzaOrderDeletion += (poDto_) =>
-                    {
-                        if (pizzaDto.id != poDto_.pizza_id) return;
-
-                        btn_select.Visibility = Visibility.Visible;
-                        grid.Visibility = Visibility.Hidden;
-                    };
+                    Grid.SetColumn(btn_plus, 2);
+                    grid.Children.Add(btn_plus);
                 }
 
-                if (j + 1 >= COL_CAP)
+                btn_select.Click += (s, e) =>
                 {
-                    j = 0;
+                    var poDto = new DTO.Pizza_Order
+                    {
+                        dough_id = 1,
+                        pizza_id = pizzaDto.id,
+                        order_id = curOrder.id,
+                        quantity = 1,
+                        size_id = 1
+                    };
 
-                    i++;
+                    lbl_quantity.Content = poDto.quantity.ToString();
+                    poDto.quantityChange += () =>
+                    {
+                        lbl_quantity.Content = poDto.quantity.ToString();
+                    };
 
-                    // Если это был последний элемент, то новой строки не будет
-                    if (COL_CAP * (i + 1) != allPizzas.Count) 
-                        table.RowDefinitions.Add(new RowDefinition { Height = new GridLength(300) });
-                }
+                    btn_minus.Click += (s, e) =>
+                    {
+                        decreasePizzaOrderQuantity(poDto);
+                        updateOrderPrice();
+                    };
 
-                else j++;
+                    btn_plus.Click += (s, e) =>
+                    {
+                        increasePizzaOrderQuantity(poDto);
+                        updateOrderPrice();
+                    };
+
+                    addPizzaOrder(poDto);
+
+                    btn_select.Visibility = Visibility.Hidden;
+                    grid.Visibility = Visibility.Visible;
+                };
+
+                pizzaOrderDeletion += (poDto_) =>
+                {
+                    if (pizzaDto.id != poDto_.pizza_id) return;
+
+                    btn_select.Visibility = Visibility.Visible;
+                    grid.Visibility = Visibility.Hidden;
+                };
             }
-        }
+
+            if (j + 1 >= COL_CAP)
+            {
+                j = 0;
+
+                i++;
+
+                // Если это был последний элемент, то новой строки не будет
+                if (COL_CAP * (i + 1) != allPizzas.Count) 
+                    table.RowDefinitions.Add(new RowDefinition { Height = new GridLength(300) });
+            }
+
+            else j++;
+        }*/
+    }
 
         void loadCartPage()
         {
