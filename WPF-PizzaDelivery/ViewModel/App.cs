@@ -76,6 +76,48 @@ namespace WPF_PizzaDelivery.ViewModel
         }
     }
 
+    public class PizzaQuantityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                var quantity = (int)value;
+
+                if (quantity > 0) return Visibility.Hidden;
+                return Visibility.Visible;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class InversePizzaQuantityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                var quantity = (int)value;
+
+                if (quantity > 0) return Visibility.Visible;
+                return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class App : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -102,12 +144,52 @@ namespace WPF_PizzaDelivery.ViewModel
 
         DTO.Order curOrder;
 
+
         //        FrameworkElement menuPage;
         //        FrameworkElement cartPage;
         //        FrameworkElement profilePage;
 
+        public ObservableCollection<SelectPizzaButton> SelectPizzaButtons { get; set; }
+
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
+
+        RelayCommand incrPizzaQuantityCommand;
+        public RelayCommand IncreasePizzaQuantityCommand
+        {
+            get
+            {
+                return incrPizzaQuantityCommand ??
+                  (incrPizzaQuantityCommand = new RelayCommand(obj =>
+                  {
+                      var pizza = obj as Model.Pizza;
+
+                      if (pizza != null)
+                          pizza.Quantity++;
+
+                  }));
+            }
+        }
+
+        RelayCommand decrPizzaQuantityCommand;
+        public RelayCommand DecreasePizzaQuantityCommand
+        {
+            get
+            {
+                return decrPizzaQuantityCommand ??
+                  (decrPizzaQuantityCommand = new RelayCommand(obj =>
+                  {
+                      var pizza = obj as Model.Pizza;
+
+                      if (pizza != null)
+                      {
+                          if (pizza.Quantity > 0)
+                              pizza.Quantity--;
+                      }
+
+                  }));
+            }
+        }
 
         public App(
             SV.IClient theClientService,
@@ -148,6 +230,7 @@ namespace WPF_PizzaDelivery.ViewModel
             allPizzaSizes = new ObservableCollection<DTO.Pizza_Size>(pizzaSizeService.getAllSizes());
 
             Pizzas = new ObservableCollection<Model.Pizza>();
+            SelectPizzaButtons = new ObservableCollection<SelectPizzaButton>();
             foreach (var pizzaDto in allPizzas)
             {
                 int quantity = 0;
@@ -172,6 +255,8 @@ namespace WPF_PizzaDelivery.ViewModel
                         Cost = pizzaDto.cost,
                         Quantity = quantity
                     });
+
+                    SelectPizzaButtons.Add(new SelectPizzaButton());
                 }
             }
 
