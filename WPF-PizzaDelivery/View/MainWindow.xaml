@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="clr-namespace:WPF_PizzaDelivery"
-        x:Class="WPF_PizzaDelivery.MainWindow"
+        xmlns:local="clr-namespace:WPF_PizzaDelivery.ViewModel"
+        x:Class="WPF_PizzaDelivery.View.MainWindow"
         mc:Ignorable="d"
         Title="Доставка пиццы" Height="720" Width="1280"
         Style="{StaticResource MaterialDesignWindow}"
@@ -17,8 +17,9 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto" MinWidth="960" MinHeight="540" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
+        <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
-        <local:PizzaMenuPriceConverter x:Key="PizzaMenuPriceConverter" />
+        <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
     </Window.Resources>
     <Border Padding="10,10">
         <Grid>
@@ -49,10 +50,10 @@
                                     </Label>
                                 </materialDesign:Card>
                                 <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl x:Name="Menu_IC_Pizzas">
+                                    <ItemsControl ItemsSource="{Binding Pizzas}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <UniformGrid Rows="{Binding allPizzas.Count}" Columns="3">
+                                                <UniformGrid Columns="3">
 
                                                 </UniformGrid>
                                             </ItemsPanelTemplate>
@@ -71,14 +72,24 @@
                                                                 <RowDefinition />
                                                                 <RowDefinition />
                                                             </Grid.RowDefinitions>
-                                                            <Image Source="{Binding Path=name, Converter={StaticResource PizzaImagePathConverter}}" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                            <Label Grid.Row="1" Content="{Binding Path=name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" />
-                                                            <Label Grid.Row="2" Content="{Binding Path=cost, Converter={StaticResource PizzaMenuPriceConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            <Image Source="{Binding Path=Name, Converter={StaticResource PizzaImagePathConverter}}" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            <Label Grid.Row="1" Content="{Binding Path=Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                                            <Label Grid.Row="2" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="от {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Grid>
                                                     </Button>
                                                     <Button Grid.Row="1">
                                                         Выбрать
                                                     </Button>
+                                                    <Grid Grid.Row="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Button Padding="0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
+                                                        <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
+                                                        <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
+                                                    </Grid>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -110,70 +121,71 @@
                                 </materialDesign:Card>
                                 <Border Grid.Row="1" Padding="20,20">
                                     <ScrollViewer Width="600" Visibility="Visible" VerticalScrollBarVisibility="Auto">
-                                        <StackPanel x:Name="Cart_SP_Orders">
-                                            <StackPanel.Resources>
-                                                <Style TargetType="materialDesign:Card">
-                                                    <Setter Property="Margin" Value="0, 0, 0, 10" />
-                                                </Style>
-                                            </StackPanel.Resources>
-                                            <materialDesign:Card Width="500" Height="150" Padding="10,10">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition MinHeight="100" />
-                                                        <RowDefinition />
-                                                    </Grid.RowDefinitions>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="100" />
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition Width="50" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <Border Padding="7.5, 7.5">
-                                                            <Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="/Media/HamNCheese.png"/>
-                                                        </Border>
-                                                        <Grid Grid.Column="1">
+                                        <ItemsControl ItemsSource="{Binding OrderParts}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel x:Name="Cart_SP_Orders">
+                                                        <StackPanel.Resources>
+                                                            <Style TargetType="materialDesign:Card">
+                                                                <Setter Property="Margin" Value="0, 0, 0, 10" />
+                                                            </Style>
+                                                        </StackPanel.Resources>
+                                                    </StackPanel>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <materialDesign:Card Width="500" Height="150" Padding="10,10">
+                                                        <Grid>
                                                             <Grid.RowDefinitions>
-                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition MinHeight="100" />
                                                                 <RowDefinition />
                                                             </Grid.RowDefinitions>
-                                                            <Label FontWeight="Bold" FontSize="20">
-                                                                Ветчина и сыр
-                                                            </Label>
-                                                            <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray">
-                                                                30 см, традиционное тесто
-                                                            </Label>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="100" />
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition Width="50" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Image Margin="7.5, 7.5" Source="{Binding Path=Name, Converter={StaticResource PizzaImagePathConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Grid Grid.Column="1">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="40" />
+                                                                        <RowDefinition />
+                                                                    </Grid.RowDefinitions>
+                                                                    <Label Content="{Binding Name}" FontWeight="Bold" FontSize="20" />
+                                                                    <Label Content="{Binding Path=., Converter={StaticResource OrderPartBottomLabelConverter}}" Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray" />
+                                                                </Grid>
+                                                                <Button Padding="0" Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
+                                                                    <materialDesign:PackIcon Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
+                                                                </Button>
+                                                            </Grid>
+                                                            <Grid Grid.Row="1">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="260" />
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Label Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" />
+                                                                <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                    Изменить
+                                                                </Button>
+                                                                <Grid Grid.Column="2">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition />
+                                                                        <ColumnDefinition />
+                                                                        <ColumnDefinition />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Button Padding="0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
+                                                                    <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
+                                                                    <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
+                                                                </Grid>
+                                                            </Grid>
                                                         </Grid>
-                                                        <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" MinWidth="32" MinHeight="32" Height="32" Foreground="Black" Width="50">
-                                                            <materialDesign:PackIcon  Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
-                                                        </Button>
-                                                    </Grid>
-                                                    <Grid Grid.Row="1">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="260" />
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                        </Grid.ColumnDefinitions>
-                                                        <Label HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15">
-                                                            389 р.
-                                                        </Label>
-                                                        <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                            Изменить
-                                                        </Button>
-                                                        <Grid Grid.Column="2">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Button Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
-                                                            <Label x:Name="Order_LBL_PizzaCount" Grid.Column="1" Content="1" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
-                                                            </Label>
-                                                            <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </materialDesign:Card>
-                                        </StackPanel>
+                                                    </materialDesign:Card>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </ScrollViewer>
                                 </Border>
                                 <Grid Grid.Row="2" Width="600">

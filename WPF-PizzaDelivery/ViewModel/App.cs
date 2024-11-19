@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,21 +17,35 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using MD = MaterialDesignThemes.Wpf;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 using WPF_PizzaDelivery.Util;
 
-namespace WPF_PizzaDelivery
+namespace WPF_PizzaDelivery.ViewModel
 {
+    public class PriceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is decimal)
+                return string.Format("{0:C2}", (decimal)value);
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class PizzaImagePathConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string)
-                return Media.directory + Media.pizzaNameToFileName[value as string] + ".png";
+                return Media.directory + Media.pizzaNameToFileName[(string)value] + ".png";
 
             return value;
         }
@@ -39,12 +56,16 @@ namespace WPF_PizzaDelivery
         }
     }
 
-    public class PizzaMenuPriceConverter : IValueConverter
+    public class OrderPartBottomLabelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is decimal)
-                return "от " + string.Format("{0:C2}", (decimal)value);
+            if (value is Model.OrderPart)
+            {
+                var orderPart = value as Model.OrderPart;
+
+                return $"{orderPart.SizeName} {orderPart.SizeValue} см, {orderPart.DoughName} тесто";
+            }
 
             return value;
         }
@@ -55,8 +76,15 @@ namespace WPF_PizzaDelivery
         }
     }
 
-    public partial class MainWindow : Window
+    public class App : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
         SV.IClient clientService;
         SV.ICourier courierService;
         SV.IDough doughService;
@@ -66,22 +94,22 @@ namespace WPF_PizzaDelivery
         SV.IPizza_Size pizzaSizeService;
         SV.IReport reportService;
 
-        List<DTO.Dough> allDough;
-        List<DTO.Order> allOrders;
-        List<DTO.Pizza> allPizzas;
-        List<DTO.Pizza_Order> allPizzaOrders;
-        List<DTO.Pizza_Size> allPizzaSizes;
+        ObservableCollection<DTO.Dough> allDough;
+        ObservableCollection<DTO.Order> allOrders;
+        ObservableCollection<DTO.Pizza> allPizzas;
+        ObservableCollection<DTO.Pizza_Order> allPizzaOrders;
+        ObservableCollection<DTO.Pizza_Size> allPizzaSizes;
 
         DTO.Order curOrder;
 
-        FrameworkElement menuPage;
-        FrameworkElement cartPage;
-        FrameworkElement profilePage;
+        //        FrameworkElement menuPage;
+        //        FrameworkElement cartPage;
+        //        FrameworkElement profilePage;
 
-        delegate void PizzaOrderDeletion(DTO.Pizza_Order poDto);
-        event PizzaOrderDeletion? pizzaOrderDeletion;
+        public ObservableCollection<Model.Pizza> Pizzas { get; set; }
+        public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
 
-        public MainWindow(
+        public App(
             SV.IClient theClientService,
             SV.ICourier theCourierService,
             SV.IDough theDoughService,
@@ -101,8 +129,6 @@ namespace WPF_PizzaDelivery
             pizzaSizeService = thePizzaSizeService;
             reportService = theReportService;
 
-            InitializeComponent();
-
             load();
         }
 
@@ -115,22 +141,65 @@ namespace WPF_PizzaDelivery
 
         void loadMembers()
         {
-            allDough = doughService.getAllDough();
-            allOrders = orderService.getAllOrders();
-            allPizzaOrders = pizzaOrderService.getAllPO();
-            allPizzas = pizzaService.getAllPizzas();
-            allPizzaSizes = pizzaSizeService.getAllSizes();
+            allDough = new ObservableCollection<DTO.Dough>(doughService.getAllDough());
+            allOrders = new ObservableCollection<DTO.Order>(orderService.getAllOrders());
+            allPizzaOrders = new ObservableCollection<DTO.Pizza_Order>(pizzaOrderService.getAllPO());
+            allPizzas = new ObservableCollection<DTO.Pizza>(pizzaService.getAllPizzas());
+            allPizzaSizes = new ObservableCollection<DTO.Pizza_Size>(pizzaSizeService.getAllSizes());
 
-            menuPage = FindName("Page_Menu") as FrameworkElement;
-            cartPage = FindName("Page_Cart") as FrameworkElement;
-            profilePage = FindName("Page_Profile") as FrameworkElement;
+            Pizzas = new ObservableCollection<Model.Pizza>();
+            foreach (var pizzaDto in allPizzas)
+            {
+                int quantity = 0;
+
+                try
+                {
+                    var poDto = allPizzaOrders.First(e => e.pizza_id == pizzaDto.id && e.id == 1);
+
+                    quantity = poDto.quantity;
+                }
+
+                catch
+                {
+                    
+                }
+
+                finally
+                {
+                    Pizzas.Add(new Model.Pizza
+                    {
+                        Name = pizzaDto.name,
+                        Cost = pizzaDto.cost,
+                        Quantity = quantity
+                    });
+                }
+            }
+
+            OrderParts = new ObservableCollection<Model.OrderPart>();
+            foreach (var poDto in allPizzaOrders.Where(e => e.id == 1))
+            {
+                var doughDto = allDough.First(e => e.id == poDto.dough_id);
+                var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
+                var sizeDto = allPizzaSizes.First(e => e.id == poDto.size_id);
+
+                var part = new Model.OrderPart();
+                part.Name = pizzaDto.name;
+                part.Cost = pizzaDto.cost;
+                part.Quantity = poDto.quantity;
+                part.DoughName = doughDto.name;
+                part.SizeName = sizeDto.name;
+                part.SizeValue = sizeDto.size;
+
+                OrderParts.Add(part);
+            }
+
+        //    menuPage = FindName("Page_Menu") as FrameworkElement;
+        //    cartPage = FindName("Page_Cart") as FrameworkElement;
+        //    profilePage = FindName("Page_Profile") as FrameworkElement;
         }
 
         void loadMenuPage()
         {
-            var ic = menuPage.FindName("Menu_IC_Pizzas") as ItemsControl;
-            ic.ItemsSource = allPizzas;
-
             /*
             var table = menuPage.FindName("Menu_GRD_Pizzas") as Grid;
             table.Children.Clear();
@@ -343,10 +412,11 @@ namespace WPF_PizzaDelivery
 
             else j++;
         }*/
-    }
+        }
 
         void loadCartPage()
         {
+            /*
             var stack = cartPage.FindName("Cart_SP_Orders") as StackPanel;
             stack.Children.Clear();
 
@@ -357,8 +427,9 @@ namespace WPF_PizzaDelivery
 
             foreach (var poDto in poDtos)
                 addPizzaOrder(poDto);
+            */
         }
-
+        /*
         void updatePizzaOrderPrice(DTO.Pizza_Order poDto)
         {
             var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
@@ -371,12 +442,12 @@ namespace WPF_PizzaDelivery
         {
             decimal total = 0.0m;
 
-            foreach (var poDto in allPizzaOrders.FindAll(e => e.order_id == curOrder.id))
-                total += poDto.cost;
+            //      foreach (var poDto in allPizzaOrders.FindAll(e => e.order_id == curOrder.id))
+            //         total += poDto.cost;
 
             curOrder.cost = total;
         }
-
+        
         void addPizzaOrder(DTO.Pizza_Order poDto)
         {
             allPizzaOrders.Add(poDto);
@@ -620,30 +691,156 @@ namespace WPF_PizzaDelivery
 
             updatePizzaOrderPrice(poDto);
         }
+        */
+        /*
+        private Phone selectedPhone;
 
-        private void Login_TB_PhoneNumber_onTextChanged(object sender, TextChangedEventArgs e)
+        public ObservableCollection<Phone> Phones { get; set; }
+        public Phone SelectedPhone
         {
-            var tb = sender as TextBox;
-
-            tb.Text = Regex.Replace(tb.Text, "[^0-9+]", "");
+            get { return selectedPhone; }
+            set
+            {
+                selectedPhone = value;
+                OnPropertyChanged("SelectedPhone");
+            }
         }
 
-        private void Login_BTN_Register_onClick(object sender, RoutedEventArgs e)
+        // команда добавления нового объекта
+        private RelayCommand addCommand;
+        public RelayCommand AddCommand
         {
-            var vb_login = FindName("Profile_VB_Login") as Viewbox;
-            var vb_reg = FindName("Profile_VB_Register") as Viewbox;
-
-            vb_login.Visibility = Visibility.Hidden;
-            vb_reg.Visibility = Visibility.Visible;
+            get
+            {
+                return addCommand ??
+                  (addCommand = new RelayCommand(obj =>
+                  {
+                      Phone phone = new Phone();
+                      Phones.Insert(0, phone);
+                      SelectedPhone = phone;
+                  }));
+            }
+        }
+        // команда удаления
+        private RelayCommand removeCommand;
+        public RelayCommand RemoveCommand
+        {
+            get
+            {
+                return removeCommand ??
+                  (removeCommand = new RelayCommand(obj =>
+                  {
+                      Phone phone = obj as Phone;
+                      if (phone != null)
+                      {
+                          Phones.Remove(phone);
+                      }
+                  },
+                 //условие, при котором будет доступна команда
+                 (obj) => (Phones.Count > 0 && selectedPhone != null)));
+            }
+        }
+        private RelayCommand copyCommand;
+        public RelayCommand CopyCommand
+        {
+            get
+            {
+                return copyCommand ??
+                    (copyCommand = new RelayCommand(obj =>
+                    {
+                        Phone phone = obj as Phone;
+                        if (phone != null)
+                        {
+                            Phone phoneCopy = new Phone
+                            {
+                                Company = phone.Company,
+                                Price = phone.Price,
+                                Title = phone.Title
+                            };
+                            Phones.Insert(0, phoneCopy);
+                        }
+                    }));
+            }
         }
 
-        private void Register_BTN_Back_onClick(object sender, RoutedEventArgs e)
-        {
-            var vb_login = FindName("Profile_VB_Login") as Viewbox;
-            var vb_reg = FindName("Profile_VB_Register") as Viewbox;
 
-            vb_login.Visibility = Visibility.Visible;
-            vb_reg.Visibility = Visibility.Hidden;
+
+        public ApplicationViewModel(IDialogService dialogService, IFileService fileService)
+        {
+            //Для работы с файлами в конструктор ApplicationViewModel передаются объекты IDialogService и IFileService
+            this.dialogService = dialogService;
+            this.fileService = fileService;
+
+            Phones = new ObservableCollection<Phone>
+            {
+                new Phone {Title="iPhone 7", Company="Apple", Price=56000, Models = new ObservableCollection<string>(new List<string>{ "iPhone 7 OLD", "iPhone 7 VERY OLD"}) },
+                new Phone {Title="Galaxy S7 Edge", Company="Samsung", Price =60000 , Models = new ObservableCollection<string>(new List<string>{ "GaBolaxy XL", "Galaxy XXL"})},
+                new Phone {Title="Xperia", Company="Sony", Price=56000 , Models = new ObservableCollection<string>(new List<string>{ "Girl", "Boys"})},
+                new Phone {Title="Mi5S", Company="Xiaomi", Price=35000 , Models = new ObservableCollection<string>(new List<string>{ "Mimi","Mumu"})}
+            };
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        IFileService fileService;
+        IDialogService dialogService;
+
+        // команда сохранения файла
+        private RelayCommand saveCommand;
+        public RelayCommand SaveCommand
+        {
+            get
+            {
+                return saveCommand ??
+                  (saveCommand = new RelayCommand(obj =>
+                  {
+                      try
+                      {
+                          if (dialogService.SaveFileDialog() == true)
+                          {
+                              fileService.Save(dialogService.FilePath, Phones.ToList());
+                              dialogService.ShowMessage("Файл сохранен");
+                          }
+                      }
+                      catch (Exception ex)
+                      {
+                          dialogService.ShowMessage(ex.Message);
+                      }
+                  }));
+            }
+        }
+
+        // команда открытия файла
+        private RelayCommand openCommand;
+        public RelayCommand OpenCommand
+        {
+            get
+            {
+                return openCommand ??
+                  (openCommand = new RelayCommand(obj =>
+                  {
+                      try
+                      {
+                          if (dialogService.OpenFileDialog() == true)
+                          {
+                              var phones = fileService.Open(dialogService.FilePath);
+                              Phones.Clear();
+                              foreach (var p in phones)
+                                  Phones.Add(p);
+                              dialogService.ShowMessage("Файл открыт");
+                          }
+                      }
+                      catch (Exception ex)
+                      {
+                          dialogService.ShowMessage(ex.Message);
+                      }
+                  }));
+            }
+        }*/
     }
 }

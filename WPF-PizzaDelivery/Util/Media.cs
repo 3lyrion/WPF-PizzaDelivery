@@ -8,7 +8,7 @@ namespace WPF_PizzaDelivery.Util
 {
     static class Media
     {
-        public static string directory { get; } = "Media/";
+        public static string directory { get; } = "pack://application:,,,/Media/";
 
         public static Dictionary<string, string> pizzaNameToFileName { get; } = new Dictionary<string, string>
         {
