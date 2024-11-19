@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace WPF_PizzaDelivery.Model
 {
-    public class Pizza : INotifyPropertyChanged
+    public class Order : INotifyPropertyChanged
     {
         public ObservableCollection<string> Models { get; set; }
 
@@ -16,20 +16,8 @@ namespace WPF_PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
-        string name;
         decimal cost;
-        int quantity;
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
+        
         public decimal Cost
         {
             get { return cost; }
@@ -37,19 +25,6 @@ namespace WPF_PizzaDelivery.Model
             {
                 cost = value;
                 OnPropertyChanged("Cost");
-            }
-        }
-
-        public int Quantity
-        {
-            get { return quantity; }
-            set
-            {
-                if (quantity != value)
-                {
-                    quantity = value;
-                    OnPropertyChanged("Quantity");
-                }
             }
         }
     }

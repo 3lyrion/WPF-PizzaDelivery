@@ -7,11 +7,6 @@ namespace Interfaces.DTO
 {
     public class Order
     {
-        public delegate void CostChangeHandler();
-        public event CostChangeHandler? costChange;
-
-        decimal m_cost;
-
         public Order() { }
 
         public Order(DM.Order order)
@@ -31,17 +26,7 @@ namespace Interfaces.DTO
 
         public DateTime? creation_date { get; set; }
 
-        public decimal cost
-        {
-            get { return m_cost; }
-
-            set
-            {
-                m_cost = value;
-
-                costChange?.Invoke();
-            }
-        }
+        public decimal cost { get; set; }
 
         public string address { get; set; }
 

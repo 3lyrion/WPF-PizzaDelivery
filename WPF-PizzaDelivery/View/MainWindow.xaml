@@ -123,10 +123,10 @@
                                 </materialDesign:Card>
                                 <Border Grid.Row="1" Padding="20,20">
                                     <ScrollViewer Width="600" Visibility="Visible" VerticalScrollBarVisibility="Auto">
-                                        <ItemsControl x:Name="Cart_IC_OrderParts" ItemsSource="{Binding OrderParts}">
+                                        <ItemsControl ItemsSource="{Binding OrderParts}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <StackPanel x:Name="Cart_SP_Orders">
+                                                    <StackPanel>
                                                         <StackPanel.Resources>
                                                             <Style TargetType="materialDesign:Card">
                                                                 <Setter Property="Margin" Value="0, 0, 0, 10" />
@@ -158,7 +158,7 @@
                                                                     <Label Content="{Binding Name}" FontWeight="Bold" FontSize="20" />
                                                                     <Label Content="{Binding Path=., Converter={StaticResource OrderPartBottomLabelConverter}}" Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray" />
                                                                 </Grid>
-                                                                <Button Padding="0" Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
+                                                                <Button Padding="0" Grid.Column="2" Command="{Binding DataContext.RemoveOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
                                                                     <materialDesign:PackIcon Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
                                                                 </Button>
                                                             </Grid>
@@ -178,9 +178,9 @@
                                                                         <ColumnDefinition />
                                                                         <ColumnDefinition />
                                                                     </Grid.ColumnDefinitions>
-                                                                    <Button Padding="0" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
+                                                                    <Button Padding="0" Command="{Binding DataContext.DecreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
                                                                     <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
-                                                                    <Button Grid.Column="2" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
+                                                                    <Button Grid.Column="2" Command="{Binding DataContext.IncreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Padding="0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
@@ -195,9 +195,7 @@
                                         <ColumnDefinition Width="320" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Label x:Name="Cart_LBL_TotalPrice" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" FontWeight="Bold">
-                                        Сумма заказа: 389 р.
-                                    </Label>
+                                    <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
                                     <Button Grid.Column="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
                                         Оформить заказ

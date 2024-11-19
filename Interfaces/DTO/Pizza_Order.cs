@@ -7,19 +7,7 @@ namespace Interfaces.DTO
 {
     public class Pizza_Order
     {
-        public delegate void Creation(Pizza_Order poDto);
-        public static event Creation? creation;
-
-        public delegate void CostChangeHandler();
-        public event CostChangeHandler? costChange;
-
-        public delegate void QuantityChangeHandler();
-        public event QuantityChangeHandler? quantityChange;
-
-        decimal m_cost;
-        int m_quantity;
-
-        public Pizza_Order() { creation?.Invoke(this); }
+        public Pizza_Order() { }
 
         public Pizza_Order(DM.Pizza_Order pizza_order)
         {
@@ -31,35 +19,13 @@ namespace Interfaces.DTO
             size_id = pizza_order.size.id;
 
             if (pizza_order.order != null) order_id = pizza_order.order.id;
-
-            creation?.Invoke(this);
         }
 
         public int id { get; set; }
 
-        public int quantity
-        {
-            get { return m_quantity; }
+        public int quantity { get; set; }
 
-            set
-            {
-                m_quantity = value;
-
-                quantityChange?.Invoke();
-            }
-        }
-
-        public decimal cost
-        {
-            get { return m_cost; }
-
-            set
-            {
-                m_cost = value;
-
-                costChange?.Invoke();
-            }
-        }
+        public decimal cost { get; set; }
 
         public int dough_id { get; set; }
 

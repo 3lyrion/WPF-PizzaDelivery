@@ -48,8 +48,11 @@ namespace WPF_PizzaDelivery.Model
             get { return quantity; }
             set
             {
-                quantity = value;
-                OnPropertyChanged("Quantity");
+                if (quantity != value)
+                {
+                    quantity = value;
+                    OnPropertyChanged("Quantity");
+                }
             }
         }
 

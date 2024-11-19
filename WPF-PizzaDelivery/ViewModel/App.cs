@@ -136,20 +136,13 @@ namespace WPF_PizzaDelivery.ViewModel
         SV.IPizza_Size pizzaSizeService;
         SV.IReport reportService;
 
-        ObservableCollection<DTO.Dough> allDough;
-        ObservableCollection<DTO.Order> allOrders;
-        ObservableCollection<DTO.Pizza> allPizzas;
-        ObservableCollection<DTO.Pizza_Order> allPizzaOrders;
-        ObservableCollection<DTO.Pizza_Size> allPizzaSizes;
+        List<DTO.Dough> allDough;
+        List<DTO.Order> allOrders;
+        List<DTO.Pizza> allPizzas;
+        List<DTO.Pizza_Order> allPizzaOrders;
+        List<DTO.Pizza_Size> allPizzaSizes;
 
-        DTO.Order curOrder;
-
-
-        //        FrameworkElement menuPage;
-        //        FrameworkElement cartPage;
-        //        FrameworkElement profilePage;
-
-        public ObservableCollection<SelectPizzaButton> SelectPizzaButtons { get; set; }
+        public Model.Order CurrentOrder { get; set; }
 
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
@@ -162,10 +155,51 @@ namespace WPF_PizzaDelivery.ViewModel
                 return incrPizzaQuantityCommand ??
                   (incrPizzaQuantityCommand = new RelayCommand(obj =>
                   {
-                      var pizza = obj as Model.Pizza;
+                      if (obj is Model.Pizza)
+                      {
+                          var pizza = obj as Model.Pizza;
 
-                      if (pizza != null)
+                          if (pizza == null) return;
+
                           pizza.Quantity++;
+
+                          if (pizza.Quantity == 1)
+                          {
+                              var doughDto = allDough.First(e => e.id == 1);
+                              var sizeDto = allPizzaSizes.First(e => e.id == 1);
+
+                              var part = new Model.OrderPart();
+                              part.PropertyChanged += (s, e) =>
+                              {
+                                  if (e.PropertyName == "Quantity")
+                                  {
+                                      part.Cost = pizza.Cost * part.Quantity * sizeDto.cost_mult;
+
+                                      updateOrderCost();
+                                  }
+                              };
+                              part.Name = pizza.Name;
+                              part.Cost = pizza.Cost;
+                              part.Quantity = pizza.Quantity;
+                              part.DoughName = doughDto.name;
+                              part.SizeName = sizeDto.name;
+                              part.SizeValue = sizeDto.size;
+
+                              bind(pizza, part);
+
+                              OrderParts.Add(part);
+                              updateOrderCost();
+                          }
+                      }
+
+                      else if (obj is Model.OrderPart)
+                      {
+                          var part = obj as Model.OrderPart;
+
+                          if (part == null) return;
+
+                          part.Quantity++;
+                      }
 
                   }));
             }
@@ -179,14 +213,55 @@ namespace WPF_PizzaDelivery.ViewModel
                 return decrPizzaQuantityCommand ??
                   (decrPizzaQuantityCommand = new RelayCommand(obj =>
                   {
-                      var pizza = obj as Model.Pizza;
-
-                      if (pizza != null)
+                      if (obj is Model.Pizza)
                       {
+                          var pizza = obj as Model.Pizza;
+
+                          if (pizza == null) return;
+
                           if (pizza.Quantity > 0)
                               pizza.Quantity--;
+
+                          if (pizza.Quantity == 0)
+                          {
+                              var part = OrderParts.First(e => e.Name == pizza.Name);
+                              OrderParts.Remove(part);
+                          }
                       }
 
+                      else if (obj is Model.OrderPart)
+                      {
+                          var part = obj as Model.OrderPart;
+
+                          if (part == null) return;
+
+                          if (part.Quantity > 0)
+                              part.Quantity--;
+
+                          if (part.Quantity == 0)
+                              OrderParts.Remove(part);
+                      }
+                  }));
+            }
+        }
+
+        RelayCommand removeOrderPartCommand;
+        public RelayCommand RemoveOrderPartCommand
+        {
+            get
+            {
+                return removeOrderPartCommand ??
+                  (removeOrderPartCommand = new RelayCommand(obj =>
+                  {
+                      if (obj is Model.OrderPart)
+                      {
+                          var part = obj as Model.OrderPart;
+
+                          if (part == null) return;
+
+                          part.Quantity = 0;
+                          OrderParts.Remove(part);
+                      }
                   }));
             }
         }
@@ -214,23 +289,45 @@ namespace WPF_PizzaDelivery.ViewModel
             load();
         }
 
+        void bind(Model.Pizza pizza, Model.OrderPart orderPart)
+        {
+            pizza.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Quantity")
+                    orderPart.Quantity = pizza.Quantity;
+            };
+
+            orderPart.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Quantity")
+                    pizza.Quantity = orderPart.Quantity;
+            };
+        }
+
+        void updateOrderCost()
+        {
+            CurrentOrder.Cost = OrderParts.Sum(e => e.Cost);
+        }
+
         void load()
         {
             loadMembers();
-            loadMenuPage();
-            loadCartPage();
+//            loadMenuPage();
+//            loadCartPage();
         }
 
         void loadMembers()
         {
-            allDough = new ObservableCollection<DTO.Dough>(doughService.getAllDough());
-            allOrders = new ObservableCollection<DTO.Order>(orderService.getAllOrders());
-            allPizzaOrders = new ObservableCollection<DTO.Pizza_Order>(pizzaOrderService.getAllPO());
-            allPizzas = new ObservableCollection<DTO.Pizza>(pizzaService.getAllPizzas());
-            allPizzaSizes = new ObservableCollection<DTO.Pizza_Size>(pizzaSizeService.getAllSizes());
+            allDough = doughService.getAllDough();
+            allOrders = orderService.getAllOrders();
+            allPizzaOrders = pizzaOrderService.getAllPO();
+            allPizzas = pizzaService.getAllPizzas();
+            allPizzaSizes = pizzaSizeService.getAllSizes();
+
+            CurrentOrder = new Model.Order();
 
             Pizzas = new ObservableCollection<Model.Pizza>();
-            SelectPizzaButtons = new ObservableCollection<SelectPizzaButton>();
+            
             foreach (var pizzaDto in allPizzas)
             {
                 int quantity = 0;
@@ -253,20 +350,20 @@ namespace WPF_PizzaDelivery.ViewModel
                     {
                         Name = pizzaDto.name,
                         Cost = pizzaDto.cost,
-                        Quantity = quantity
+                        Quantity = 0
                     });
-
-                    SelectPizzaButtons.Add(new SelectPizzaButton());
                 }
             }
-
+            
             OrderParts = new ObservableCollection<Model.OrderPart>();
+            /*
             foreach (var poDto in allPizzaOrders.Where(e => e.id == 1))
             {
                 var doughDto = allDough.First(e => e.id == poDto.dough_id);
                 var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
                 var sizeDto = allPizzaSizes.First(e => e.id == poDto.size_id);
 
+                
                 var part = new Model.OrderPart();
                 part.Name = pizzaDto.name;
                 part.Cost = pizzaDto.cost;
@@ -274,9 +371,12 @@ namespace WPF_PizzaDelivery.ViewModel
                 part.DoughName = doughDto.name;
                 part.SizeName = sizeDto.name;
                 part.SizeValue = sizeDto.size;
-
+                
                 OrderParts.Add(part);
             }
+            */
+
+
 
         //    menuPage = FindName("Page_Menu") as FrameworkElement;
         //    cartPage = FindName("Page_Cart") as FrameworkElement;

@@ -101,6 +101,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderPart.cs" />
     <Compile Include="Model\Pizza.cs" />
     <Compile Include="Util\Media.cs" />
@@ -120,7 +121,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\SelectPizzaButton.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
