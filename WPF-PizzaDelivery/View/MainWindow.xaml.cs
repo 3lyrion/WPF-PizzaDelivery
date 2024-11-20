@@ -35,8 +35,8 @@ namespace WPF_PizzaDelivery.View
             SV.IDough doughService = kernel.Get<SV.IDough>();
             SV.IOrder orderService = kernel.Get<SV.IOrder>();
             SV.IPizza pizzaService = kernel.Get<SV.IPizza>();
-            SV.IPizza_Order pizzaOrderService = kernel.Get<SV.IPizza_Order>();
-            SV.IPizza_Size pizzaSizeService = kernel.Get<SV.IPizza_Size>();
+            SV.IPizzaOrder pizzaOrderService = kernel.Get<SV.IPizzaOrder>();
+            SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
             SV.IReport reportService = kernel.Get<SV.IReport>();
 
             DataContext = new ViewModel.App

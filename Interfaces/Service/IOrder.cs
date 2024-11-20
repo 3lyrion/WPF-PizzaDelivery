@@ -1,17 +1,16 @@
+using System;
+using System.Collections.Generic;
+
 namespace Interfaces.Service
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public interface IOrder
     {
-        int createOrder(DTO.Order orderDto);
+        int Create(DTO.Order orderDto);
 
-        bool deleteOrder(int id);
+        bool Delete(int id);
 
-        bool save();
+        bool Save();
 
-        List<DTO.Order> getAllOrders();
+        List<DTO.Order> GetList();
     }
 }

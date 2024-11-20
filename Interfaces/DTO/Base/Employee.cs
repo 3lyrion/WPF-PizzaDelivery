@@ -1,12 +1,12 @@
-﻿namespace Interfaces.DTO.Base
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Interfaces.DTO.Base
+{
     public abstract class Employee : User
     {
         protected Employee() { }
 
-        public bool busy { get; set; } = false;
+        public bool Busy { get; set; } = false;
     }
 }

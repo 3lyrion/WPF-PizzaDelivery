@@ -11,15 +11,15 @@ namespace Interfaces.DTO
 
         public Dough(DM.Dough dough)
         {
-            id = dough.id;
-            name = dough.name;
-            weight = dough.weight;
+            Id = dough.id;
+            Name = dough.name;
+            Weight = dough.weight;
         }
 
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public int weight { get; set; }
+        public int Weight { get; set; }
     }
 }

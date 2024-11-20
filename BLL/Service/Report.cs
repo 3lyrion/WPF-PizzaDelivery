@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using Interfaces;
 using Interfaces.Repository;
-using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
-using DM = DomainModel;
 
 namespace BLL.Service
 {
@@ -19,20 +14,20 @@ namespace BLL.Service
             db = repos;
         }
 
-        public DataTable get_online_clients_orders()
+        public DataTable GetOnlineClientOrders()
         {
             var table = new DataTable();
             table.Columns.Add("ID");
             table.Columns.Add("ФИО");
             table.Columns.Add("Заказы (ID)");
 
-            var res = db.report.get_online_clients_orders();
+            var res = db.Report.GetOnlineClientOrders();
             foreach (var oco in res)
             {
                 var row = table.NewRow();
-                row["ID"] = oco.id;
-                row["ФИО"] = oco.full_name;
-                row["Заказы (ID)"] = oco.order_ids;
+                row["ID"] = oco.Id;
+                row["ФИО"] = oco.FullName;
+                row["Заказы (ID)"] = oco.OrdersIds;
 
                 table.Rows.Add(row);
             }
@@ -40,20 +35,20 @@ namespace BLL.Service
             return table;
         }
 
-        public DataTable get_online_couriers_orders()
+        public DataTable GetOnlineCourierOrders()
         {
             var table = new DataTable();
             table.Columns.Add("ID");
             table.Columns.Add("ФИО");
             table.Columns.Add("Заказ (ID)");
 
-            var res = db.report.get_online_couriers_orders();
+            var res = db.Report.GetOnlineCourierOrders();
             foreach (var oco in res)
             {
                 var row = table.NewRow();
-                row["ID"] = oco.id;
-                row["ФИО"] = oco.full_name;
-                row["Заказ (ID)"] = oco.order_id;
+                row["ID"] = oco.Id;
+                row["ФИО"] = oco.FullName;
+                row["Заказ (ID)"] = oco.OrderId;
 
                 table.Rows.Add(row);
             }

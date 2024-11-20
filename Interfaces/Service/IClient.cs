@@ -1,18 +1,16 @@
+using System;
+using System.Collections.Generic;
+
 namespace Interfaces.Service
 {
-    using System;
-    using System.Data;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public interface IClient
     {
-        bool createClient(DTO.Client clientDto);
+        int Create(DTO.Client clientDto);
 
-        List<DTO.Client> getAllClients();
+        List<DTO.Client> GetList();
 
-        bool deleteClient(int id);
+        bool Delete(int id);
 
-        bool save();
+        bool Save();
     }
 }

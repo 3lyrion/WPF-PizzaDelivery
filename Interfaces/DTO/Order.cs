@@ -11,33 +11,33 @@ namespace Interfaces.DTO
 
         public Order(DM.Order order)
         {
-            id = order.id;
-            creation_date = order.creation_date;
-            if (order.cost.HasValue) cost = order.cost.Value;
-            address = order.address;
+            Id = order.id;
+            CreationDate = order.creation_date;
+            Cost = order.cost;
+            Address = order.address;
             //status_id = order.status.id;
-            client_id = order.client.id;
-            if (order.cook != null) cook_id = order.cook.id;
-            if (order.courier != null) courier_id = order.courier.id;
-            pizza_order_IDs = order.pizza_order.Select(e => e.id).ToList();
+            ClientId = order.client.id;
+            if (order.cook != null) CookId = order.cook.id;
+            if (order.courier != null) CourierId = order.courier.id;
+            PizzaOrdersIds = order.pizza_order.Select(e => e.id).ToList();
         }
 
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public DateTime? creation_date { get; set; }
+        public DateTime? CreationDate { get; set; }
 
-        public decimal cost { get; set; }
+        public decimal? Cost { get; set; }
 
-        public string address { get; set; }
+        public string Address { get; set; }
 
     //    public int status_id { get; set; }
 
-        public int client_id { get; set; }
+        public int ClientId { get; set; }
 
-        public int cook_id { get; set; }
+        public int? CookId { get; set; }
 
-        public int courier_id { get; set; }
+        public int? CourierId { get; set; }
 
-        public List<int> pizza_order_IDs { get; set; }
+        public List<int> PizzaOrdersIds { get; set; }
     }
 }

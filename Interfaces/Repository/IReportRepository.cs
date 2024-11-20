@@ -9,8 +9,8 @@ namespace Interfaces.Repository
 {
     public interface IReportRepository
     {
-        List<DTO.OnlineClientOrders> get_online_clients_orders();
+        List<DTO.OnlineClientOrders> GetOnlineClientOrders();
 
-        List<DTO.OnlineCourierOrder> get_online_couriers_orders();
+        List<DTO.OnlineCourierOrder> GetOnlineCourierOrders();
     }
 }

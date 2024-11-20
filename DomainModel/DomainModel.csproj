@@ -52,7 +52,6 @@
     <Compile Include="Dough.cs" />
     <Compile Include="Ingredient.cs" />
     <Compile Include="Order.cs" />
-    <Compile Include="Order_Status.cs" />
     <Compile Include="Pizza.cs" />
     <Compile Include="Pizza_Order.cs" />
     <Compile Include="Pizza_Size.cs" />

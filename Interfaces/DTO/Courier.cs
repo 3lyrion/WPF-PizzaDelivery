@@ -11,12 +11,12 @@ namespace Interfaces.DTO
 
         public Courier(DM.Courier courier)
         {
-            id = courier.id;
-            full_name = courier.full_name;
-            online = courier.online;
-            busy = courier.busy;
-            password = courier.password;
-            phone_number = courier.phone_number;
+            Id = courier.id;
+            FullName = courier.full_name;
+            Busy = courier.busy;
+            Online = courier.online;
+            Password = courier.password;
+            PhoneNumber = courier.phone_number;
         }
     }
 }

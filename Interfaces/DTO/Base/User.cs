@@ -1,20 +1,20 @@
-﻿namespace Interfaces.DTO.Base
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Interfaces.DTO.Base
+{
     public abstract class User
     {
         protected User() { }
 
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public bool online { get; set; } = false;
+        public bool Online { get; set; } = false;
 
-        public string full_name { get; set; }
+        public string FullName { get; set; }
 
-        public string phone_number { get; set; }
+        public string PhoneNumber { get; set; }
 
-        public string password { get; set; }
+        public string Password { get; set; }
     }
 }

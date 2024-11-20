@@ -1,14 +1,12 @@
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using DM = DomainModel;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data;
-    using System.ComponentModel.DataAnnotations;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-
     public class Client : R.IRepository<DM.Client>
     {
         PizzaDeliveryDB db;
@@ -18,30 +16,30 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DM.Client> getList()
+        public List<DM.Client> GetList()
         {
-            return db.client.ToList();
+            return db.Client.ToList();
         }
 
-        public DM.Client getItem(int id)
+        public DM.Client GetItem(int id)
         {
-            return db.client.Find(id);
+            return db.Client.Find(id);
         }
 
-        public int create(DM.Client entity)
+        public int Create(DM.Client entity)
         {
-            return db.client.Add(entity).id;
+            return db.Client.Add(entity).id;
         }
 
-        public void update(DM.Client entity)
+        public void Update(DM.Client entity)
         {
             db.Entry(entity).State = EntityState.Modified;
         }
 
-        public void delete(int id)
+        public void Delete(int id)
         {
-            DM.Client entity = db.client.Find(id);
-            if (entity != null) db.client.Remove(entity);
+            DM.Client entity = db.Client.Find(id);
+            if (entity != null) db.Client.Remove(entity);
         }
     }
 }

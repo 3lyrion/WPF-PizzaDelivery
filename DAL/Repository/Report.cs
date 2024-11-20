@@ -1,15 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using DTO = Interfaces.DTO;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data;
-    using System.ComponentModel.DataAnnotations;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-    using DTO = Interfaces.DTO;
-
     public class Report : R.IReportRepository
     {
         PizzaDeliveryDB db;
@@ -19,14 +15,14 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DTO.OnlineClientOrders> get_online_clients_orders()
+        public List<DTO.OnlineClientOrders> GetOnlineClientOrders()
         {
             return db.Database.SqlQuery<DTO.OnlineClientOrders>
                 ("SELECT * FROM dbo.get_online_clients_orders()")
                 .ToList();
         }
 
-        public List<DTO.OnlineCourierOrder> get_online_couriers_orders()
+        public List<DTO.OnlineCourierOrder> GetOnlineCourierOrders()
         {
             return db.Database.SqlQuery<DTO.OnlineCourierOrder>
                 ("SELECT * FROM dbo.get_online_couriers_orders()")

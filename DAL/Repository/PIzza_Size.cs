@@ -1,12 +1,12 @@
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using DM = DomainModel;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-
     public class Pizza_Size : R.IRepository<DM.Pizza_Size>
     {
         PizzaDeliveryDB db;
@@ -16,30 +16,30 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DM.Pizza_Size> getList()
+        public List<DM.Pizza_Size> GetList()
         {
-            return db.pizza_size.ToList();
+            return db.Pizza_Size.ToList();
         }
 
-        public DM.Pizza_Size getItem(int id)
+        public DM.Pizza_Size GetItem(int id)
         {
-            return db.pizza_size.Find(id);
+            return db.Pizza_Size.Find(id);
         }
 
-        public int create(DM.Pizza_Size entity)
+        public int Create(DM.Pizza_Size entity)
         {
-            return db.pizza_size.Add(entity).id;
+            return db.Pizza_Size.Add(entity).id;
         }
 
-        public void update(DM.Pizza_Size entity)
+        public void Update(DM.Pizza_Size entity)
         {
             db.Entry(entity).State = EntityState.Modified;
         }
 
-        public void delete(int id)
+        public void Delete(int id)
         {
-            var entity = db.pizza_size.Find(id);
-            if (entity != null) db.pizza_size.Remove(entity);
+            var entity = db.Pizza_Size.Find(id);
+            if (entity != null) db.Pizza_Size.Remove(entity);
         }
     }
 }

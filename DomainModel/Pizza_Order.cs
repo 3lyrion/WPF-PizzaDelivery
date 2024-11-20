@@ -1,11 +1,10 @@
-﻿namespace DomainModel
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace DomainModel
+{
     [Table("pizza_order")]
     public class Pizza_Order
     {
@@ -20,13 +19,14 @@
         [Required]
         public virtual Pizza_Size size { get; set; }
 
+        [Required]
         [Column(TypeName = "smallmoney")]
-        public decimal? cost { get; set; }
+        public decimal cost { get; set; }
 
         [Required]
         public virtual Pizza pizza { get; set; }
 
-        //[Required]
+        [Required]
         public virtual Order order { get; set; }
     }
 }

@@ -5,6 +5,14 @@ using System.ComponentModel;
 
 namespace WPF_PizzaDelivery.Model
 {
+    public enum OrderStatus
+    {
+        Preparation,
+        Delivery,
+        Success,
+        Cancellation
+    }
+
     public class Order : INotifyPropertyChanged
     {
         public ObservableCollection<string> Models { get; set; }
@@ -16,8 +24,21 @@ namespace WPF_PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        string address;
         decimal cost;
+        DateTime creationTime;
+        OrderStatus status;
         
+        public string Address
+        {
+            get { return address; }
+            set
+            {
+                address = value;
+                OnPropertyChanged("Address");
+            }
+        }
+
         public decimal Cost
         {
             get { return cost; }
@@ -25,6 +46,26 @@ namespace WPF_PizzaDelivery.Model
             {
                 cost = value;
                 OnPropertyChanged("Cost");
+            }
+        }
+
+        public DateTime CreationTime
+        {
+            get { return creationTime; }
+            set
+            {
+                creationTime = value;
+                OnPropertyChanged("CreationTime");
+            }
+        }
+
+        public OrderStatus Status
+        {
+            get { return status; }
+            set
+            {
+                status = value;
+                OnPropertyChanged("Status");
             }
         }
     }

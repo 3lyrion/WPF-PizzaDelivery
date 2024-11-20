@@ -18,36 +18,41 @@ namespace BLL.Service
             db = database;
         }
 
-        public bool createClient(DTO.Client clientDto)
+        public int Create(DTO.Client clientDto)
         {
-            db.client.create(new DM.Client
+            var client = new DM.Client
             {
-                full_name = clientDto.full_name,
-                online = clientDto.online,
-                order = db.order.getList().Where(e => clientDto.ordersIDs.Contains(e.id)).ToList(),
-                password = clientDto.password,
-                phone_number = clientDto.phone_number
-            });
+                full_name = clientDto.FullName,
+                online = clientDto.Online,
+                order = db.Order.GetList().Where(e => clientDto.OrdersIDs.Contains(e.id)).ToList(),
+                password = clientDto.Password,
+                phone_number = clientDto.PhoneNumber
+            };
 
-            return save();
+            db.Client.Create(client);
+
+            if (Save())
+                return client.id;
+
+            return 0;
         }
 
-        public List<DTO.Client> getAllClients()
+        public List<DTO.Client> GetList()
         {
-            return db.client.getList().Select(i => new DTO.Client(i)).ToList();
+            return db.Client.GetList().Select(i => new DTO.Client(i)).ToList();
         }
 
-        public bool deleteClient(int id)
+        public bool Delete(int id)
         {
-            var cl = db.client.getItem(id);
-            if (cl != null) db.client.delete(id);
+            var cl = db.Client.GetItem(id);
+            if (cl != null) db.Client.Delete(id);
 
-            return save();
+            return Save();
         }
 
-        public bool save()
+        public bool Save()
         {
-            return db.save() > 0;
+            return db.Save() > 0;
         }
     }
 }

@@ -18,31 +18,37 @@ namespace BLL.Service
             db = database;
         }
 
-        public bool createPizza(DTO.Pizza pizzaDto)
+        public int Create(DTO.Pizza pizzaDto)
         {
-            var recipes = db.recipe.getList().Where(e => pizzaDto.recipesIDs.Contains(e.id)).ToList();
+            var recipes = db.Recipe.GetList().Where(e => pizzaDto.RecipesIds.Contains(e.id)).ToList();
 
-            db.pizza.create(new DM.Pizza
+            var pizza = new DM.Pizza
             {
-                name = pizzaDto.name,
-                cost = pizzaDto.cost,
-                custom = pizzaDto.custom,
-                pizza_order = db.pizza_order.getList().Where(e => pizzaDto.pizza_order_IDs.Contains(e.id)).ToList(),
+                name = pizzaDto.Name,
+                cost = pizzaDto.Cost,
+                custom = pizzaDto.Custom,
+                pizza_order = db.Pizza_Order.GetList().Where(e => pizzaDto.PizzaOrdersIds.Contains(e.id)).ToList(),
                 recipe = recipes,
-                sales_hit = pizzaDto.sales_hit,
+                sales_hit = pizzaDto.SalesHit,
                 weight = recipes.Sum(e => e.quantity)
-            });
+            };
 
-            if (db.save() > 0)
-                return true;
+            db.Pizza.Create(pizza);
 
-            return false;
+            if (Save())
+                return pizza.id;
+
+            return 0;
         }
 
-
-        public List<DTO.Pizza> getAllPizzas()
+        public bool Save()
         {
-            return db.pizza.getList().Select(i => new DTO.Pizza(i)).ToList();
+            return db.Save() > 0;
+        }
+
+        public List<DTO.Pizza> GetList()
+        {
+            return db.Pizza.GetList().Select(i => new DTO.Pizza(i)).ToList();
         }
     }
 }

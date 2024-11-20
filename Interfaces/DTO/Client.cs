@@ -5,20 +5,20 @@ using DM = DomainModel;
 
 namespace Interfaces.DTO
 {
-    public partial class Client : Base.User
+    public class Client : Base.User
     {
         public Client() { }
 
         public Client(DM.Client client)
         {
-            id = client.id;
-            full_name = client.full_name;
-            online = client.online;
-            password = client.password;
-            phone_number = client.phone_number;
-            ordersIDs = client.order.Select(e => e.id).ToList();
+            Id = client.id;
+            FullName = client.full_name;
+            Online = client.online;
+            Password = client.password;
+            PhoneNumber = client.phone_number;
+            OrdersIDs = client.order.Select(e => e.id).ToList();
         }
 
-        public List<int> ordersIDs;
+        public List<int> OrdersIDs { get; set; }
     }
 }

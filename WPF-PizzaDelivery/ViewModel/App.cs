@@ -5,119 +5,11 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MD = MaterialDesignThemes.Wpf;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
-using WPF_PizzaDelivery.Util;
 
 namespace WPF_PizzaDelivery.ViewModel
 {
-    public class PriceConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is decimal)
-                return string.Format("{0:C2}", (decimal)value);
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class PizzaImagePathConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string)
-                return Media.directory + Media.pizzaNameToFileName[(string)value] + ".png";
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class OrderPartBottomLabelConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is Model.OrderPart)
-            {
-                var orderPart = value as Model.OrderPart;
-
-                return $"{orderPart.SizeName} {orderPart.SizeValue} см, {orderPart.DoughName} тесто";
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class PizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Hidden;
-                return Visibility.Visible;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class InversePizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Visible;
-                return Visibility.Hidden;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class App : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -132,20 +24,24 @@ namespace WPF_PizzaDelivery.ViewModel
         SV.IDough doughService;
         SV.IOrder orderService;
         SV.IPizza pizzaService;
-        SV.IPizza_Order pizzaOrderService;
-        SV.IPizza_Size pizzaSizeService;
+        SV.IPizzaOrder pizzaOrderService;
+        SV.IPizzaSize pizzaSizeService;
         SV.IReport reportService;
 
         List<DTO.Dough> allDough;
         List<DTO.Order> allOrders;
         List<DTO.Pizza> allPizzas;
-        List<DTO.Pizza_Order> allPizzaOrders;
-        List<DTO.Pizza_Size> allPizzaSizes;
+        List<DTO.PizzaOrder> allPizzaOrders;
+        List<DTO.PizzaSize> allPizzaSizes;
 
         public Model.Order CurrentOrder { get; set; }
 
+        public ObservableCollection<Model.Ingredient> Ingredients { get; set; }
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
+        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
+        public ObservableCollection<Model.Order> PastOrders { get; set; }
+        public ObservableCollection<Model.Order> ActualOrders { get; set; }
 
         RelayCommand incrPizzaQuantityCommand;
         public RelayCommand IncreasePizzaQuantityCommand
@@ -165,15 +61,15 @@ namespace WPF_PizzaDelivery.ViewModel
 
                           if (pizza.Quantity == 1)
                           {
-                              var doughDto = allDough.First(e => e.id == 1);
-                              var sizeDto = allPizzaSizes.First(e => e.id == 1);
+                              var doughDto = allDough.First(e => e.Id == 1);
+                              var sizeDto = allPizzaSizes.First(e => e.Id == 1);
 
                               var part = new Model.OrderPart();
                               part.PropertyChanged += (s, e) =>
                               {
                                   if (e.PropertyName == "Quantity")
                                   {
-                                      part.Cost = pizza.Cost * part.Quantity * sizeDto.cost_mult;
+                                      part.Cost = pizza.Cost * part.Quantity * sizeDto.CostMult;
 
                                       updateOrderCost();
                                   }
@@ -181,9 +77,9 @@ namespace WPF_PizzaDelivery.ViewModel
                               part.Name = pizza.Name;
                               part.Cost = pizza.Cost;
                               part.Quantity = pizza.Quantity;
-                              part.DoughName = doughDto.name;
-                              part.SizeName = sizeDto.name;
-                              part.SizeValue = sizeDto.size;
+                              part.DoughName = doughDto.Name;
+                              part.SizeName = sizeDto.Name;
+                              part.SizeValue = sizeDto.Size;
 
                               bind(pizza, part);
 
@@ -272,8 +168,8 @@ namespace WPF_PizzaDelivery.ViewModel
             SV.IDough theDoughService,
             SV.IOrder theOrderService,
             SV.IPizza thePizzaService,
-            SV.IPizza_Order thePizzaOrderService,
-            SV.IPizza_Size thePizzaSizeService,
+            SV.IPizzaOrder thePizzaOrderService,
+            SV.IPizzaSize thePizzaSizeService,
             SV.IReport theReportService
         )
         {
@@ -318,11 +214,11 @@ namespace WPF_PizzaDelivery.ViewModel
 
         void loadMembers()
         {
-            allDough = doughService.getAllDough();
-            allOrders = orderService.getAllOrders();
-            allPizzaOrders = pizzaOrderService.getAllPO();
-            allPizzas = pizzaService.getAllPizzas();
-            allPizzaSizes = pizzaSizeService.getAllSizes();
+            allDough = doughService.GetList();
+            allOrders = orderService.GetList();
+            allPizzaOrders = pizzaOrderService.GetList();
+            allPizzas = pizzaService.GetList();
+            allPizzaSizes = pizzaSizeService.GetList();
 
             CurrentOrder = new Model.Order();
 
@@ -334,9 +230,9 @@ namespace WPF_PizzaDelivery.ViewModel
 
                 try
                 {
-                    var poDto = allPizzaOrders.First(e => e.pizza_id == pizzaDto.id && e.id == 1);
+                    var poDto = allPizzaOrders.First(e => e.PizzaId == pizzaDto.Id && e.Id == 1);
 
-                    quantity = poDto.quantity;
+                    quantity = poDto.Quantity;
                 }
 
                 catch
@@ -348,8 +244,8 @@ namespace WPF_PizzaDelivery.ViewModel
                 {
                     Pizzas.Add(new Model.Pizza
                     {
-                        Name = pizzaDto.name,
-                        Cost = pizzaDto.cost,
+                        Name = pizzaDto.Name,
+                        Cost = pizzaDto.Cost,
                         Quantity = 0
                     });
                 }
@@ -560,13 +456,13 @@ namespace WPF_PizzaDelivery.ViewModel
                     btn_minus.Click += (s, e) =>
                     {
                         decreasePizzaOrderQuantity(poDto);
-                        updateOrderPrice();
+                        UpdateOrderPrice();
                     };
 
                     btn_plus.Click += (s, e) =>
                     {
                         increasePizzaOrderQuantity(poDto);
-                        updateOrderPrice();
+                        UpdateOrderPrice();
                     };
 
                     addPizzaOrder(poDto);
@@ -615,7 +511,7 @@ namespace WPF_PizzaDelivery.ViewModel
             */
         }
         /*
-        void updatePizzaOrderPrice(DTO.Pizza_Order poDto)
+        void UpdatePizzaOrderPrice(DTO.Pizza_Order poDto)
         {
             var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
             var sizeDto = allPizzaSizes.First(e => e.id == poDto.size_id);
@@ -623,7 +519,7 @@ namespace WPF_PizzaDelivery.ViewModel
             poDto.cost = pizzaDto.cost * sizeDto.cost_mult * poDto.quantity;
         }
 
-        void updateOrderPrice()
+        void UpdateOrderPrice()
         {
             decimal total = 0.0m;
 
@@ -659,7 +555,7 @@ namespace WPF_PizzaDelivery.ViewModel
 
                 stack.Children.Remove(card);
 
-                updateOrderPrice();
+                UpdateOrderPrice();
             };
 
             {
@@ -765,7 +661,7 @@ namespace WPF_PizzaDelivery.ViewModel
                         {
                             lbl_price.Content = string.Format("{0:C2}", poDto.cost);
                         };
-                        updatePizzaOrderPrice(poDto);
+                        UpdatePizzaOrderPrice(poDto);
 
                         grid1.Children.Add(lbl_price);
 
@@ -824,7 +720,7 @@ namespace WPF_PizzaDelivery.ViewModel
                             btn.Click += (s, e) =>
                             {
                                 decreasePizzaOrderQuantity(poDto);
-                                updateOrderPrice();
+                                UpdateOrderPrice();
                             };
 
                             btn = new Button
@@ -839,7 +735,7 @@ namespace WPF_PizzaDelivery.ViewModel
                             btn.Click += (s, e) =>
                             {
                                 increasePizzaOrderQuantity(poDto);
-                                updateOrderPrice();
+                                UpdateOrderPrice();
                             };
 
                             Grid.SetColumn(btn, 2);
@@ -855,7 +751,7 @@ namespace WPF_PizzaDelivery.ViewModel
                 lbl_total.Content = "Сумма заказа: " + string.Format("{0:C2}", curOrder.cost);
             };
 
-            updateOrderPrice();
+            UpdateOrderPrice();
         }
 
         void decreasePizzaOrderQuantity(DTO.Pizza_Order poDto)
@@ -864,7 +760,7 @@ namespace WPF_PizzaDelivery.ViewModel
             {
                 poDto.quantity--;
 
-                updatePizzaOrderPrice(poDto);
+                UpdatePizzaOrderPrice(poDto);
             }
 
             else pizzaOrderDeletion?.Invoke(poDto);
@@ -874,7 +770,7 @@ namespace WPF_PizzaDelivery.ViewModel
         {
             poDto.quantity++;
 
-            updatePizzaOrderPrice(poDto);
+            UpdatePizzaOrderPrice(poDto);
         }
         */
         /*

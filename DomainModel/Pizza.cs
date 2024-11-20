@@ -1,11 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DomainModel
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    
-
     [Table("pizza")]
     public class Pizza
     {
@@ -29,7 +28,7 @@ namespace DomainModel
         [Column(TypeName = "smallmoney")]
         public decimal cost { get; set; }
 
-        public int? weight { get; set; }
+        public int weight { get; set; }
 
         public virtual ICollection<Recipe> recipe { get; set; }
 

@@ -21,7 +21,7 @@ namespace WPF_PizzaDelivery.Util
 
         public override void Load()
         {
-            Bind<IDbRepos>().To<DbRepos>().InSingletonScope().WithConstructorArgument(connectionString);
+            Bind<IDbRepos>().To<DbRepos>().InSingletonScope();
         }
     }
 }

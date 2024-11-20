@@ -1,14 +1,12 @@
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using DM = DomainModel;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data;
-    using System.ComponentModel.DataAnnotations;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-
     public class Ingredient : R.IRepository<DM.Ingredient>
     {
         PizzaDeliveryDB db;
@@ -18,30 +16,30 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DM.Ingredient> getList()
+        public List<DM.Ingredient> GetList()
         {
-            return db.ingredient.ToList();
+            return db.Ingredient.ToList();
         }
 
-        public DM.Ingredient getItem(int id)
+        public DM.Ingredient GetItem(int id)
         {
-            return db.ingredient.Find(id);
+            return db.Ingredient.Find(id);
         }
 
-        public int create(DM.Ingredient entity)
+        public int Create(DM.Ingredient entity)
         {
-            return db.ingredient.Add(entity).id;
+            return db.Ingredient.Add(entity).id;
         }
 
-        public void update(DM.Ingredient entity)
+        public void Update(DM.Ingredient entity)
         {
             db.Entry(entity).State = EntityState.Modified;
         }
 
-        public void delete(int id)
+        public void Delete(int id)
         {
-            var entity = db.ingredient.Find(id);
-            if (entity != null) db.ingredient.Remove(entity);
+            var entity = db.Ingredient.Find(id);
+            if (entity != null) db.Ingredient.Remove(entity);
         }
     }
 }

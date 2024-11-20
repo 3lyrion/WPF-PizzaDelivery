@@ -5,22 +5,21 @@ using System.Linq;
 using Interfaces.Repository;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
-using DM = DomainModel;
 
 namespace BLL.Service
 {
-    public class Pizza_Size : SV.IPizza_Size
+    public class PizzaSize : SV.IPizzaSize
     {
         IDbRepos db;
 
-        public Pizza_Size(IDbRepos database)
+        public PizzaSize(IDbRepos database)
         {
             db = database;
         }
 
-        public List<DTO.Pizza_Size> getAllSizes()
+        public List<DTO.PizzaSize> GetList()
         {
-            return db.pizza_size.getList().Select(i => new DTO.Pizza_Size(i)).ToList();
+            return db.Pizza_Size.GetList().Select(i => new DTO.PizzaSize(i)).ToList();
         }
     }
 }

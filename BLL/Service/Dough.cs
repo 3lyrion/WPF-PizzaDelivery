@@ -5,7 +5,6 @@ using System.Linq;
 using Interfaces.Repository;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
-using DM = DomainModel;
 
 namespace BLL.Service
 {
@@ -18,9 +17,9 @@ namespace BLL.Service
             db = database;
         }
 
-        public List<DTO.Dough> getAllDough()
+        public List<DTO.Dough> GetList()
         {
-            return db.dough.getList().Select(i => new DTO.Dough(i)).ToList();
+            return db.Dough.GetList().Select(i => new DTO.Dough(i)).ToList();
         }
     }
 }

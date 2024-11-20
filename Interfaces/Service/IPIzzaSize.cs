@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Interfaces.Service
 {
-    public interface IDough
+    public interface IPizzaSize
     {
-        List<DTO.Dough> GetList();
+        List<DTO.PizzaSize> GetList();
     }
 }

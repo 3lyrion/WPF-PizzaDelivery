@@ -11,29 +11,30 @@ namespace Interfaces.DTO
 
         public Pizza(DM.Pizza pizza)
         {
-            this.cost = pizza.cost;
-            this.custom = pizza.custom;
-            this.id = pizza.id;
-            this.name = pizza.name;
-            this.pizza_order_IDs = pizza.pizza_order.Select(e => e.id).ToList();
-            this.recipesIDs = pizza.recipe.Select(e => e.id).ToList();
-            this.sales_hit = pizza.sales_hit;
-            this.weight = pizza.weight;
+            Id = pizza.id;
+            Custom = pizza.custom;
+            SalesHit = pizza.sales_hit;
+            Name = pizza.name;
+            Cost = pizza.cost;
+            Weight = pizza.weight;
+            PizzaOrdersIds = pizza.pizza_order.Select(e => e.id).ToList();
+            RecipesIds = pizza.recipe.Select(e => e.id).ToList();
         }
 
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public bool custom { get; set; }
+        public bool Custom { get; set; }
 
-        public bool sales_hit { get; set; }
+        public bool SalesHit { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public decimal cost { get; set; }
+        public decimal Cost { get; set; }
 
-        public int? weight { get; set; }
+        public int Weight { get; set; }
 
-        public List<int> recipesIDs { get; set; }
-        public List<int> pizza_order_IDs { get; set; }
+        public List<int> RecipesIds { get; set; }
+
+        public List<int> PizzaOrdersIds { get; set; }
     }
 }

@@ -13,17 +13,25 @@ namespace DAL
         {
         }
 
-        public virtual DbSet<DM.Client> client { get; set; }
-        public virtual DbSet<DM.Cook> cook { get; set; }
-        public virtual DbSet<DM.Courier> courier { get; set; }
-        public virtual DbSet<DM.Dough> dough { get; set; }
-        public virtual DbSet<DM.Ingredient> ingredient { get; set; }
-        public virtual DbSet<DM.Order> order { get; set; }
-        public virtual DbSet<DM.Order_Status> order_status { get; set; }
-        public virtual DbSet<DM.Pizza> pizza { get; set; }
-        public virtual DbSet<DM.Pizza_Order> pizza_order { get; set; }
-        public virtual DbSet<DM.Pizza_Size> pizza_size { get; set; }
-        public virtual DbSet<DM.Recipe> recipe { get; set; }
+        public DbSet<DM.Client> Client { get; set; }
+
+        public DbSet<DM.Cook> Cook { get; set; }
+
+        public DbSet<DM.Courier> Courier { get; set; }
+
+        public DbSet<DM.Dough> Dough { get; set; }
+
+        public DbSet<DM.Ingredient> Ingredient { get; set; }
+
+        public DbSet<DM.Order> Order { get; set; }
+
+        public DbSet<DM.Pizza> Pizza { get; set; }
+
+        public DbSet<DM.Pizza_Order> Pizza_Order { get; set; }
+
+        public DbSet<DM.Pizza_Size> Pizza_Size { get; set; }
+
+        public DbSet<DM.Recipe> Recipe { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

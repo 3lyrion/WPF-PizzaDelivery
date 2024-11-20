@@ -1,14 +1,12 @@
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using DM = DomainModel;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data;
-    using System.ComponentModel.DataAnnotations;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-
     public class Courier : R.IRepository<DM.Courier>
     {
         PizzaDeliveryDB db;
@@ -18,30 +16,30 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DM.Courier> getList()
+        public List<DM.Courier> GetList()
         {
-            return db.courier.ToList();
+            return db.Courier.ToList();
         }
 
-        public DM.Courier getItem(int id)
+        public DM.Courier GetItem(int id)
         {
-            return db.courier.Find(id);
+            return db.Courier.Find(id);
         }
 
-        public int create(DM.Courier entity)
+        public int Create(DM.Courier entity)
         {
-            return db.courier.Add(entity).id;
+            return db.Courier.Add(entity).id;
         }
 
-        public void update(DM.Courier entity)
+        public void Update(DM.Courier entity)
         {
             db.Entry(entity).State = EntityState.Modified;
         }
 
-        public void delete(int id)
+        public void Delete(int id)
         {
-            DM.Courier entity = db.courier.Find(id);
-            if (entity != null) db.courier.Remove(entity);
+            DM.Courier entity = db.Courier.Find(id);
+            if (entity != null) db.Courier.Remove(entity);
         }
     }
 }

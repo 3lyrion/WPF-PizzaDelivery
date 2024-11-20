@@ -1,12 +1,12 @@
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using DM = DomainModel;
+using R = Interfaces.Repository;
+
 namespace DAL.Repository
 {
-    using System;
-    using System.Data.Entity;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DM = DomainModel;
-    using R = Interfaces.Repository;
-
     public class Order : R.IRepository<DM.Order>
     {
         PizzaDeliveryDB db;
@@ -16,30 +16,30 @@ namespace DAL.Repository
             db = theDB;
         }
 
-        public List<DM.Order> getList()
+        public List<DM.Order> GetList()
         {
-            return db.order.ToList();
+            return db.Order.ToList();
         }
 
-        public DM.Order getItem(int id)
+        public DM.Order GetItem(int id)
         {
-            return db.order.Find(id);
+            return db.Order.Find(id);
         }
 
-        public int create(DM.Order entity)
+        public int Create(DM.Order entity)
         {
-            return db.order.Add(entity).id;
+            return db.Order.Add(entity).id;
         }
 
-        public void update(DM.Order entity)
+        public void Update(DM.Order entity)
         {
             db.Entry(entity).State = EntityState.Modified;
         }
 
-        public void delete(int id)
+        public void Delete(int id)
         {
-            var entity = db.order.Find(id);
-            if (entity != null) db.order.Remove(entity);
+            var entity = db.Order.Find(id);
+            if (entity != null) db.Order.Remove(entity);
         }
     }
 }

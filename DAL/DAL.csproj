@@ -58,7 +58,6 @@
     <Compile Include="Repository\Client.cs" />
     <Compile Include="Repository\Report.cs" />
     <Compile Include="Repository\Recipe.cs" />
-    <Compile Include="Repository\Order_Status.cs" />
     <Compile Include="Repository\Ingredient.cs" />
     <Compile Include="Repository\Cook.cs" />
     <Compile Include="Repository\Courier.cs" />

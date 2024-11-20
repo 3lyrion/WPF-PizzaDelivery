@@ -17,8 +17,8 @@ namespace WPF_PizzaDelivery.Util
             Bind<IDough>().To<Dough>();
             Bind<IOrder>().To<Order>();
             Bind<IPizza>().To<Pizza>();
-            Bind<IPizza_Order>().To<Pizza_Order>();
-            Bind<IPizza_Size>().To<Pizza_Size>();
+            Bind<IPizzaOrder>().To<PizzaOrder>();
+            Bind<IPizzaSize>().To<PizzaSize>();
             Bind<IReport>().To<Report>();
         }
     }

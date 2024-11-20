@@ -18,60 +18,58 @@ namespace BLL.Service
             db = database;
         }
 
-        public int createOrder(DTO.Order orderDto)
+        public int Create(DTO.Order orderDto)
         {
             var order = new DM.Order();
             var poList = new List<DM.Pizza_Order>();
             var sum = 0.0m;
 
-            foreach (var poId in orderDto.pizza_order_IDs)
+            foreach (var poId in orderDto.PizzaOrdersIds)
             {
-                var po = db.pizza_order.getItem(poId);
+                var po = db.Pizza_Order.GetItem(poId);
                 po.order = order;
 
-                sum += po.cost.Value;
+                sum += po.cost;
 
                 poList.Add(po);
             }
 
-//            var cook = db.cook.getList().First(e => e.online && !e.busy);
+//            var cook = db.Cook.GetList().First(e => e.online && !e.busy);
 //            cook.busy = true;
 
-            order.creation_date = DateTime.Now;
-            order.address = orderDto.address;
+            order.address = orderDto.Address;
             order.cost = sum;
-            order.client = db.client.getItem(orderDto.client_id);
+            order.client = db.Client.GetItem(orderDto.ClientId);
             // order.cook = cook;
-            //    status = db.order_status.Single(e => e.name == "Приготовление"),
             order.pizza_order = poList;
 
-            db.order.create(order);
+            db.Order.Create(order);
 
-            //db.cook.First(e => e.online && e.order != null).
+            //db.Cook.First(e => e.online && e.order != null).
             //    order = order;
 
-            if (save())
+            if (Save())
                 return order.id;
 
             return 0;
         }
 
-        public bool deleteOrder(int id)
+        public bool Delete(int id)
         {
-            var cl = db.order.getItem(id);
-            if (cl != null) db.order.delete(id);
+            var cl = db.Order.GetItem(id);
+            if (cl != null) db.Order.Delete(id);
 
-            return save();
+            return Save();
         }
 
-        public bool save()
+        public bool Save()
         {
-            return db.save() > 0;
+            return db.Save() > 0;
         }
 
-        public List<DTO.Order> getAllOrders()
+        public List<DTO.Order> GetList()
         {
-            return db.order.getList().Select(i => new DTO.Order(i)).ToList();
+            return db.Order.GetList().Select(i => new DTO.Order(i)).ToList();
         }
     }
 }

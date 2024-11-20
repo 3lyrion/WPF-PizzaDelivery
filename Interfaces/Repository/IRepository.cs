@@ -8,12 +8,14 @@ namespace Interfaces.Repository
 {
     public interface IRepository<T> where T : class
     {
-        List<T> getList();
+        List<T> GetList();
 
-        T getItem(int id);
+        T GetItem(int id);
 
-        int create(T item);
-        void update(T item);
-        void delete(int id);
+        int Create(T item);
+
+        void Update(T item);
+
+        void Delete(int id);
     }
 }

@@ -1,11 +1,10 @@
-﻿namespace DomainModel
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace DomainModel
+{
     [Table("ingredient")]
     public class Ingredient
     {
@@ -27,7 +26,6 @@
         [Required]
         [Column(TypeName = "smallmoney")]
         public decimal cost { get; set; }
-
 
         public ICollection<Recipe> recipe;
     }

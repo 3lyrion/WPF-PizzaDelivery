@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using DM = DomainModel;
 using R = Interfaces.Repository;
 
@@ -19,7 +14,6 @@ namespace DAL.Repository
         Dough doughRep;
         Ingredient ingredientRep;
         Order orderRep;
-        Order_Status orderStatusRep;
         Pizza pizzaRep;
         Pizza_Order pizzaOrderRep;
         Pizza_Size pizzaSizeRep;
@@ -36,7 +30,6 @@ namespace DAL.Repository
             doughRep = new Dough(db);
             ingredientRep = new Ingredient(db);
             orderRep = new Order(db);
-            orderStatusRep = new Order_Status(db);
             pizzaRep = new Pizza(db);
             pizzaOrderRep = new Pizza_Order(db);
             pizzaSizeRep = new Pizza_Size(db);
@@ -44,7 +37,7 @@ namespace DAL.Repository
             reportRep = new Report(db);
         }
 
-        public R.IRepository<DM.Client> client
+        public R.IRepository<DM.Client> Client
         {
             get
             {
@@ -52,7 +45,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Cook> cook
+        public R.IRepository<DM.Cook> Cook
         {
             get
             {
@@ -60,7 +53,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Courier> courier
+        public R.IRepository<DM.Courier> Courier
         {
             get
             {
@@ -68,7 +61,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Dough> dough
+        public R.IRepository<DM.Dough> Dough
         {
             get
             {
@@ -76,7 +69,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Ingredient> ingredient
+        public R.IRepository<DM.Ingredient> Ingredient
         {
             get
             {
@@ -84,7 +77,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Order> order
+        public R.IRepository<DM.Order> Order
         {
             get
             {
@@ -92,15 +85,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Order_Status> order_status
-        {
-            get
-            {
-                return orderStatusRep;
-            }
-        }
-
-        public R.IRepository<DM.Pizza> pizza
+        public R.IRepository<DM.Pizza> Pizza
         {
             get
             {
@@ -108,7 +93,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Pizza_Order> pizza_order
+        public R.IRepository<DM.Pizza_Order> Pizza_Order
         {
             get
             {
@@ -116,7 +101,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Pizza_Size> pizza_size
+        public R.IRepository<DM.Pizza_Size> Pizza_Size
         {
             get
             {
@@ -124,7 +109,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IRepository<DM.Recipe> recipe
+        public R.IRepository<DM.Recipe> Recipe
         {
             get
             {
@@ -132,7 +117,7 @@ namespace DAL.Repository
             }
         }
 
-        public R.IReportRepository report
+        public R.IReportRepository Report
         {
             get
             {
@@ -140,7 +125,7 @@ namespace DAL.Repository
             }
         }
 
-        public int save()
+        public int Save()
         {
             return db.SaveChanges();
         }
