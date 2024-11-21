@@ -8,7 +8,7 @@ using System.Windows;
 using SV = Interfaces.Service;
 using Ninject;
 
-namespace WPF_PizzaDelivery
+namespace PizzaDelivery
 {
     /// <summary>
     /// Interaction logic for App.xaml

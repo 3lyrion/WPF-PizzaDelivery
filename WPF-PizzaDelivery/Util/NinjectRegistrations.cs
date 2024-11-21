@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Interfaces.Service;
 using BLL.Service;
 
-namespace WPF_PizzaDelivery.Util
+namespace PizzaDelivery.Util
 {
     public class NinjectRegistrations : Ninject.Modules.NinjectModule
     {

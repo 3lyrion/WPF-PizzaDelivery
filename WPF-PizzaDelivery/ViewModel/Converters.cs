@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using WPF_PizzaDelivery.Util;
+using PizzaDelivery.Util;
 
-namespace WPF_PizzaDelivery.ViewModel
+namespace PizzaDelivery.ViewModel
 {
     public class PriceConverter : IValueConverter
     {
@@ -27,7 +27,7 @@ namespace WPF_PizzaDelivery.ViewModel
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string)
-                return Media.directory + Media.pizzaNameToFileName[(string)value] + ".png";
+                return Media.Directory + Media.PizzaNameToFileName[(string)value] + ".png";
 
             return value;
         }

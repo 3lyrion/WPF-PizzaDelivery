@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace WPF_PizzaDelivery.ViewModel
+namespace PizzaDelivery.ViewModel
 {
     public class RelayCommand : ICommand
     {
         private Action<object> execute;
         private Func<object, bool> canExecute;
 
-        //public event EventHandler CanExecuteChanged;
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
@@ -23,17 +22,12 @@ namespace WPF_PizzaDelivery.ViewModel
 
         public bool CanExecute(object parameter)
         {
-            return this.canExecute == null || this.canExecute(parameter);
+            return canExecute == null || canExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            this.execute(parameter);
+            execute(parameter);
         }
-
-        //public void RaiseCanExecuteChanged()
-        //{
-        //    CanExecuteChanged(this, EventArgs.Empty);
-        //}
     }
 }

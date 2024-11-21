@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
-namespace WPF_PizzaDelivery.ViewModel
+namespace PizzaDelivery.ViewModel
 {
     public class App : INotifyPropertyChanged
     {
@@ -20,13 +20,11 @@ namespace WPF_PizzaDelivery.ViewModel
         }
 
         SV.IClient clientService;
-        SV.ICourier courierService;
         SV.IDough doughService;
         SV.IOrder orderService;
         SV.IPizza pizzaService;
         SV.IPizzaOrder pizzaOrderService;
         SV.IPizzaSize pizzaSizeService;
-        SV.IReport reportService;
 
         List<DTO.Dough> allDough;
         List<DTO.Order> allOrders;
@@ -69,7 +67,7 @@ namespace WPF_PizzaDelivery.ViewModel
                               {
                                   if (e.PropertyName == "Quantity")
                                   {
-                                      part.Cost = pizza.Cost * part.Quantity * sizeDto.CostMult;
+                                      part.Cost = pizza.Cost * part.Quantity * (decimal)sizeDto.CostMult;
 
                                       updateOrderCost();
                                   }
@@ -162,25 +160,32 @@ namespace WPF_PizzaDelivery.ViewModel
             }
         }
 
+        /*
+        theClientService : SV.IClient, theCourierService : SV.ICourier, theDoughService : SV.IDough, theOrderService : SV.IOrder, SV.IPizza thePizzaService
+
+         ,
+        ,
+        SV.IPizzaOrder thePizzaOrderService,
+        SV.IPizzaSize thePizzaSizeService,
+        SV.IReport theReportService
+        */
+
+
         public App(
             SV.IClient theClientService,
-            SV.ICourier theCourierService,
             SV.IDough theDoughService,
             SV.IOrder theOrderService,
             SV.IPizza thePizzaService,
             SV.IPizzaOrder thePizzaOrderService,
-            SV.IPizzaSize thePizzaSizeService,
-            SV.IReport theReportService
+            SV.IPizzaSize thePizzaSizeService
         )
         {
             clientService = theClientService;
-            courierService = theCourierService;
             doughService = theDoughService;
             orderService = theOrderService;
             pizzaService = thePizzaService;
             pizzaOrderService = thePizzaOrderService;
             pizzaSizeService = thePizzaSizeService;
-            reportService = theReportService;
 
             load();
         }

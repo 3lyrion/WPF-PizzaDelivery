@@ -8,7 +8,7 @@ using Interfaces.Service;
 using BLL.Service;
 using DAL.Repository;
 
-namespace WPF_PizzaDelivery.Util
+namespace PizzaDelivery.Util
 {
     public class ReposModule : Ninject.Modules.NinjectModule
     {

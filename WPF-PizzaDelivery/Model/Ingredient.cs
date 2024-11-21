@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace WPF_PizzaDelivery.Model
+namespace PizzaDelivery.Model
 {
     public class Ingredient : INotifyPropertyChanged
     {

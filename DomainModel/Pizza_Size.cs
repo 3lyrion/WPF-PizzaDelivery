@@ -18,9 +18,9 @@ namespace DomainModel
         public int size { get; set; }
 
         [Required]
-        public decimal cost_mult { get; set; }
+        public double cost_mult { get; set; }
 
         [Required]
-        public decimal weight_mult { get; set; }
+        public double weight_mult { get; set; }
     }
 }

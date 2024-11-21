@@ -22,7 +22,7 @@ using MD = MaterialDesignThemes.Wpf;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
-namespace WPF_PizzaDelivery.View
+namespace PizzaDelivery.View
 {
     public partial class MainWindow : Window
     {
@@ -31,24 +31,20 @@ namespace WPF_PizzaDelivery.View
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
             SV.IClient clientService = kernel.Get<SV.IClient>();
-            SV.ICourier courierService = kernel.Get<SV.ICourier>();
             SV.IDough doughService = kernel.Get<SV.IDough>();
             SV.IOrder orderService = kernel.Get<SV.IOrder>();
             SV.IPizza pizzaService = kernel.Get<SV.IPizza>();
             SV.IPizzaOrder pizzaOrderService = kernel.Get<SV.IPizzaOrder>();
             SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
-            SV.IReport reportService = kernel.Get<SV.IReport>();
 
             DataContext = new ViewModel.App
             (
                 clientService,
-                courierService,
                 doughService,
                 orderService,
                 pizzaService,
                 pizzaOrderService,
-                pizzaSizeService,
-                reportService
+                pizzaSizeService
             );
 
             InitializeComponent();

@@ -22,7 +22,7 @@ namespace BLL.Service
         {
             pizzaOrderDto.Cost = db.Pizza.GetList()
                 .Where(e => e.id == pizzaOrderDto.PizzaId)
-                .Sum(e => e.cost) * db.Pizza_Size.GetItem(pizzaOrderDto.SizeId).cost_mult;
+                .Sum(e => e.cost) * (decimal)db.Pizza_Size.GetItem(pizzaOrderDto.SizeId).cost_mult;
 
             var po = new DM.Pizza_Order
             {

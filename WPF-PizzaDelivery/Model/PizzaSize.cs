@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace WPF_PizzaDelivery.Model
+namespace PizzaDelivery.Model
 {
     public class PizzaSize : INotifyPropertyChanged
     {
@@ -17,7 +17,7 @@ namespace WPF_PizzaDelivery.Model
         }
 
         string name;
-        decimal costMult;
+        double costMult;
         int size;
 
         public string Name
@@ -30,7 +30,7 @@ namespace WPF_PizzaDelivery.Model
             }
         }
 
-        public decimal CostMult
+        public double CostMult
         {
             get { return costMult; }
             set

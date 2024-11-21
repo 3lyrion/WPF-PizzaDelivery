@@ -6,7 +6,7 @@ using DM = DomainModel;
 
 namespace DAL
 {
-    public partial class PizzaDeliveryDB : DbContext
+    public class PizzaDeliveryDB : DbContext
     {
         public PizzaDeliveryDB()
             : base("name=PizzaDeliveryDB")
@@ -37,6 +37,7 @@ namespace DAL
         {
             base.OnModelCreating(modelBuilder);
 
+            /*
             modelBuilder.Entity<DM.Pizza_Size>()
                 .Property(e => e.cost_mult)
                 .HasPrecision(10, 4);
@@ -44,8 +45,7 @@ namespace DAL
             modelBuilder.Entity<DM.Pizza_Size>()
                 .Property(e => e.weight_mult)
                 .HasPrecision(10, 4);
-
-            /*
+            
             modelBuilder.Entity<Client>()
                 .Property(e => e.phone_number)
                 .IsFixedLength();

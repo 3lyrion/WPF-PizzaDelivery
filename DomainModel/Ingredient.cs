@@ -27,6 +27,6 @@ namespace DomainModel
         [Column(TypeName = "smallmoney")]
         public decimal cost { get; set; }
 
-        public ICollection<Recipe> recipe;
+        public ICollection<Recipe> recipe { get; set; }
     }
 }

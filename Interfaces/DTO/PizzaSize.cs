@@ -24,8 +24,8 @@ namespace Interfaces.DTO
 
         public int Size { get; set; }
 
-        public decimal CostMult { get; set; }
+        public double CostMult { get; set; }
 
-        public decimal WeightMult { get; set; }
+        public double WeightMult { get; set; }
     }
 }

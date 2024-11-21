@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WPF_PizzaDelivery.Util
+namespace PizzaDelivery.Util
 {
     static class Media
     {
-        public static string directory { get; } = "pack://application:,,,/Media/";
+        public static string Directory { get; } = "pack://application:,,,/Media/";
 
-        public static Dictionary<string, string> pizzaNameToFileName { get; } = new Dictionary<string, string>
+        public static Dictionary<string, string> PizzaNameToFileName { get; } = new Dictionary<string, string>
         {
             { "Песто", "Pesto" },
             { "Гавайская", "Hawaiian" },
