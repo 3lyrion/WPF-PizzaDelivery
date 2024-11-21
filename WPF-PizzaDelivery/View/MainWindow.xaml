@@ -179,7 +179,7 @@
                                                                         <ColumnDefinition />
                                                                     </Grid.ColumnDefinitions>
                                                                     <Button Padding="0" Command="{Binding DataContext.DecreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
-                                                                    <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
+                                                                    <Label Grid.Column="1" Content="{Binding Pizza.Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
                                                                     <Button Grid.Column="2" Command="{Binding DataContext.IncreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Padding="0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
                                                                 </Grid>
                                                             </Grid>

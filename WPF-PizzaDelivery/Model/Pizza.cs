@@ -45,11 +45,8 @@ namespace PizzaDelivery.Model
             get { return quantity; }
             set
             {
-                if (quantity != value)
-                {
-                    quantity = value;
-                    OnPropertyChanged("Quantity");
-                }
+                quantity = value;
+                OnPropertyChanged("Quantity");
             }
         }
     }

@@ -46,7 +46,7 @@ namespace PizzaDelivery.ViewModel
             {
                 var orderPart = value as Model.OrderPart;
 
-                return $"{orderPart.SizeName} {orderPart.SizeValue} см, {orderPart.DoughName} тесто";
+                return $"{orderPart.PizzaSize.Name} {orderPart.PizzaSize.Size} см, {orderPart.Dough.Name} тесто";
             }
 
             return value;

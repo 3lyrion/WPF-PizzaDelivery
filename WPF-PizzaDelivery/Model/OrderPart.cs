@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using DTO = Interfaces.DTO;
 
 namespace PizzaDelivery.Model
 {
@@ -18,10 +19,9 @@ namespace PizzaDelivery.Model
 
         string name;
         decimal cost;
-        int quantity;
-        string doughName;
-        string sizeName;
-        int sizeValue;
+        Model.Pizza pizza;
+        DTO.Dough dough;
+        DTO.PizzaSize pizzaSize;
 
         public string Name
         {
@@ -43,46 +43,33 @@ namespace PizzaDelivery.Model
             }
         }
 
-        public int Quantity
+        public Model.Pizza Pizza
         {
-            get { return quantity; }
+            get { return pizza; }
             set
             {
-                if (quantity != value)
-                {
-                    quantity = value;
-                    OnPropertyChanged("Quantity");
-                }
+                pizza = value;
+                OnPropertyChanged("Pizza");
             }
         }
 
-        public string DoughName
+        public DTO.Dough Dough
         {
-            get { return doughName; }
+            get { return dough; }
             set
             {
-                doughName = value;
-                OnPropertyChanged("DoughName");
+                dough = value;
+                OnPropertyChanged("Dough");
             }
         }
 
-        public string SizeName
+        public DTO.PizzaSize PizzaSize
         {
-            get { return sizeName; }
+            get { return pizzaSize; }
             set
             {
-                sizeName = value;
-                OnPropertyChanged("SizeName");
-            }
-        }
-
-        public int SizeValue
-        {
-            get { return sizeValue; }
-            set
-            {
-                sizeValue = value;
-                OnPropertyChanged("SizeValue");
+                pizzaSize = value;
+                OnPropertyChanged("PizzaSize");
             }
         }
     }

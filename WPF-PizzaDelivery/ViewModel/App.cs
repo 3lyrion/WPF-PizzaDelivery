@@ -36,7 +36,7 @@ namespace PizzaDelivery.ViewModel
 
         public ObservableCollection<Model.Ingredient> Ingredients { get; set; }
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
-        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
+//        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
@@ -65,21 +65,30 @@ namespace PizzaDelivery.ViewModel
                               var part = new Model.OrderPart();
                               part.PropertyChanged += (s, e) =>
                               {
-                                  if (e.PropertyName == "Quantity")
+                                  if (e.PropertyName == "PizzaSize")
                                   {
-                                      part.Cost = pizza.Cost * part.Quantity * (decimal)sizeDto.CostMult;
+                                      part.Cost = pizza.Cost * pizza.Quantity * (decimal)part.PizzaSize.CostMult;
 
                                       updateOrderCost();
                                   }
                               };
                               part.Name = pizza.Name;
                               part.Cost = pizza.Cost;
-                              part.Quantity = pizza.Quantity;
-                              part.DoughName = doughDto.Name;
-                              part.SizeName = sizeDto.Name;
-                              part.SizeValue = sizeDto.Size;
+                              part.Pizza = pizza;
+                              part.Dough = doughDto;
+                              part.PizzaSize = sizeDto;
 
-                              bind(pizza, part);
+                              pizza.PropertyChanged += (s, e) =>
+                              {
+                                  if (e.PropertyName == "Quantity")
+                                  {
+                                      part.Cost = pizza.Cost * pizza.Quantity * (decimal)part.PizzaSize.CostMult;
+
+                                      updateOrderCost();
+                                  }
+                              };
+
+                              //bind(pizza, part);
 
                               OrderParts.Add(part);
                               updateOrderCost();
@@ -92,7 +101,7 @@ namespace PizzaDelivery.ViewModel
 
                           if (part == null) return;
 
-                          part.Quantity++;
+                          part.Pizza.Quantity++;
                       }
 
                   }));
@@ -129,10 +138,10 @@ namespace PizzaDelivery.ViewModel
 
                           if (part == null) return;
 
-                          if (part.Quantity > 0)
-                              part.Quantity--;
+                          if (part.Pizza.Quantity > 0)
+                              part.Pizza.Quantity--;
 
-                          if (part.Quantity == 0)
+                          if (part.Pizza.Quantity == 0)
                               OrderParts.Remove(part);
                       }
                   }));
@@ -153,7 +162,7 @@ namespace PizzaDelivery.ViewModel
 
                           if (part == null) return;
 
-                          part.Quantity = 0;
+                          part.Pizza.Quantity = 0;
                           OrderParts.Remove(part);
                       }
                   }));
@@ -189,7 +198,7 @@ namespace PizzaDelivery.ViewModel
 
             load();
         }
-
+        /*
         void bind(Model.Pizza pizza, Model.OrderPart orderPart)
         {
             pizza.PropertyChanged += (s, e) =>
@@ -204,7 +213,7 @@ namespace PizzaDelivery.ViewModel
                     pizza.Quantity = orderPart.Quantity;
             };
         }
-
+        */
         void updateOrderCost()
         {
             CurrentOrder.Cost = OrderParts.Sum(e => e.Cost);
@@ -247,12 +256,14 @@ namespace PizzaDelivery.ViewModel
 
                 finally
                 {
-                    Pizzas.Add(new Model.Pizza
+                    var pizza = new Model.Pizza
                     {
                         Name = pizzaDto.Name,
                         Cost = pizzaDto.Cost,
                         Quantity = 0
-                    });
+                    };
+
+                    Pizzas.Add(pizza);
                 }
             }
             
