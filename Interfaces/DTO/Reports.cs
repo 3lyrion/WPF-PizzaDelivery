@@ -22,4 +22,21 @@ namespace Interfaces.DTO
 
         public int OrderId { get; set; }
     }
+
+    public class ClientOrder
+    {
+        public int OrderId { get; set; }
+
+        public string DateTime { get; set; }
+
+        public string Pizza { get; set; }
+
+        public string Dough { get; set; }
+
+        public string Size { get; set; }
+
+        public string Quantity { get; set; }
+
+        public string Total { get; set; }
+    }
 }

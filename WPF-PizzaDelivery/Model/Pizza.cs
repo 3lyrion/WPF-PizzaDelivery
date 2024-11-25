@@ -19,6 +19,7 @@ namespace PizzaDelivery.Model
         string name;
         decimal cost;
         int quantity;
+        List<Ingredient> ingredients;
 
         public string Name
         {
@@ -47,6 +48,16 @@ namespace PizzaDelivery.Model
             {
                 quantity = value;
                 OnPropertyChanged("Quantity");
+            }
+        }
+
+        public List<Ingredient> Ingredients
+        {
+            get { return ingredients; }
+            set
+            {
+                ingredients = value;
+                OnPropertyChanged("Ingredients");
             }
         }
     }

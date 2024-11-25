@@ -21,25 +21,76 @@ namespace PizzaDelivery.ViewModel
 
         SV.IClient clientService;
         SV.IDough doughService;
+        SV.IIngredient ingredientService;
         SV.IOrder orderService;
         SV.IPizza pizzaService;
         SV.IPizzaOrder pizzaOrderService;
         SV.IPizzaSize pizzaSizeService;
+        SV.IRecipe recipeService;
 
         List<DTO.Dough> allDough;
+        List<DTO.Ingredient> allIngredients;
         List<DTO.Order> allOrders;
         List<DTO.Pizza> allPizzas;
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
+        List<DTO.Recipe> allRecipes;
 
+        public bool SelectedTraditionalDough { get; set; } = true;
+
+        public Model.OrderPart CurrentOrderPart { get; set; } = new Model.OrderPart();
         public Model.Order CurrentOrder { get; set; }
 
         public ObservableCollection<Model.Ingredient> Ingredients { get; set; }
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
-//        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
+        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
+
+        RelayCommand selectPizzaSize;
+        public RelayCommand SelectPizzaSize
+        {
+            get
+            {
+                return selectPizzaSize ??
+                  (selectPizzaSize = new RelayCommand(obj =>
+                  {
+                      if (obj is Model.PizzaSize)
+                      {
+                          var pizzaSize = obj as Model.PizzaSize;
+
+                          CurrentOrderPart.PizzaSize = allPizzaSizes.Find(e => e.Size == pizzaSize.Size);
+                      }
+                  }));
+            }
+        }
+
+        RelayCommand editOrderPart;
+        public RelayCommand EditOrderPart
+        {
+            get
+            {
+                return editOrderPart ??
+                  (editOrderPart = new RelayCommand(obj =>
+                  {
+                      if (obj is Model.Pizza)
+                      {
+                          var pizza = obj as Model.Pizza;
+                          pizza.Quantity++;
+
+                          CurrentOrder.SelectedPizza = pizza;
+
+                          CurrentOrderPart.Pizza = pizza;
+                          CurrentOrderPart.PropertyChanged += (s, e) =>
+                          {
+                              if (e.PropertyName == "PizzaSize")
+                                  CurrentOrderPart.Cost = pizza.Cost * pizza.Quantity * (decimal)CurrentOrderPart.PizzaSize.CostMult;
+                          };
+                      }
+                  }));
+            }
+        }
 
         RelayCommand incrPizzaQuantityCommand;
         public RelayCommand IncreasePizzaQuantityCommand
@@ -183,18 +234,22 @@ namespace PizzaDelivery.ViewModel
         public App(
             SV.IClient theClientService,
             SV.IDough theDoughService,
+            SV.IIngredient theIngredientService,
             SV.IOrder theOrderService,
             SV.IPizza thePizzaService,
             SV.IPizzaOrder thePizzaOrderService,
-            SV.IPizzaSize thePizzaSizeService
+            SV.IPizzaSize thePizzaSizeService,
+            SV.IRecipe theRecipeService
         )
         {
             clientService = theClientService;
             doughService = theDoughService;
+            ingredientService = theIngredientService;
             orderService = theOrderService;
             pizzaService = thePizzaService;
             pizzaOrderService = thePizzaOrderService;
             pizzaSizeService = thePizzaSizeService;
+            recipeService = theRecipeService;
 
             load();
         }
@@ -229,19 +284,30 @@ namespace PizzaDelivery.ViewModel
         void loadMembers()
         {
             allDough = doughService.GetList();
+            allIngredients = ingredientService.GetList();
             allOrders = orderService.GetList();
             allPizzaOrders = pizzaOrderService.GetList();
             allPizzas = pizzaService.GetList();
             allPizzaSizes = pizzaSizeService.GetList();
+            allRecipes = recipeService.GetList();
 
             CurrentOrder = new Model.Order();
 
+            PizzaSizes = new ObservableCollection<Model.PizzaSize>();
+            foreach (var sizeDto in allPizzaSizes)
+                PizzaSizes.Add(new Model.PizzaSize
+                {
+                    CostMult = sizeDto.CostMult,
+                    Name = sizeDto.Name,
+                    Size = sizeDto.Size
+                });
+
             Pizzas = new ObservableCollection<Model.Pizza>();
-            
+
             foreach (var pizzaDto in allPizzas)
             {
-                int quantity = 0;
-
+                //int quantity = 0;
+                /*
                 try
                 {
                     var poDto = allPizzaOrders.First(e => e.PizzaId == pizzaDto.Id && e.Id == 1);
@@ -255,16 +321,32 @@ namespace PizzaDelivery.ViewModel
                 }
 
                 finally
-                {
-                    var pizza = new Model.Pizza
-                    {
-                        Name = pizzaDto.Name,
-                        Cost = pizzaDto.Cost,
-                        Quantity = 0
-                    };
+                {*/
 
-                    Pizzas.Add(pizza);
-                }
+
+                var pizza = new Model.Pizza
+                {
+                    Name = pizzaDto.Name,
+                    Cost = pizzaDto.Cost,
+                    Quantity = 0
+                };
+
+                var recipes = allRecipes.FindAll(e => e.PizzaId == pizzaDto.Id);
+                var ingredients = new List<Tuple<int, DTO.Ingredient>>();
+                foreach (var recipe in recipes)
+                    ingredients.Add(new Tuple<int, DTO.Ingredient>(recipe.Quantity, allIngredients.Find(e => e.Id == recipe.IngredientId)));
+
+                pizza.Ingredients = ingredients.Select(e => new Model.Ingredient
+                {
+                    Name = e.Item2.Name,
+                    Cost = e.Item2.Cost,
+                    InStock = e.Item2.InStock,
+                    Quantity = e.Item1
+                })
+                .ToList();
+
+                Pizzas.Add(pizza);
+               // }
             }
             
             OrderParts = new ObservableCollection<Model.OrderPart>();

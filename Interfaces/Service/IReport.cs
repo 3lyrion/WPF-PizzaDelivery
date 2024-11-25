@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Collections.Generic;
 
 namespace Interfaces.Service
 {
@@ -8,5 +9,7 @@ namespace Interfaces.Service
         DataTable GetOnlineClientOrders();
 
         DataTable GetOnlineCourierOrders();
+
+        List<DTO.ClientOrder> GetClientOrders(int clientId);
     }
 }

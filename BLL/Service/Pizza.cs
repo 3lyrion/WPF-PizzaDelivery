@@ -41,6 +41,33 @@ namespace BLL.Service
             return 0;
         }
 
+        public bool Update(DTO.Pizza pizzaDto)
+        {
+            var pizza = db.Pizza.GetItem(pizzaDto.Id);
+            pizza.cost = pizzaDto.Cost;
+            pizza.custom = pizzaDto.Custom;
+            pizza.name = pizzaDto.Name;
+            pizza.sales_hit = pizzaDto.SalesHit;
+            pizza.weight = pizzaDto.Weight;
+
+            db.Pizza.Update(pizza);
+
+            return Save();
+        }
+
+        public bool Delete(int id)
+        {
+            var pizza = db.Pizza.GetItem(id);
+
+            if (pizza != null)
+            {
+                db.Pizza.Delete(id);
+                return Save();
+            }
+
+            return false;
+        }
+
         public bool Save()
         {
             return db.Save() > 0;
@@ -49,6 +76,13 @@ namespace BLL.Service
         public List<DTO.Pizza> GetList()
         {
             return db.Pizza.GetList().Select(i => new DTO.Pizza(i)).ToList();
+        }
+
+        public List<DTO.Recipe> GetRecipes()
+        {
+            var recipes = db.Recipe.GetList();
+
+            return recipes.Select(i => new DTO.Recipe(i)).ToList();
         }
     }
 }

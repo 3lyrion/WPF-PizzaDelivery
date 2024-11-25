@@ -15,10 +15,12 @@ namespace PizzaDelivery.Util
             Bind<IClient>().To<Client>();
             Bind<ICourier>().To<Courier>();
             Bind<IDough>().To<Dough>();
+            Bind<IIngredient>().To<Ingredient>();
             Bind<IOrder>().To<Order>();
             Bind<IPizza>().To<Pizza>();
             Bind<IPizzaOrder>().To<PizzaOrder>();
             Bind<IPizzaSize>().To<PizzaSize>();
+            Bind<IRecipe>().To<Recipe>();
             Bind<IReport>().To<Report>();
         }
     }

@@ -7,8 +7,14 @@ namespace Interfaces.Service
     {
         int Create(DTO.Pizza pizzaDto);
 
+        bool Update(DTO.Pizza pizzaDto);
+
+        bool Delete(int id);
+
         bool Save();
 
         List<DTO.Pizza> GetList();
+
+        List<DTO.Recipe> GetRecipes();
     }
 }

@@ -175,25 +175,29 @@ namespace Database
                     add(new DM.Pizza
                     {
                         name = "Песто",
-                        cost = 499.00m
+                        cost = 499.00m,
+                        weight = 400
                     });
 
                     add(new DM.Pizza
                     {
                         name = "Двойной цыплёнок",
-                        cost = 389.00m
+                        cost = 389.00m,
+                        weight = 360
                     });
 
                     add(new DM.Pizza
                     {
                         name = "Гавайская",
-                        cost = 449.00m
+                        cost = 449.00m,
+                        weight = 390
                     });
 
                     add(new DM.Pizza
                     {
                         name = "Ветчина и сыр",
-                        cost = 389.00m
+                        cost = 389.00m,
+                        weight = 320
                     });
 
                     db.SaveChanges();
@@ -504,22 +508,23 @@ namespace Database
                 // Cook
 
                 // --------- Order ---------
-                /*
+                
                 {
                     Func<DM.Order, DM.Order> add = db.Order.Add;
 
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Рабфаковская, 34",
+                        creation_date = new DateTime(2024, 03, 15, 11, 30, 00),
                         client = db.Client.Single(e => e.full_name == "Иванов Иван Иванович"),
                         cook = db.Cook.Single(e => e.id == 1),
-                        courier = db.Courier.Single(e => e.id == 2)
-                        status = db.Order_status.Single(e => e.id == 2)
+                        courier = db.Courier.Single(e => e.id == 2),
                     });
 
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Парижской Коммуны, 13",
+                        creation_date = new DateTime(2024, 03, 15, 12, 38, 00),
                         client = db.Client.Single(e => e.full_name == "Иванов Иван Иванович"),
                         cook = db.Cook.Single(e => e.id == 1)
                     });
@@ -527,6 +532,7 @@ namespace Database
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Красных Зорь, 14",
+                        creation_date = new DateTime(2024, 03, 15, 11, 42, 00),
                         client = db.Client.Single(e => e.full_name == "Шапошникова Екатерина Сергеевна"),
                         cook = db.Cook.Single(e => e.id == 2),
                         courier = db.Courier.Single(e => e.id == 1)
@@ -535,6 +541,7 @@ namespace Database
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. 10 Августа, 77",
+                        creation_date = new DateTime(2024, 03, 15, 12, 01, 00),
                         client = db.Client.Single(e => e.full_name == "Снегирев Валентин Игоревич"),
                         cook = db.Cook.Single(e => e.id == 2)
                     });
@@ -548,107 +555,131 @@ namespace Database
 
                     db.SaveChanges();
                 }
-                */
+                
                 // Order
 
                 // --------- Pizza_Order ---------
-                /*
+                
                 {
+                    Action<DM.Pizza_Order> calcTotal = (po_) =>
+                    {
+                        po_.cost = po_.pizza.cost * po_.quantity * (decimal)po_.size.cost_mult;
+                    };
+
                     Func<DM.Pizza_Order, DM.Pizza_Order> add = db.Pizza_Order.Add;
 
-                    add(new DM.Pizza_Order
+                    var po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Маленькая"),
                         order = db.Order.Single(e => e.id == 1),
                         pizza = db.Pizza.Single(e => e.name == "Песто"),
                         quantity = 2
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Тонкое"),
                         size = db.Pizza_Size.Single(e => e.name == "Средняя"),
                         order = db.Order.Single(e => e.id == 1),
                         pizza = db.Pizza.Single(e => e.name == "Ветчина и сыр"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Большая"),
                         order = db.Order.Single(e => e.id == 2),
                         pizza = db.Pizza.Single(e => e.name == "Гавайская"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Большая"),
                         order = db.Order.Single(e => e.id == 2),
                         pizza = db.Pizza.Single(e => e.name == "Двойной цыплёнок"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Маленькая"),
                         order = db.Order.Single(e => e.id == 3),
                         pizza = db.Pizza.Single(e => e.name == "Гавайская"),
                         quantity = 3
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Тонкое"),
                         size = db.Pizza_Size.Single(e => e.name == "Средняя"),
                         order = db.Order.Single(e => e.id == 4),
                         pizza = db.Pizza.Single(e => e.name == "Ветчина и сыр"),
                         quantity = 2
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Большая"),
                         order = db.Order.Single(e => e.id == 4),
                         pizza = db.Pizza.Single(e => e.name == "Песто"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Маленькая"),
                         order = db.Order.Single(e => e.id == 5),
                         pizza = db.Pizza.Single(e => e.name == "Двойной цыплёнок"),
                         quantity = 2
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Тонкое"),
                         size = db.Pizza_Size.Single(e => e.name == "Средняя"),
                         order = db.Order.Single(e => e.id == 5),
                         pizza = db.Pizza.Single(e => e.name == "Ветчина и сыр"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
-                    add(new DM.Pizza_Order
+                    po = new DM.Pizza_Order
                     {
                         dough = db.Dough.Single(e => e.name == "Традиционное"),
                         size = db.Pizza_Size.Single(e => e.name == "Средняя"),
                         order = db.Order.Single(e => e.id == 5),
                         pizza = db.Pizza.Single(e => e.name == "Песто"),
                         quantity = 1
-                    });
+                    };
+                    calcTotal(po);
+                    add(po);
 
                     db.SaveChanges();
                 }
-                */
                 // Pizza_Order
             }
         }

@@ -17,6 +17,6 @@ namespace DomainModel
         public virtual Pizza pizza { get; set; }
 
         [Required]
-        public Ingredient ingredient { get; set; }
+        public virtual Ingredient ingredient { get; set; }
     }
 }

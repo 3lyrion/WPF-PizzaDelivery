@@ -16,11 +16,22 @@ namespace PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        string name;
         decimal cost;
         bool inStock;
         int quantity;
         int weight;
-        
+
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
         public decimal Cost
         {
             get { return cost; }

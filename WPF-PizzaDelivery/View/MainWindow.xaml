@@ -22,6 +22,9 @@
         <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
         <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
         <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
+        <local:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+        <local:SizeConverter x:Key="SizeConverter" />
     </Window.Resources>
     <Border Padding="10,10">
         <Grid>
@@ -67,7 +70,7 @@
                                                         <RowDefinition Height="200" />
                                                         <RowDefinition />
                                                     </Grid.RowDefinitions>
-                                                    <Button Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                    <Button Command="{Binding DataContext.EditOrderPart, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
                                                         <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="150" />
@@ -97,6 +100,116 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
+                                <materialDesign:Card Grid.Row="1" Visibility="{Binding Path=CurrentOrder.SelectedPizza, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                    <Grid Width="600" Height="600">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="5*" />
+                                            <RowDefinition Height="2*"/>
+                                            <RowDefinition Height="2*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Пицца -->
+                                        <Grid Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition Height="200" />
+                                            </Grid.RowDefinitions>
+                                            <Label Content="{Binding Path=CurrentOrder.SelectedPizza.Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
+                                            <Image Grid.Row="1" Source="{Binding Path=CurrentOrder.SelectedPizza.Name, Converter={StaticResource PizzaImagePathConverter}}" Width="195" Height="195" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Grid>
+
+                                        <!-- Ингредиенты -->
+                                        <Grid Grid.Column="1" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition Height="200" />
+                                            </Grid.RowDefinitions>
+                                            
+                                            <Label Content="Состав" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
+                                            
+                                            <ScrollViewer Grid.Row="1" Width="200" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ItemsControl ItemsSource="{Binding CurrentOrder.SelectedPizza.Ingredients}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel>
+                                                            </StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <BulletDecorator>
+                                                                <BulletDecorator.Bullet>
+                                                                    <Ellipse Width="6" Height="6" Fill="Black" />
+                                                                </BulletDecorator.Bullet>
+                                                                <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
+                                                            </BulletDecorator>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </Grid>
+
+                                        <!-- Тесто -->
+                                        <Grid Grid.Row="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="50" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+
+                                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="Тесто" FontSize="24" />
+
+                                            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
+                                                <StackPanel.Resources>
+                                                    <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
+                                                        <Setter Property="Margin" Value="5" />
+                                                    </Style>
+                                                </StackPanel.Resources>
+                                                <RadioButton Content="Традиционное" GroupName="Dough" />
+                                                <RadioButton Content="Тонкое" Grid.Column="1" GroupName="Dough" />
+                                            </StackPanel>
+                                        </Grid>
+                                        
+                                        <!-- Размеры -->
+                                        <Grid Grid.Row="1" Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="50" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+
+                                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="Размер" FontSize="24" />
+
+                                            <ItemsControl ItemsSource="{Binding PizzaSizes}" Grid.Row="1" HorizontalAlignment="Center">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid>
+                                                            <UniformGrid.Resources>
+                                                                <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
+                                                                    <Setter Property="Margin" Value="5" />
+                                                                </Style>
+                                                            </UniformGrid.Resources>
+                                                        </UniformGrid>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <RadioButton Command="{Binding DataContext.SelectPizzaSize, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{Binding Converter={StaticResource SizeConverter}}" GroupName="PizzaSize" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+
+                                        <!-- Низ -->
+                                        <Label Grid.Row="2" Content="{Binding Path=CurrentOrderPart.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Цена: {0}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
+
+                                        <Button Grid.Row="2" Grid.Column="1" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
+                                            Добавить
+                                        </Button>
+                                    </Grid>
+                                </materialDesign:Card>
                             </Grid>
                         </Border>
                     </TabItem>
