@@ -81,6 +81,7 @@
                                                         <RowDefinition Height="200" />
                                                         <RowDefinition />
                                                     </Grid.RowDefinitions>
+                                                    
                                                     <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
                                                         <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                             <Grid.RowDefinitions>
@@ -93,31 +94,8 @@
                                                             <Label Grid.Row="2" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="от {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Grid>
                                                     </Button>
-                                                    <Button Grid.Row="1" Content="Выбрать" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}"
-                                                        Visibility="{Binding Path=Quantity, Converter={StaticResource PizzaQuantityToVisibilityConverter}}" />
-                                                    <Grid Grid.Row="1" Visibility="{Binding Path=Quantity, Converter={StaticResource InversePizzaQuantityToVisibilityConverter}}">
-                                                        <!--
-                                                        <Grid.Visibility>
-                                                            <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource InversePizzaQuantityToVisibilityConverter}">
-                                                                <Binding Path="." />
-                                                                <Binding Path="DataContext.OrderParts" RelativeSource="{RelativeSource AncestorType=Window}" />
-                                                                <Binding Path="DataContext.OrderParts.Count" RelativeSource="{RelativeSource AncestorType=Window}" />
-                                                            </MultiBinding>
-                                                        </Grid.Visibility>
-                                                        -->
-                                                            
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                        </Grid.ColumnDefinitions>
-                                                        
-                                                        <Button Padding="0" Command="{Binding DataContext.DecreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
-
-                                                        <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
-
-                                                        <Button Grid.Column="2" Command="{Binding DataContext.IncreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Padding="0, 0, 0, 0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
-                                                    </Grid>
+                                                    
+                                                    <Button Grid.Row="1" Content="Выбрать" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
