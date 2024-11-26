@@ -28,7 +28,7 @@ namespace PizzaDelivery.Model
         decimal cost;
         DateTime creationTime;
         OrderStatus status;
-        Model.Pizza selectedPizza;
+        Model.OrderPart selectedPart;
         
         public string Address
         {
@@ -70,13 +70,13 @@ namespace PizzaDelivery.Model
             }
         }
 
-        public Model.Pizza SelectedPizza
+        public Model.OrderPart SelectedPart
         {
-            get { return selectedPizza; }
+            get { return selectedPart; }
             set
             {
-                selectedPizza = value;
-                OnPropertyChanged("SelectedPizza");
+                selectedPart = value;
+                OnPropertyChanged("SelectedPart");
             }
         }
     }

@@ -17,21 +17,11 @@ namespace PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
-        string name;
         decimal cost;
         Model.Pizza pizza;
         DTO.Dough dough;
         DTO.PizzaSize pizzaSize;
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged("Name");
-            }
-        }
+        int quantity;
 
         public decimal Cost
         {
@@ -71,6 +61,25 @@ namespace PizzaDelivery.Model
                 pizzaSize = value;
                 OnPropertyChanged("PizzaSize");
             }
+        }
+
+        public int Quantity
+        {
+            get { return quantity; }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged("Quantity");
+            }
+        }
+
+        public void CopyTo(Model.OrderPart orderPart)
+        {
+            orderPart.Cost = Cost;
+            orderPart.Dough = Dough;
+            orderPart.Pizza = Pizza;
+            orderPart.PizzaSize = PizzaSize;
+            orderPart.Quantity = Quantity;
         }
     }
 }

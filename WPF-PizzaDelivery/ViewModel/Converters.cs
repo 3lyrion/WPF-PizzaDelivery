@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using PizzaDelivery.Util;
@@ -47,48 +49,6 @@ namespace PizzaDelivery.ViewModel
                 var orderPart = value as Model.OrderPart;
 
                 return $"{orderPart.PizzaSize.Name} {orderPart.PizzaSize.Size} см, {orderPart.Dough.Name} тесто";
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class PizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Hidden;
-                return Visibility.Visible;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class InversePizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Visible;
-                return Visibility.Hidden;
             }
 
             return value;
@@ -150,6 +110,232 @@ namespace PizzaDelivery.ViewModel
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class DoughConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Model.Dough)
+            {
+                var dough = value as Model.Dough;
+
+                return dough.Name;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SubmitOrderTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                var quantity = (int)value;
+
+                if (quantity > 0) return "Сохранить";
+
+                return "Добавить";
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PizzaToQuantityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is Model.Pizza)
+            {
+                var pizza = value[0] as Model.Pizza;
+                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
+
+                try
+                {
+                    return orderParts.First(e => e.Pizza == pizza).Quantity;
+                }
+
+                catch
+                {
+                    return 0;
+                }
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class PizzaQuantityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                var quantity = (int)value;
+
+                if (quantity > 0) return Visibility.Hidden;
+                return Visibility.Visible;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class InversePizzaQuantityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                var quantity = (int)value;
+
+                if (quantity > 0) return Visibility.Visible;
+                return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /*
+    public class PizzaQuantityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is Model.Pizza)
+            {
+                var pizza = value[0] as Model.Pizza;
+                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
+
+                try
+                {
+                    var quantity = orderParts.First(e => e.Pizza == pizza).Quantity;
+
+                    if (quantity > 0) return Visibility.Hidden;
+                    return Visibility.Visible;
+                }
+
+                catch
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class InversePizzaQuantityToVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is Model.Pizza)
+            {
+                var pizza = value[0] as Model.Pizza;
+                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
+
+                try
+                {
+                    var quantity = orderParts.First(e => e.Pizza == pizza).Quantity;
+
+                    if (quantity > 0) return Visibility.Visible;
+                    return Visibility.Hidden;
+                }
+
+                catch
+                {
+                    return Visibility.Hidden;
+                }
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+    */
+    public class CurrentDoughToBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is Model.Dough)
+            {
+                var dough = value[0] as Model.Dough;
+                var order = value[1] as Model.Order;
+
+                if (order.SelectedPart != null && order.SelectedPart.Dough != null && order.SelectedPart.Dough.Name == dough.Name)
+                    return true;
+
+                return false;
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class CurrentSizeToBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is Model.PizzaSize)
+            {
+                var pizzaSize = value[0] as Model.PizzaSize;
+                var order = value[1] as Model.Order;
+
+                if (order.SelectedPart != null && order.SelectedPart.PizzaSize != null && order.SelectedPart.PizzaSize.Size == pizzaSize.Size)
+                    return true;
+
+                return false;
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
 }
