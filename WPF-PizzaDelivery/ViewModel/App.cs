@@ -124,8 +124,8 @@ namespace PizzaDelivery.ViewModel
 
                           SelectedOrderPart.CopyTo(OriginalOrderPart);
 
-                          SelectedOrderPart.Quantity = 1;
                           SelectedOrderPart.Pizza = pizza;
+                          SelectedOrderPart.Quantity = 1;
                       }
 
                       else if (obj is Model.OrderPart)
@@ -196,9 +196,10 @@ namespace PizzaDelivery.ViewModel
                             }
                         }
 
-                        SelectedOrderPart.Quantity = 1;
-
+                        // Сначала добавляю в список, а потом триггерю обновление цен
                         OrderParts.Add(SelectedOrderPart);
+
+                        SelectedOrderPart.Quantity = 1;
 
                         SelectedOrderPart = null;
 
