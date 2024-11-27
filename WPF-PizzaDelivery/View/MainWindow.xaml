@@ -32,6 +32,9 @@
         <local:SizeConverter x:Key="SizeConverter" />
         <local:CurrentSizeToBoolConverter x:Key="CurrentSizeToBoolConverter" />
         <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
+        <local:LoginMenuVisibilityConverter x:Key="LoginMenuVisibilityConverter" />
+        <local:RegistrationMenuVisibilityConverter x:Key="RegistrationMenuVisibilityConverter" />
+        <local:CloneDataConverter x:Key="CloneDataConverter" />
         
     </Window.Resources>
     <Border Padding="10,10">
@@ -52,7 +55,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
-                        <Border x:Name="Page_Menu" Padding="10,10,10,10">
+                        <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
@@ -82,7 +85,14 @@
                                                         <RowDefinition />
                                                     </Grid.RowDefinitions>
                                                     
-                                                    <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                    <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                <Binding Path="." />
+                                                                <Binding ElementName="Menu_OPE" />
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
+
                                                         <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="150" />
@@ -94,15 +104,22 @@
                                                             <Label Grid.Row="2" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="от {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Grid>
                                                     </Button>
-                                                    
-                                                    <Button Grid.Row="1" Content="Выбрать" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" />
+
+                                                    <Button Grid.Row="1" Content="Выбрать" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                <Binding Path="." />
+                                                                <Binding ElementName="Menu_OPE" />
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
+                                                    </Button>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
                                 
-                                <uc:OrderPartEditor Grid.Row="1" />
+                                <uc:OrderPartEditor Grid.Row="1" x:Name="Menu_OPE" Visibility="Hidden" />
                                 
                             </Grid>
                         </Border>
@@ -113,7 +130,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="CartOutline" Width="70" Height="70" />
                         </TabItem.Header>
-                        <Border x:Name="Page_Cart" Padding="10,10,10,10">
+                        <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
@@ -161,8 +178,17 @@
                                                                         <RowDefinition Height="40" />
                                                                         <RowDefinition />
                                                                     </Grid.RowDefinitions>
+                                                                    
                                                                     <Label Content="{Binding Pizza.Name}" FontWeight="Bold" FontSize="20" />
-                                                                    <Label Content="{Binding Path=., Converter={StaticResource OrderPartBottomLabelConverter}}" Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray" />
+
+                                                                    <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray">
+                                                                        <Label.Content>
+                                                                            <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource OrderPartBottomLabelConverter}">
+                                                                                <Binding Path="PizzaSize" />
+                                                                                <Binding Path="Dough" />
+                                                                            </MultiBinding>
+                                                                        </Label.Content>
+                                                                    </Label>
                                                                 </Grid>
                                                                 <Button Padding="0" Grid.Column="2" Command="{Binding DataContext.RemoveOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
                                                                     <materialDesign:PackIcon Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
@@ -175,8 +201,13 @@
                                                                     <ColumnDefinition />
                                                                 </Grid.ColumnDefinitions>
                                                                 <Label Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" />
-                                                                <Button Grid.Column="1" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                                    Изменить
+                                                                <Button Grid.Column="1" Content="Изменить" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                    <Button.CommandParameter>
+                                                                        <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                            <Binding Path="." />
+                                                                            <Binding ElementName="Cart_OPE" />
+                                                                        </MultiBinding>
+                                                                    </Button.CommandParameter>
                                                                 </Button>
                                                                 <Grid Grid.Column="2">
                                                                     <Grid.ColumnDefinitions>
@@ -205,13 +236,15 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenu}" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
+                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenuCommand}" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
                                         Оформить заказ
                                     </Button>
                                 </Grid>
 
-                                <uc:OrderPartEditor Grid.Row="1" Grid.RowSpan="2" />
+                                <!-- Меню изменения части заказа -->
+                                <uc:OrderPartEditor Grid.Row="1" Grid.RowSpan="2" x:Name="Cart_OPE" Visibility="Hidden" />
 
+                                <!-- Меню оформления заказа -->
                                 <materialDesign:Card Grid.Row="1" Grid.RowSpan="2" Visibility="{Binding Path=CheckoutMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Grid Width="600">
                                         <Grid.RowDefinitions>
@@ -224,8 +257,16 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Margin="0, 150, 0, 0" Width="450" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
-                                            <TextBox Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                            <!-- Адрес -->
+                                            <StackPanel>
+                                                <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
+                                                <TextBox Text="{Binding CurrentOrder.Address}" Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                            </StackPanel>
+                                            <!-- Имя получателя -->
+                                            <StackPanel>
+                                                <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Имя получателя" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
+                                                <TextBox Text="{Binding CurrentOrder.RecipentName}" Padding="10" Width="350" Height="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                            </StackPanel>
                                         </StackPanel>
 
                                         <Grid Grid.ColumnSpan="2" Grid.Row="2">
@@ -237,8 +278,8 @@
 
                                             <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Итого: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                                            <Button Grid.Column="1" Content="Оплатить" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
-                                            <Button Grid.Column="2" Command="{Binding CloseCheckoutMenu}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
+                                            <Button Grid.Column="1" Command="{Binding PayOrderCommand}" Content="Оплатить" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
+                                            <Button Grid.Column="2" Command="{Binding CloseCheckoutMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
                                                 Отмена
                                             </Button>
                                         </Grid>
@@ -253,12 +294,13 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" FontSize="36" />
                         </TabItem.Header>
-                        <Border x:Name="Page_Profile" Padding="10,10,10,10">
+                        <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                     <RowDefinition MinHeight="300"/>
                                 </Grid.RowDefinitions>
+                                
                                 <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Padding="0, 0, 0, 5" Content="Профиль" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
@@ -266,7 +308,15 @@
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <Viewbox Grid.Row="1" x:Name="Profile_VB_Login">
+                                
+                                <Viewbox Grid.Row="1">
+                                    <Viewbox.Visibility>
+                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource LoginMenuVisibilityConverter}">
+                                            <Binding Path="RegistrationMenuVisible" />
+                                            <Binding Path="Account" />
+                                        </MultiBinding>
+                                    </Viewbox.Visibility>
+                                    
                                     <materialDesign:Card Padding="20, 0, 20, 20" Width="600" Height="350" Margin="300,100">
                                         <Grid>
                                             <Grid.RowDefinitions>
@@ -289,22 +339,27 @@
                                                         <ColumnDefinition />
                                                         <ColumnDefinition />
                                                     </Grid.ColumnDefinitions>
-                                                    <Label Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center">
-
-                                                    </Label>
-                                                    <TextBox Grid.Column="1" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="0"/>
+                                                    
+                                                    <Label Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                                    <TextBox Grid.Column="1" x:Name="Profile_TB_Login" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="0"/>
+                                                    
                                                     <Label Grid.Row="1" Content="Пароль" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                                    <PasswordBox Grid.Row="1" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
+                                                    <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="Profile_PB_Login" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
 
                                                     <Grid Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition />
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
-                                                        <Button Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                            Войти
+                                                        <Button Content="Войти" Command="{Binding LoginCommand}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
+                                                            <Button.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                    <Binding ElementName="Profile_TB_Login" />
+                                                                    <Binding ElementName="Profile_PB_Login" />
+                                                                </MultiBinding>
+                                                            </Button.CommandParameter>
                                                         </Button>
-                                                        <Button Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10" Click="Login_BTN_Register_onClick">
+                                                        <Button Grid.Column="1" Command="{Binding GoToRegistrationMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
                                                             Регистрация
                                                         </Button>
                                                     </Grid>
@@ -313,7 +368,15 @@
                                         </Grid>
                                     </materialDesign:Card>
                                 </Viewbox>
-                                <Viewbox Grid.Row="1" x:Name="Profile_VB_Register" Visibility="Hidden">
+                                
+                                <Viewbox Grid.Row="1" x:Name="Profile_VB_Registration">
+                                    <Viewbox.Visibility>
+                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource RegistrationMenuVisibilityConverter}">
+                                            <Binding Path="RegistrationMenuVisible" />
+                                            <Binding Path="Account" />
+                                        </MultiBinding>
+                                    </Viewbox.Visibility>
+                                    
                                     <materialDesign:Card Width="600" Height="375" Padding="20, 0, 20, 20" Margin="250,125">
                                         <Grid>
                                             <!--<Button Content="{materialDesign:PackIcon Kind=CloseBox, Size=48}" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" Width="48" Height="48" Margin="0,7.5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>-->
@@ -344,23 +407,29 @@
                                                         </Grid.ColumnDefinitions>
 
                                                         <Label Padding="0" Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <TextBox Grid.Column="1" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="20,10,0,10"/>
+                                                        <TextBox Grid.Column="1" x:Name="Profile_TB_Register" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="20,10,0,10"/>
 
                                                         <Label Grid.Row="1" Padding="0" Content="Пароль" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <PasswordBox Grid.Row="1" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
-
+                                                        <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="Profile_PB_Register_1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
+                                                        
                                                         <Label Grid.Row="2" Padding="0" Content="Пароль повторно" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <PasswordBox Grid.Row="2" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
+                                                        <PasswordBox Grid.Row="2" Grid.Column="1" x:Name="Profile_PB_Register_2" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
 
                                                         <Grid Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
-                                                            <Button Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                                Зарегистрироваться
+                                                            <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
+                                                                <Button.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                        <Binding ElementName="Profile_TB_Register" />
+                                                                        <Binding ElementName="Profile_PB_Register_1" />
+                                                                        <Binding ElementName="Profile_PB_Register_2" />
+                                                                    </MultiBinding>
+                                                                </Button.CommandParameter>
                                                             </Button>
-                                                            <Button Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10" Click="Register_BTN_Back_onClick">
+                                                            <Button Grid.Column="1" Command="{Binding GoToLoginMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
                                                                 Назад
                                                             </Button>
                                                         </Grid>

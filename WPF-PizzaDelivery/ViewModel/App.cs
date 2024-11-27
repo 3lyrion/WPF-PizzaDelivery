@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -27,6 +29,7 @@ namespace PizzaDelivery.ViewModel
         SV.IPizzaSize pizzaSizeService;
         SV.IRecipe recipeService;
 
+        List<DTO.Client> allClients;
         List<DTO.Dough> allDough;
         List<DTO.Ingredient> allIngredients;
         List<DTO.Order> allOrders;
@@ -34,6 +37,17 @@ namespace PizzaDelivery.ViewModel
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
         List<DTO.Recipe> allRecipes;
+
+        bool regMenuVisible = false;
+        public bool RegistrationMenuVisible
+        {
+            get { return regMenuVisible; }
+            set
+            {
+                regMenuVisible = value;
+                OnPropertyChanged("RegistrationMenuVisible");
+            }
+        }
 
         bool checkoutMenuVisible = false;
         public bool CheckoutMenuVisible
@@ -68,6 +82,17 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
+        DTO.Client account;
+        public DTO.Client Account
+        {
+            get { return account; }
+            set
+            {
+                account = value;
+                OnPropertyChanged("Account");
+            }
+        }
+
         public Model.OrderPart OriginalOrderPart { get; set; }
 
         public Model.Order CurrentOrder { get; set; }
@@ -80,20 +105,113 @@ namespace PizzaDelivery.ViewModel
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
 
-        RelayCommand payOrder;
-        public RelayCommand PayOrder
+        RelayCommand gotoLoginMenuCommand;
+        public RelayCommand GoToLoginMenuCommand
         {
             get
             {
-                return payOrder ??
-                    (payOrder = new RelayCommand(obj =>
+                return gotoLoginMenuCommand ??
+                    (gotoLoginMenuCommand = new RelayCommand(obj =>
+                    {
+                        RegistrationMenuVisible = false;
+
+                    }));
+            }
+        }
+
+        RelayCommand gotoRegMenuCommand;
+        public RelayCommand GoToRegistrationMenuCommand
+        {
+            get
+            {
+                return gotoRegMenuCommand ??
+                    (gotoRegMenuCommand = new RelayCommand(obj =>
+                    {
+                        RegistrationMenuVisible = true;
+
+                    }));
+            }
+        }
+
+        RelayCommand loginCommand;
+        public RelayCommand LoginCommand
+        {
+            get
+            {
+                return loginCommand ??
+                    (loginCommand = new RelayCommand(obj =>
+                    {
+                        var objects = obj as object[];
+                        var phoneNumber = (objects[0] as TextBox).Text;
+                        var password = (objects[1] as PasswordBox).Password;
+
+                        try
+                        {
+                            Account = allClients.Find(e => e.PhoneNumber == phoneNumber && e.Password == password);
+                        }
+
+                        catch { }
+
+                    }));
+            }
+        }
+
+        RelayCommand regCommand;
+        public RelayCommand RegistrationCommand
+        {
+            get
+            {
+                return regCommand ??
+                    (regCommand = new RelayCommand(obj =>
+                    {
+                        var objects = obj as object[];
+                        var phoneNumber = (objects[0] as TextBox).Text;
+                        var password = (objects[1] as PasswordBox).Password;
+                        var passwordConfirmation = (objects[2] as PasswordBox).Password;
+
+                        if (phoneNumber != "" &&
+                            password != "" && passwordConfirmation == password)
+                        {
+                            Account = new DTO.Client
+                            {
+                                Online = true,
+                                Password = password,
+                                PhoneNumber = phoneNumber
+                            };
+                        }
+
+                    }));
+            }
+        }
+
+        RelayCommand payOrderCommand;
+        public RelayCommand PayOrderCommand
+        {
+            get
+            {
+                return payOrderCommand ??
+                    (payOrderCommand = new RelayCommand(obj =>
                     {
                         CheckoutMenuVisible = false;
+                        
+                        allOrders.Add(new DTO.Order
+                        {
+                            Address = CurrentOrder.Address,
+                            Cost = CurrentOrder.Cost
+                        });
 
                         foreach (var op in OrderParts)
                         {
-
+                            allPizzaOrders.Add(new DTO.PizzaOrder
+                            {
+                                Cost = op.Cost,
+                                DoughId = allDough.Find(e => e.Name == op.Dough.Name).Id,
+                                PizzaId = allPizzas.Find(e => e.Name == op.Pizza.Name).Id,
+                                SizeId = allPizzaSizes.Find(e => e.Size == op.PizzaSize.Size).Id
+                            });
                         }
+
+                        CurrentOrder.Clear();
 
                         OrderParts.Clear();
 
@@ -101,47 +219,29 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
-        RelayCommand gotoCheckoutMenu;
-        public RelayCommand GoToCheckoutMenu
+        RelayCommand gotoCheckoutMenuCommand;
+        public RelayCommand GoToCheckoutMenuCommand
         {
             get
             {
-                return gotoCheckoutMenu ??
-                    (gotoCheckoutMenu = new RelayCommand(obj =>
+                return gotoCheckoutMenuCommand ??
+                    (gotoCheckoutMenuCommand = new RelayCommand(obj =>
                     {
                        CheckoutMenuVisible = true;
 
-                    }, (obj) => (OrderParts.Count > 0)));
+                    }, (obj) => (OrderParts.Count > 0 && Account != null)));
             }
         }
 
-        RelayCommand closeCheckoutMenu;
-        public RelayCommand CloseCheckoutMenu
+        RelayCommand closeCheckoutMenuCommand;
+        public RelayCommand CloseCheckoutMenuCommand
         {
             get
             {
-                return closeCheckoutMenu ??
-                    (closeCheckoutMenu = new RelayCommand(obj =>
+                return closeCheckoutMenuCommand ??
+                    (closeCheckoutMenuCommand = new RelayCommand(obj =>
                     {
                         CheckoutMenuVisible = false;
-
-                    }));
-            }
-        }
-
-        RelayCommand switchCheckoutMenuVisibility;
-        public RelayCommand SwitchCheckoutMenuVisibility
-        {
-            get
-            {
-                return switchCheckoutMenuVisibility ??
-                    (switchCheckoutMenuVisibility = new RelayCommand(obj =>
-                    {
-                        if (obj is bool)
-                            CheckoutMenuVisible = (bool)obj;
-
-                        else
-                            CheckoutMenuVisible = !CheckoutMenuVisible;
 
                     }));
             }
@@ -189,36 +289,39 @@ namespace PizzaDelivery.ViewModel
             get
             {
                 return editOrderPartCommand ??
-                  (editOrderPartCommand = new RelayCommand(obj =>
-                  {
-                      // Quantity = 1 для правильного расчёта цены
+                    (editOrderPartCommand = new RelayCommand(obj =>
+                    {
+                        // Quantity = 1 для правильного расчёта цены
 
-                      if (obj is Model.Pizza)
-                      {
-                          var pizza = obj as Model.Pizza;
+                        var objects = obj as object[];
 
-                          SelectedOrderPart = createOrderPart();
+                        if (objects[0] is Model.Pizza)
+                        {
+                            var pizza = objects[0] as Model.Pizza;
 
-                          SelectedOrderPart.CopyTo(OriginalOrderPart);
+                            SelectedOrderPart = createOrderPart();
 
-                          SelectedOrderPart.Pizza = pizza;
-                          SelectedOrderPart.Quantity = 1;
-                      }
+                            SelectedOrderPart.CopyTo(OriginalOrderPart);
 
-                      else if (obj is Model.OrderPart)
-                      {
-                          var orderPart = obj as Model.OrderPart;
+                            SelectedOrderPart.Pizza = pizza;
+                            SelectedOrderPart.Quantity = 1;
+                        }
 
-                          orderPart.CopyTo(OriginalOrderPart);
+                        else if (objects[0] is Model.OrderPart)
+                        {
+                            var orderPart = objects[0] as Model.OrderPart;
 
-                          orderPart.Quantity = 1;
+                            orderPart.CopyTo(OriginalOrderPart);
 
-                          SelectedOrderPart = orderPart;
-                      }
+                            orderPart.Quantity = 1;
 
-                      TabControlEnabled = false;
+                            SelectedOrderPart = orderPart;
+                        }
 
-                  }));
+                        var editor = objects[1] as View.Elements.OrderPartEditor;
+                        editor.Visibility = Visibility.Visible;
+
+                    }));
             }
         }
 
@@ -230,10 +333,12 @@ namespace PizzaDelivery.ViewModel
                 return cancelOrderPartCommand ??
                   (cancelOrderPartCommand = new RelayCommand(obj =>
                   {
+                      var editor = obj as View.Elements.OrderPartEditor;
+
                       OriginalOrderPart.CopyTo(SelectedOrderPart);
                       SelectedOrderPart = null;
 
-                      TabControlEnabled = true;
+                      editor.Visibility = Visibility.Hidden;
 
                   }));
             }
@@ -247,6 +352,8 @@ namespace PizzaDelivery.ViewModel
                 return submitOrderPartCommand ??
                     (submitOrderPartCommand = new RelayCommand(obj =>
                     {
+                        var editor = obj as View.Elements.OrderPartEditor;
+
                         // Изменение существующей части заказа
                         foreach (var orderPart in OrderParts)
                         {
@@ -254,9 +361,7 @@ namespace PizzaDelivery.ViewModel
                             {
                                 orderPart.Quantity = OriginalOrderPart.Quantity;
 
-                                SelectedOrderPart = null;
-
-                                return;
+                                goto Finally;
                             }
 
                             // Если уже есть в точности такая же пицца,
@@ -267,9 +372,7 @@ namespace PizzaDelivery.ViewModel
                             {
                                 IncreasePizzaQuantityCommand.Execute(orderPart);
 
-                                SelectedOrderPart = null;
-
-                                return;
+                                goto Finally;
                             }
                         }
 
@@ -278,9 +381,11 @@ namespace PizzaDelivery.ViewModel
 
                         SelectedOrderPart.Quantity = 1;
 
+                    Finally:
+
                         SelectedOrderPart = null;
 
-                        TabControlEnabled = true;
+                        editor.Visibility = Visibility.Hidden;
 
                     }, (obj) => (SelectedOrderPart != null && SelectedOrderPart.PizzaSize != null && SelectedOrderPart.Dough != null)));
             }
@@ -294,15 +399,7 @@ namespace PizzaDelivery.ViewModel
                 return incrPizzaQuantityCommand ??
                   (incrPizzaQuantityCommand = new RelayCommand(obj =>
                   {
-                      if (obj is Model.Pizza)
-                      {
-                          var pizza = obj as Model.Pizza;
-                          var orderPart = OrderParts.First(e => e.Pizza == pizza);
-
-                          orderPart.Quantity++;
-                      }
-
-                      else if (obj is Model.OrderPart)
+                      if (obj is Model.OrderPart)
                       {
                           var orderPart = obj as Model.OrderPart;
 
@@ -321,19 +418,7 @@ namespace PizzaDelivery.ViewModel
                 return decrPizzaQuantityCommand ??
                   (decrPizzaQuantityCommand = new RelayCommand(obj =>
                   {
-                      if (obj is Model.Pizza)
-                      {
-                          var pizza = obj as Model.Pizza;
-                          var orderPart = OrderParts.First(e => e.Pizza == pizza);
-
-                          if (orderPart.Quantity > 0)
-                              orderPart.Quantity--;
-
-                          if (orderPart.Quantity == 0)
-                              OrderParts.Remove(orderPart);
-                      }
-
-                      else if (obj is Model.OrderPart)
+                      if (obj is Model.OrderPart)
                       {
                           var orderPart = obj as Model.OrderPart;
 
@@ -422,6 +507,7 @@ namespace PizzaDelivery.ViewModel
 
         void loadMembers()
         {
+            allClients = clientService.GetList();
             allDough = doughService.GetList();
             allIngredients = ingredientService.GetList();
             allOrders = orderService.GetList();

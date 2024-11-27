@@ -60,23 +60,5 @@ namespace PizzaDelivery.View
 
             tb.Text = Regex.Replace(tb.Text, "[^0-9+]", "");
         }
-
-        private void Login_BTN_Register_onClick(object sender, RoutedEventArgs e)
-        {
-            var vb_login = FindName("Profile_VB_Login") as Viewbox;
-            var vb_reg = FindName("Profile_VB_Register") as Viewbox;
-
-            vb_login.Visibility = Visibility.Hidden;
-            vb_reg.Visibility = Visibility.Visible;
-        }
-
-        private void Register_BTN_Back_onClick(object sender, RoutedEventArgs e)
-        {
-            var vb_login = FindName("Profile_VB_Login") as Viewbox;
-            var vb_reg = FindName("Profile_VB_Register") as Viewbox;
-
-            vb_login.Visibility = Visibility.Visible;
-            vb_reg.Visibility = Visibility.Hidden;
-        }
     }
 }

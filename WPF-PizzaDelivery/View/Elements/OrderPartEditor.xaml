@@ -20,7 +20,8 @@
         <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
     </UserControl.Resources>
     <!-- Меню изменения части заказа -->
-    <materialDesign:Card Visibility="{Binding Path=SelectedOrderPart, Converter={StaticResource ObjectToVisibilityConverter}}">
+    <!-- Visibility="{Binding Path=SelectedOrderPart, Converter={StaticResource ObjectToVisibilityConverter}}"-->
+    <materialDesign:Card Visibility="{Binding Path=Visibility, RelativeSource={RelativeSource Self}}">
         <Grid Width="600" Height="600">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
@@ -155,8 +156,8 @@
 
                 <Label Content="{Binding Path=SelectedOrderPart.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Цена: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                <Button Grid.Column="1" Command="{Binding SubmitOrderPartCommand}" Content="{Binding Path=OriginalOrderPart.Quantity, Converter={StaticResource SubmitOrderTextConverter}}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
-                <Button Grid.Column="2" Command="{Binding CancelOrderPartCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
+                <Button Grid.Column="1" Command="{Binding SubmitOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Content="{Binding Path=OriginalOrderPart.Quantity, Converter={StaticResource SubmitOrderTextConverter}}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Command="{Binding CancelOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
                     Отмена
                 </Button>
             </Grid>

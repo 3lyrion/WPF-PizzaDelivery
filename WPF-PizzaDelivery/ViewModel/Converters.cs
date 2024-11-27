@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using PizzaDelivery.Util;
+using DTO = Interfaces.DTO;
 
 namespace PizzaDelivery.ViewModel
 {
@@ -30,26 +31,6 @@ namespace PizzaDelivery.ViewModel
         {
             if (value is string)
                 return Media.Directory + Media.PizzaNameToFileName[(string)value] + ".png";
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class OrderPartBottomLabelConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is Model.OrderPart)
-            {
-                var orderPart = value as Model.OrderPart;
-
-                return $"{orderPart.PizzaSize.Name} {orderPart.PizzaSize.Size} см, {orderPart.Dough.Name} тесто";
-            }
 
             return value;
         }
@@ -155,6 +136,27 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
+    public class OrderPartBottomLabelConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is DTO.PizzaSize)
+            {
+                var pizzaSize = value[0] as DTO.PizzaSize;
+                var dough = value[1] as DTO.Dough;
+
+                return $"{pizzaSize.Name} {pizzaSize.Size} см, {dough.Name} тесто";
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
     public class PizzaToQuantityConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -226,71 +228,6 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
-    /*
-    public class PizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value[0] is Model.Pizza)
-            {
-                var pizza = value[0] as Model.Pizza;
-                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
-
-                try
-                {
-                    var quantity = orderParts.First(e => e.Pizza == pizza).Quantity;
-
-                    if (quantity > 0) return Visibility.Hidden;
-                    return Visibility.Visible;
-                }
-
-                catch
-                {
-                    return Visibility.Visible;
-                }
-            }
-
-            return value;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
-    public class InversePizzaQuantityToVisibilityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value[0] is Model.Pizza)
-            {
-                var pizza = value[0] as Model.Pizza;
-                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
-
-                try
-                {
-                    var quantity = orderParts.First(e => e.Pizza == pizza).Quantity;
-
-                    if (quantity > 0) return Visibility.Visible;
-                    return Visibility.Hidden;
-                }
-
-                catch
-                {
-                    return Visibility.Hidden;
-                }
-            }
-
-            return value;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-    */
     public class CurrentDoughToBoolConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -336,6 +273,72 @@ namespace PizzaDelivery.ViewModel
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class LoginMenuVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is bool)
+            {
+                var regMenuVisible = (bool)value[0];
+                var account = value[1];
+
+                if (!regMenuVisible && account == null)
+                    return Visibility.Visible;
+
+                return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class RegistrationMenuVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is bool)
+            {
+                var regMenuVisible = (bool)value[0];
+                var account = value[1];
+
+                if (regMenuVisible && account == null)
+                    return Visibility.Visible;
+
+                return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class CloneDataConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.Clone();
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            var objects = new object[targetType.Length];
+
+            for (int i = 0; i < targetType.Length; i++)
+                objects.Append(Binding.DoNothing);
+
+            return objects;
         }
     }
 }

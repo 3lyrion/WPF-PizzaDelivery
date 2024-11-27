@@ -24,7 +24,7 @@ namespace Interfaces.DTO
 
         public int Id { get; set; }
 
-        public DateTime? CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
         public decimal? Cost { get; set; }
 

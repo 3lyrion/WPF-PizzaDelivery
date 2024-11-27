@@ -25,6 +25,7 @@ namespace PizzaDelivery.Model
         }
 
         string address;
+        string recipientName;
         decimal cost;
         DateTime creationTime;
         OrderStatus status;
@@ -36,6 +37,16 @@ namespace PizzaDelivery.Model
             {
                 address = value;
                 OnPropertyChanged("Address");
+            }
+        }
+
+        public string RecipientName
+        {
+            get { return recipientName; }
+            set
+            {
+                recipientName = value;
+                OnPropertyChanged("RecipientName");
             }
         }
 
@@ -67,6 +78,14 @@ namespace PizzaDelivery.Model
                 status = value;
                 OnPropertyChanged("Status");
             }
+        }
+
+        public void Clear()
+        {
+            Address = "";
+            Cost = 0.0m;
+            CreationTime = new DateTime();
+            Status = 0;
         }
     }
 }
