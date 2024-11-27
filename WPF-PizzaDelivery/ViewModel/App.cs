@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DTO = Interfaces.DTO;
@@ -35,6 +34,17 @@ namespace PizzaDelivery.ViewModel
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
         List<DTO.Recipe> allRecipes;
+
+        bool checkoutMenuVisible = false;
+        public bool CheckoutMenuVisible
+        {
+            get { return checkoutMenuVisible; }
+            set
+            {
+                checkoutMenuVisible = value;
+                OnPropertyChanged("CheckoutMenuVisible");
+            }
+        }
 
         bool tabControlEnabled = true;
         public bool TabControlEnabled
@@ -69,6 +79,73 @@ namespace PizzaDelivery.ViewModel
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
+
+        RelayCommand payOrder;
+        public RelayCommand PayOrder
+        {
+            get
+            {
+                return payOrder ??
+                    (payOrder = new RelayCommand(obj =>
+                    {
+                        CheckoutMenuVisible = false;
+
+                        foreach (var op in OrderParts)
+                        {
+
+                        }
+
+                        OrderParts.Clear();
+
+                    }));
+            }
+        }
+
+        RelayCommand gotoCheckoutMenu;
+        public RelayCommand GoToCheckoutMenu
+        {
+            get
+            {
+                return gotoCheckoutMenu ??
+                    (gotoCheckoutMenu = new RelayCommand(obj =>
+                    {
+                       CheckoutMenuVisible = true;
+
+                    }, (obj) => (OrderParts.Count > 0)));
+            }
+        }
+
+        RelayCommand closeCheckoutMenu;
+        public RelayCommand CloseCheckoutMenu
+        {
+            get
+            {
+                return closeCheckoutMenu ??
+                    (closeCheckoutMenu = new RelayCommand(obj =>
+                    {
+                        CheckoutMenuVisible = false;
+
+                    }));
+            }
+        }
+
+        RelayCommand switchCheckoutMenuVisibility;
+        public RelayCommand SwitchCheckoutMenuVisibility
+        {
+            get
+            {
+                return switchCheckoutMenuVisibility ??
+                    (switchCheckoutMenuVisibility = new RelayCommand(obj =>
+                    {
+                        if (obj is bool)
+                            CheckoutMenuVisible = (bool)obj;
+
+                        else
+                            CheckoutMenuVisible = !CheckoutMenuVisible;
+
+                    }));
+            }
+        }
 
         RelayCommand selectPizzaSizeCommand;
         public RelayCommand SelectPizzaSizeCommand

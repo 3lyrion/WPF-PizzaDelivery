@@ -203,14 +203,48 @@
                                         <ColumnDefinition Width="320" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
+                                    <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                                    <Button Grid.Column="2" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
+                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenu}" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
                                         Оформить заказ
                                     </Button>
                                 </Grid>
 
                                 <uc:OrderPartEditor Grid.Row="1" Grid.RowSpan="2" />
+
+                                <materialDesign:Card Grid.Row="1" Grid.RowSpan="2" Visibility="{Binding Path=CheckoutMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid Width="600">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="8*" />
+                                            <RowDefinition Height="2*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Margin="0, 150, 0, 0" Width="450" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
+                                            <TextBox Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                        </StackPanel>
+
+                                        <Grid Grid.ColumnSpan="2" Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1.5*" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Итого: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
+
+                                            <Button Grid.Column="1" Content="Оплатить" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
+                                            <Button Grid.Column="2" Command="{Binding CloseCheckoutMenu}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
+                                                Отмена
+                                            </Button>
+                                        </Grid>
+
+                                    </Grid>
+                                </materialDesign:Card>
 
                             </Grid>
                         </Border>
@@ -255,11 +289,11 @@
                                                         <ColumnDefinition />
                                                         <ColumnDefinition />
                                                     </Grid.ColumnDefinitions>
-                                                    <Label Content="Номер телефона:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                    <Label Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center">
 
                                                     </Label>
                                                     <TextBox Grid.Column="1" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="0"/>
-                                                    <Label Grid.Row="1" Content="Пароль:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                                    <Label Grid.Row="1" Content="Пароль" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
                                                     <PasswordBox Grid.Row="1" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
 
                                                     <Grid Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
@@ -309,13 +343,13 @@
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
 
-                                                        <Label Padding="0" Content="Номер телефона:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
+                                                        <Label Padding="0" Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
                                                         <TextBox Grid.Column="1" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="20,10,0,10"/>
 
-                                                        <Label Grid.Row="1" Padding="0" Content="Пароль:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
+                                                        <Label Grid.Row="1" Padding="0" Content="Пароль" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
                                                         <PasswordBox Grid.Row="1" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
 
-                                                        <Label Grid.Row="2" Padding="0" Content="Пароль повторно:" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
+                                                        <Label Grid.Row="2" Padding="0" Content="Пароль повторно" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
                                                         <PasswordBox Grid.Row="2" Grid.Column="1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
 
                                                         <Grid Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
