@@ -47,7 +47,18 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
-        public Model.OrderPart OriginalOrderPart { get; set; } = new Model.OrderPart();
+        Model.OrderPart selectedOrderPart;
+        public Model.OrderPart SelectedOrderPart
+        {
+            get { return selectedOrderPart; }
+            set
+            {
+                selectedOrderPart = value;
+                OnPropertyChanged("SelectedOrderPart");
+            }
+        }
+
+        public Model.OrderPart OriginalOrderPart { get; set; }
 
         public Model.Order CurrentOrder { get; set; }
 
@@ -58,24 +69,6 @@ namespace PizzaDelivery.ViewModel
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
-
-        Model.OrderPart createOrderPart()
-        {
-            var orderPart = new Model.OrderPart();
-            orderPart.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "PizzaSize" || e.PropertyName == "Quantity")
-                {
-                    if (orderPart.Pizza == null) return;
-
-                    orderPart.Cost = orderPart.Pizza.Cost * orderPart.Quantity * (decimal)orderPart.PizzaSize.CostMult;
-
-                    updateOrderCost();
-                }
-            };
-
-            return orderPart;
-        }
 
         RelayCommand selectPizzaSizeCommand;
         public RelayCommand SelectPizzaSizeCommand
@@ -89,7 +82,7 @@ namespace PizzaDelivery.ViewModel
                         {
                             var pizzaSize = obj as Model.PizzaSize;
 
-                            CurrentOrder.SelectedPart.PizzaSize = allPizzaSizes.Find(e => e.Size == pizzaSize.Size);
+                            SelectedOrderPart.PizzaSize = allPizzaSizes.Find(e => e.Size == pizzaSize.Size);
                         }
                     }));
             }
@@ -107,7 +100,7 @@ namespace PizzaDelivery.ViewModel
                         {
                             var dough = obj as Model.Dough;
 
-                            CurrentOrder.SelectedPart.Dough = allDough.Find(e => e.Name == dough.Name);
+                            SelectedOrderPart.Dough = allDough.Find(e => e.Name == dough.Name);
                         }
                     }));
             }
@@ -127,12 +120,12 @@ namespace PizzaDelivery.ViewModel
                       {
                           var pizza = obj as Model.Pizza;
 
-                          CurrentOrder.SelectedPart = createOrderPart();
+                          SelectedOrderPart = createOrderPart();
 
-                          CurrentOrder.SelectedPart.CopyTo(OriginalOrderPart);
+                          SelectedOrderPart.CopyTo(OriginalOrderPart);
 
-                          CurrentOrder.SelectedPart.Quantity = 1;
-                          CurrentOrder.SelectedPart.Pizza = pizza;
+                          SelectedOrderPart.Quantity = 1;
+                          SelectedOrderPart.Pizza = pizza;
                       }
 
                       else if (obj is Model.OrderPart)
@@ -143,7 +136,7 @@ namespace PizzaDelivery.ViewModel
 
                           orderPart.Quantity = 1;
 
-                          CurrentOrder.SelectedPart = orderPart;
+                          SelectedOrderPart = orderPart;
                       }
 
                       TabControlEnabled = false;
@@ -160,8 +153,8 @@ namespace PizzaDelivery.ViewModel
                 return cancelOrderPartCommand ??
                   (cancelOrderPartCommand = new RelayCommand(obj =>
                   {
-                      OriginalOrderPart.CopyTo(CurrentOrder.SelectedPart);
-                      CurrentOrder.SelectedPart = null;
+                      OriginalOrderPart.CopyTo(SelectedOrderPart);
+                      SelectedOrderPart = null;
 
                       TabControlEnabled = true;
 
@@ -180,38 +173,38 @@ namespace PizzaDelivery.ViewModel
                         // Изменение существующей части заказа
                         foreach (var orderPart in OrderParts)
                         {
-                            if (orderPart == CurrentOrder.SelectedPart)
+                            if (orderPart == SelectedOrderPart)
                             {
                                 orderPart.Quantity = OriginalOrderPart.Quantity;
 
-                                CurrentOrder.SelectedPart = null;
+                                SelectedOrderPart = null;
 
                                 return;
                             }
 
                             // Если уже есть в точности такая же пицца,
                             // то зачем добавлять новую часть заказа?
-                            if (orderPart.Pizza == CurrentOrder.SelectedPart.Pizza
-                                && orderPart.Dough == CurrentOrder.SelectedPart.Dough
-                                && orderPart.PizzaSize == CurrentOrder.SelectedPart.PizzaSize)
+                            if (orderPart.Pizza == SelectedOrderPart.Pizza
+                                && orderPart.Dough == SelectedOrderPart.Dough
+                                && orderPart.PizzaSize == SelectedOrderPart.PizzaSize)
                             {
                                 IncreasePizzaQuantityCommand.Execute(orderPart);
 
-                                CurrentOrder.SelectedPart = null;
+                                SelectedOrderPart = null;
 
                                 return;
                             }
                         }
 
-                        CurrentOrder.SelectedPart.Quantity = 1;
+                        SelectedOrderPart.Quantity = 1;
 
-                        OrderParts.Add(CurrentOrder.SelectedPart);
+                        OrderParts.Add(SelectedOrderPart);
 
-                        CurrentOrder.SelectedPart = null;
+                        SelectedOrderPart = null;
 
                         TabControlEnabled = true;
 
-                    }, (obj) => (CurrentOrder.SelectedPart != null && CurrentOrder.SelectedPart.PizzaSize != null && CurrentOrder.SelectedPart.Dough != null)));
+                    }, (obj) => (SelectedOrderPart != null && SelectedOrderPart.PizzaSize != null && SelectedOrderPart.Dough != null)));
             }
         }
 
@@ -296,17 +289,6 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
-        /*
-        theClientService : SV.IClient, theCourierService : SV.ICourier, theDoughService : SV.IDough, theOrderService : SV.IOrder, SV.IPizza thePizzaService
-
-         ,
-        ,
-        SV.IPizzaOrder thePizzaOrderService,
-        SV.IPizzaSize thePizzaSizeService,
-        SV.IReport theReportService
-        */
-
-
         public App(
             SV.IClient theClientService,
             SV.IDough theDoughService,
@@ -330,6 +312,26 @@ namespace PizzaDelivery.ViewModel
             load();
         }
 
+        Model.OrderPart createOrderPart()
+        {
+            var orderPart = new Model.OrderPart();
+            orderPart.Dough = allDough.Find(e => e.Name == "Традиционное");
+            orderPart.PizzaSize = allPizzaSizes.Find(e => e.Size == 25);
+            orderPart.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "PizzaSize" || e.PropertyName == "Quantity")
+                {
+                    if (orderPart.Pizza == null) return;
+
+                    orderPart.Cost = orderPart.Pizza.Cost * orderPart.Quantity * (decimal)orderPart.PizzaSize.CostMult;
+
+                    updateOrderCost();
+                }
+            };
+
+            return orderPart;
+        }
+
         void updateOrderCost()
         {
             CurrentOrder.Cost = OrderParts.Sum(e => e.Cost);
@@ -350,6 +352,8 @@ namespace PizzaDelivery.ViewModel
             allPizzaSizes = pizzaSizeService.GetList();
             allRecipes = recipeService.GetList();
 
+            OriginalOrderPart = new Model.OrderPart();
+
             CurrentOrder = new Model.Order();
 
             Dough = new ObservableCollection<Model.Dough>();
@@ -369,27 +373,8 @@ namespace PizzaDelivery.ViewModel
                 });
 
             Pizzas = new ObservableCollection<Model.Pizza>();
-
             foreach (var pizzaDto in allPizzas)
             {
-                //int quantity = 0;
-                /*
-                try
-                {
-                    var poDto = allPizzaOrders.First(e => e.PizzaId == pizzaDto.Id && e.Id == 1);
-
-                    quantity = poDto.Quantity;
-                }
-
-                catch
-                {
-                    
-                }
-
-                finally
-                {*/
-
-
                 var pizza = new Model.Pizza
                 {
                     Name = pizzaDto.Name,
@@ -411,35 +396,9 @@ namespace PizzaDelivery.ViewModel
                 .ToList();
 
                 Pizzas.Add(pizza);
-               // }
             }
             
             OrderParts = new ObservableCollection<Model.OrderPart>();
-            /*
-            foreach (var poDto in allPizzaOrders.Where(e => e.id == 1))
-            {
-                var doughDto = allDough.First(e => e.id == poDto.dough_id);
-                var pizzaDto = allPizzas.First(e => e.id == poDto.pizza_id);
-                var sizeDto = allPizzaSizes.First(e => e.id == poDto.size_id);
-
-                
-                var part = new Model.OrderPart();
-                part.Name = pizzaDto.name;
-                part.Cost = pizzaDto.cost;
-                part.Quantity = poDto.quantity;
-                part.DoughName = doughDto.name;
-                part.SizeName = sizeDto.name;
-                part.SizeValue = sizeDto.size;
-                
-                OrderParts.Add(part);
-            }
-            */
-
-
-
-        //    menuPage = FindName("Page_Menu") as FrameworkElement;
-        //    cartPage = FindName("Page_Cart") as FrameworkElement;
-        //    profilePage = FindName("Page_Profile") as FrameworkElement;
         }
     }
 }

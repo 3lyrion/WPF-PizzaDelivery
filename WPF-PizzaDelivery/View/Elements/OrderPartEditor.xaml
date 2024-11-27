@@ -20,7 +20,7 @@
         <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
     </UserControl.Resources>
     <!-- Меню изменения части заказа -->
-    <materialDesign:Card Visibility="{Binding Path=CurrentOrder.SelectedPart, Converter={StaticResource ObjectToVisibilityConverter}}">
+    <materialDesign:Card Visibility="{Binding Path=SelectedOrderPart, Converter={StaticResource ObjectToVisibilityConverter}}">
         <Grid Width="600" Height="600">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
@@ -38,8 +38,8 @@
                     <RowDefinition />
                     <RowDefinition Height="200" />
                 </Grid.RowDefinitions>
-                <Label Content="{Binding Path=CurrentOrder.SelectedPart.Pizza.Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
-                <Image Grid.Row="1" Source="{Binding Path=CurrentOrder.SelectedPart.Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" Width="195" Height="195" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Label Content="{Binding Path=SelectedOrderPart.Pizza.Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
+                <Image Grid.Row="1" Source="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" Width="195" Height="195" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>
 
             <!-- Ингредиенты -->
@@ -52,7 +52,7 @@
                 <Label Content="Состав" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
 
                 <ScrollViewer Grid.Row="1" Width="200" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ItemsControl ItemsSource="{Binding CurrentOrder.SelectedPart.Pizza.Ingredients}">
+                    <ItemsControl ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel>
@@ -100,7 +100,7 @@
                                 <RadioButton.IsChecked>
                                     <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentDoughToBoolConverter}">
                                         <Binding Path="." />
-                                        <Binding Path="DataContext.CurrentOrder" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                        <Binding Path="DataContext.SelectedOrderPart" RelativeSource="{RelativeSource AncestorType=Window}" />
                                     </MultiBinding>
                                 </RadioButton.IsChecked>
                             </RadioButton>
@@ -136,7 +136,7 @@
                                 <RadioButton.IsChecked>
                                     <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentSizeToBoolConverter}">
                                         <Binding Path="." />
-                                        <Binding Path="DataContext.CurrentOrder" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                        <Binding Path="DataContext.SelectedOrderPart" RelativeSource="{RelativeSource AncestorType=Window}" />
                                     </MultiBinding>
                                 </RadioButton.IsChecked>
                             </RadioButton>
@@ -153,7 +153,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Label Content="{Binding Path=CurrentOrder.SelectedPart.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Цена: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
+                <Label Content="{Binding Path=SelectedOrderPart.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Цена: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
                 <Button Grid.Column="1" Command="{Binding SubmitOrderPartCommand}" Content="{Binding Path=OriginalOrderPart.Quantity, Converter={StaticResource SubmitOrderTextConverter}}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
                 <Button Grid.Column="2" Command="{Binding CancelOrderPartCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">

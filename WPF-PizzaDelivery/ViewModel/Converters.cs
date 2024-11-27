@@ -180,7 +180,7 @@ namespace PizzaDelivery.ViewModel
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
+            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
         }
     }
 
@@ -298,9 +298,9 @@ namespace PizzaDelivery.ViewModel
             if (value[0] is Model.Dough)
             {
                 var dough = value[0] as Model.Dough;
-                var order = value[1] as Model.Order;
+                var op = value[1] as Model.OrderPart;
 
-                if (order.SelectedPart != null && order.SelectedPart.Dough != null && order.SelectedPart.Dough.Name == dough.Name)
+                if (op != null && op.Dough != null && op.Dough.Name == dough.Name)
                     return true;
 
                 return false;
@@ -322,9 +322,9 @@ namespace PizzaDelivery.ViewModel
             if (value[0] is Model.PizzaSize)
             {
                 var pizzaSize = value[0] as Model.PizzaSize;
-                var order = value[1] as Model.Order;
+                var op = value[1] as Model.OrderPart;
 
-                if (order.SelectedPart != null && order.SelectedPart.PizzaSize != null && order.SelectedPart.PizzaSize.Size == pizzaSize.Size)
+                if (op != null && op.PizzaSize != null && op.PizzaSize.Size == pizzaSize.Size)
                     return true;
 
                 return false;
