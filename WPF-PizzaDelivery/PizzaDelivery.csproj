@@ -119,6 +119,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Elements\OrdersList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,6 +135,9 @@
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="View\Elements\OrderPartEditor.xaml.cs">
       <DependentUpon>OrderPartEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Elements\OrdersList.xaml.cs">
+      <DependentUpon>OrdersList.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

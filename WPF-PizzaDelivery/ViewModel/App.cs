@@ -38,6 +38,17 @@ namespace PizzaDelivery.ViewModel
         List<DTO.PizzaSize> allPizzaSizes;
         List<DTO.Recipe> allRecipes;
 
+        bool profileMenuVisible = false;
+        public bool ProfileMenuVisible
+        {
+            get { return profileMenuVisible; }
+            set
+            {
+                profileMenuVisible = value;
+                OnPropertyChanged("ProfileMenuVisible");
+            }
+        }
+
         bool regMenuVisible = false;
         public bool RegistrationMenuVisible
         {
@@ -136,8 +147,8 @@ namespace PizzaDelivery.ViewModel
 
                         try
                         {
-                            Account = allClients.Find(e => e.PhoneNumber == phoneNumber && e.Password == password);
-                            loadOrders();
+                            Account = allClients.First(e => e.PhoneNumber == phoneNumber && e.Password == password);
+                            gotoProfileMenu();
                         }
 
                         catch { }
@@ -169,7 +180,7 @@ namespace PizzaDelivery.ViewModel
                                 PhoneNumber = phoneNumber
                             };
 
-                            loadOrders();
+                            gotoProfileMenu();
                         }
 
                     }));
@@ -185,7 +196,7 @@ namespace PizzaDelivery.ViewModel
                     (payOrderCommand = new RelayCommand(obj =>
                     {
                         CheckoutMenuVisible = false;
-                        
+
                         allOrders.Add(new DTO.Order
                         {
                             Address = CurrentOrder.Address,
@@ -202,6 +213,15 @@ namespace PizzaDelivery.ViewModel
                                 SizeId = allPizzaSizes.Find(e => e.Size == op.PizzaSize.Size).Id
                             });
                         }
+
+                        ActualOrders.Insert(0, new Model.Order
+                        {
+                            Address = CurrentOrder.Address,
+                            Cost = CurrentOrder.Cost,
+                            CreationDate = DateTime.Now,
+                            Parts = OrderParts.ToList(),
+                            Status = DTO.OrderStatus.Preparation
+                        });
 
                         CurrentOrder.Clear();
 
@@ -221,7 +241,7 @@ namespace PizzaDelivery.ViewModel
                     {
                        CheckoutMenuVisible = true;
 
-                    }, (obj) => (OrderParts.Count > 0/* && Account != null*/)));
+                    }, (obj) => (OrderParts.Count > 0 && Account != null)));
             }
         }
 
@@ -492,15 +512,16 @@ namespace PizzaDelivery.ViewModel
             CurrentOrder.Cost = OrderParts.Sum(e => e.Cost);
         }
 
-        void loadOrders()
+        void gotoProfileMenu()
         {
             var orders = allOrders
                 .Where(e => e.ClientId == Account.Id)
+                .OrderByDescending(e => e.CreationDate)
                 .Select(o => new Model.Order
                 {
                     Address = o.Address,
                     Cost = o.Cost.Value,
-                    CreationTime = o.CreationDate,
+                    CreationDate = o.CreationDate,
                     Status = o.Status,
                     Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
                     {
@@ -515,9 +536,6 @@ namespace PizzaDelivery.ViewModel
 
             foreach (var order in orders)
             {
-                PastOrders.Add(order);
-
-                /*
                 if (order.Status == DTO.OrderStatus.Success ||
                     order.Status == DTO.OrderStatus.Cancellation)
                 {
@@ -525,8 +543,9 @@ namespace PizzaDelivery.ViewModel
                 }
 
                 else ActualOrders.Add(order);
-                */
             }
+
+            ProfileMenuVisible = true;
         }
 
         void load()

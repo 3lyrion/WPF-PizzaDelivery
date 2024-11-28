@@ -20,7 +20,7 @@ namespace PizzaDelivery.Model
         string address;
         string recipientName;
         decimal cost;
-        DateTime creationTime;
+        DateTime creationDate;
         DTO.OrderStatus status;
         List<Model.OrderPart> parts;
         
@@ -54,13 +54,13 @@ namespace PizzaDelivery.Model
             }
         }
 
-        public DateTime CreationTime
+        public DateTime CreationDate
         {
-            get { return creationTime; }
+            get { return creationDate; }
             set
             {
-                creationTime = value;
-                OnPropertyChanged("CreationTime");
+                creationDate = value;
+                OnPropertyChanged("CreationDate");
             }
         }
 
@@ -88,9 +88,9 @@ namespace PizzaDelivery.Model
         {
             Address = "";
             Cost = 0.0m;
-            CreationTime = new DateTime();
+            CreationDate = default;
             Status = 0;
-            Parts.Clear();
+            Parts?.Clear();
         }
     }
 }

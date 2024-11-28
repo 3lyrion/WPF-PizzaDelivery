@@ -41,39 +41,6 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
-    public class InverseBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool)
-            {
-                return !(bool)value;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ObjectToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null) return Visibility.Hidden;
-
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class SizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -239,6 +206,55 @@ namespace PizzaDelivery.ViewModel
 
                 if (quantity > 0) return Visibility.Visible;
                 return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DateTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DateTime)
+            {
+                var dt = (DateTime)value;
+
+                var month = dt.Month.ToString();
+                if (month.Length == 1) month = '0' + month;
+
+                return $"{dt.Day}.{month}.{dt.Year} {dt.Hour}:{dt.Minute}";
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class OrderStatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DTO.OrderStatus)
+            {
+                var status = (DTO.OrderStatus)value;
+
+                switch (status)
+                {
+                case DTO.OrderStatus.Cancellation: return "Отменён";
+                case DTO.OrderStatus.Delivery: return "Доставляется";
+                case DTO.OrderStatus.Preparation: return "Готовится";
+                case DTO.OrderStatus.Success: return "Доставлен";
+                }
             }
 
             return value;

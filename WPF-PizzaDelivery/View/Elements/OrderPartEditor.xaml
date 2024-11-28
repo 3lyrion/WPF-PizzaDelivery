@@ -12,7 +12,6 @@
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
         <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
-        <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
         <local:DoughConverter x:Key="DoughConverter" />
         <local:CurrentDoughToBoolConverter x:Key="CurrentDoughToBoolConverter" />
         <local:SizeConverter x:Key="SizeConverter" />
