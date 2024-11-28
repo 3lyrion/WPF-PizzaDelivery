@@ -60,17 +60,6 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
-        bool tabControlEnabled = true;
-        public bool TabControlEnabled
-        {
-            get { return tabControlEnabled; }
-            set
-            {
-                tabControlEnabled = value;
-                OnPropertyChanged("TabControlEnabled");
-            }
-        }
-
         Model.OrderPart selectedOrderPart;
         public Model.OrderPart SelectedOrderPart
         {
@@ -148,6 +137,7 @@ namespace PizzaDelivery.ViewModel
                         try
                         {
                             Account = allClients.Find(e => e.PhoneNumber == phoneNumber && e.Password == password);
+                            loadOrders();
                         }
 
                         catch { }
@@ -178,6 +168,8 @@ namespace PizzaDelivery.ViewModel
                                 Password = password,
                                 PhoneNumber = phoneNumber
                             };
+
+                            loadOrders();
                         }
 
                     }));
@@ -229,7 +221,7 @@ namespace PizzaDelivery.ViewModel
                     {
                        CheckoutMenuVisible = true;
 
-                    }, (obj) => (OrderParts.Count > 0 && Account != null)));
+                    }, (obj) => (OrderParts.Count > 0/* && Account != null*/)));
             }
         }
 
@@ -500,6 +492,43 @@ namespace PizzaDelivery.ViewModel
             CurrentOrder.Cost = OrderParts.Sum(e => e.Cost);
         }
 
+        void loadOrders()
+        {
+            var orders = allOrders
+                .Where(e => e.ClientId == Account.Id)
+                .Select(o => new Model.Order
+                {
+                    Address = o.Address,
+                    Cost = o.Cost.Value,
+                    CreationTime = o.CreationDate,
+                    Status = o.Status,
+                    Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
+                    {
+                        //Cost = p.Cost.Value,
+                        Dough = allDough.Find(a => a.Id == p.DoughId),
+                        Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
+                        PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
+                        Quantity = p.Quantity
+
+                    }).ToList()
+                }).ToList();
+
+            foreach (var order in orders)
+            {
+                PastOrders.Add(order);
+
+                /*
+                if (order.Status == DTO.OrderStatus.Success ||
+                    order.Status == DTO.OrderStatus.Cancellation)
+                {
+                    PastOrders.Add(order);
+                }
+
+                else ActualOrders.Add(order);
+                */
+            }
+        }
+
         void load()
         {
             loadMembers();
@@ -519,6 +548,9 @@ namespace PizzaDelivery.ViewModel
             OriginalOrderPart = new Model.OrderPart();
 
             CurrentOrder = new Model.Order();
+
+            ActualOrders = new ObservableCollection<Model.Order>();
+            PastOrders = new ObservableCollection<Model.Order>();
 
             Dough = new ObservableCollection<Model.Dough>();
             foreach (var doughDto in allDough)

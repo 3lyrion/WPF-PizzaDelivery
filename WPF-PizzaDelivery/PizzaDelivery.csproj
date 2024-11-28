@@ -101,7 +101,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Client.cs" />
     <Compile Include="Model\Dough.cs" />
     <Compile Include="Model\Ingredient.cs" />
     <Compile Include="Model\Order.cs" />
@@ -129,7 +128,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\Converters.cs" />
-    <Compile Include="ViewModel\Login.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="View\Elements\OrderPartEditor.xaml.cs">
       <DependentUpon>OrderPartEditor.xaml</DependentUpon>

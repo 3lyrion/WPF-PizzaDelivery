@@ -22,6 +22,7 @@
         <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
+        <local:OrderHistoryPartBottomLabelConverter x:Key="OrderHistoryPartBottomLabelConverter" />
         <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
         <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
         <local:InverseBoolConverter x:Key="InverseBoolConverter" />
@@ -256,18 +257,24 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
-                                        <StackPanel Margin="0, 150, 0, 0" Width="450" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Grid Margin="0, 150, 0, 0" Width="600" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="3.5*" />
+                                                <ColumnDefinition Width="6.5*" />
+                                            </Grid.ColumnDefinitions>
+                                            
                                             <!-- Адрес -->
-                                            <StackPanel>
-                                                <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
-                                                <TextBox Text="{Binding CurrentOrder.Address}" Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
-                                            </StackPanel>
+                                            <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
+                                            <TextBox Grid.Column="1" Text="{Binding CurrentOrder.Address}" Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                            
                                             <!-- Имя получателя -->
-                                            <StackPanel>
-                                                <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Имя получателя" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
-                                                <TextBox Text="{Binding CurrentOrder.RecipentName}" Padding="10" Width="350" Height="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
-                                            </StackPanel>
-                                        </StackPanel>
+                                            <Label Grid.Row="1" Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Имя получателя" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
+                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentOrder.RecipientName}" Padding="10" Width="350" Height="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
+                                        </Grid>
 
                                         <Grid Grid.ColumnSpan="2" Grid.Row="2">
                                             <Grid.ColumnDefinitions>
@@ -439,6 +446,93 @@
                                         </Grid>
                                     </materialDesign:Card>
                                 </Viewbox>
+
+                                <Grid Grid.Row="1" Width="1000" Height="600">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Прошлые заказы -->
+                                    <Label Content="Прошлые заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" />
+                                    <ScrollViewer Grid.Row="1" Width="500" Padding="0" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding PastOrders}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel>
+                                                        <StackPanel.Resources>
+                                                            <Style TargetType="materialDesign:Card">
+                                                                <Setter Property="Margin" Value="0, 0, 0, 10" />
+                                                            </Style>
+                                                        </StackPanel.Resources>
+                                                    </StackPanel>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <materialDesign:Card Width="400" Padding="10,10">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition />
+                                                                <RowDefinition Height="30" />
+                                                            </Grid.RowDefinitions>
+
+                                                            <ItemsControl ItemsSource="{Binding Parts}">
+                                                                <ItemsControl.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <StackPanel />
+                                                                    </ItemsPanelTemplate>
+                                                                </ItemsControl.ItemsPanel>
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                                            <Grid>
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="75" />
+                                                                                    <ColumnDefinition />
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Image Margin="5" Source="{Binding Path=Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                <Grid Grid.Column="1">
+                                                                                    <Grid.RowDefinitions>
+                                                                                        <RowDefinition Height="40" />
+                                                                                        <RowDefinition />
+                                                                                    </Grid.RowDefinitions>
+
+                                                                                    <Label Content="{Binding Pizza.Name}" FontWeight="Bold" FontSize="16" />
+
+                                                                                    <Label Grid.Row="1" FontSize="12" FontWeight="Bold" Foreground="Gray">
+                                                                                        <Label.Content>
+                                                                                            <MultiBinding Converter="{StaticResource OrderHistoryPartBottomLabelConverter}">
+                                                                                                <Binding Path="PizzaSize" />
+                                                                                                <Binding Path="Dough" />
+                                                                                                <Binding Path="Quantity" />
+                                                                                            </MultiBinding>
+                                                                                        </Label.Content>
+                                                                                    </Label>
+                                                                                    
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+
+                                                        </Grid>
+                                                    </materialDesign:Card>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+
+                                    <!-- Текущие заказы -->
+                                    <Label Grid.Column="1" Content="Текущие заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" />
+
+                                </Grid>
+                                
                             </Grid>
                         </Border>
                     </TabItem>

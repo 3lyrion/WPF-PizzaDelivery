@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using DTO = Interfaces.DTO;
 
 namespace PizzaDelivery.Model
 {
-    public enum OrderStatus
-    {
-        Preparation,
-        Delivery,
-        Success,
-        Cancellation
-    }
-
     public class Order : INotifyPropertyChanged
     {
         public ObservableCollection<string> Models { get; set; }
@@ -28,7 +21,8 @@ namespace PizzaDelivery.Model
         string recipientName;
         decimal cost;
         DateTime creationTime;
-        OrderStatus status;
+        DTO.OrderStatus status;
+        List<Model.OrderPart> parts;
         
         public string Address
         {
@@ -70,7 +64,7 @@ namespace PizzaDelivery.Model
             }
         }
 
-        public OrderStatus Status
+        public DTO.OrderStatus Status
         {
             get { return status; }
             set
@@ -80,12 +74,23 @@ namespace PizzaDelivery.Model
             }
         }
 
+        public List<Model.OrderPart> Parts
+        {
+            get { return parts; }
+            set
+            {
+                parts = value;
+                OnPropertyChanged("Parts");
+            }
+        }
+
         public void Clear()
         {
             Address = "";
             Cost = 0.0m;
             CreationTime = new DateTime();
             Status = 0;
+            Parts.Clear();
         }
     }
 }

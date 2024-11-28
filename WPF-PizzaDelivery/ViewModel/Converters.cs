@@ -157,6 +157,28 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
+    public class OrderHistoryPartBottomLabelConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is DTO.PizzaSize)
+            {
+                var pizzaSize = value[0] as DTO.PizzaSize;
+                var dough = value[1] as DTO.Dough;
+                var quantity = (int)value[2];
+
+                return $"{pizzaSize.Name} {pizzaSize.Size} см, {dough.Name} тесто, x {quantity}";
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
     public class PizzaToQuantityConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)

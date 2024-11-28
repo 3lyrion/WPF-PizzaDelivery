@@ -5,6 +5,14 @@ using DM = DomainModel;
 
 namespace Interfaces.DTO
 {
+    public enum OrderStatus
+    {
+        Preparation,
+        Delivery,
+        Success,
+        Cancellation
+    }
+
     public class Order
     {
         public Order() { }
@@ -39,5 +47,7 @@ namespace Interfaces.DTO
         public int? CourierId { get; set; }
 
         public List<int> PizzaOrdersIds { get; set; }
+
+        public OrderStatus Status { get; set; }
     }
 }
