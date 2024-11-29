@@ -18,7 +18,7 @@ namespace PizzaDelivery.Model
 
         string name;
         decimal cost;
-        List<Ingredient> ingredients;
+        List<Model.Ingredient> ingredients;
 
         public string Name
         {
@@ -40,7 +40,7 @@ namespace PizzaDelivery.Model
             }
         }
 
-        public List<Ingredient> Ingredients
+        public List<Model.Ingredient> Ingredients
         {
             get { return ingredients; }
             set

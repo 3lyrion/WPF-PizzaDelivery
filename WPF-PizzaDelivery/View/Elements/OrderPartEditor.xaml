@@ -12,16 +12,16 @@
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
         <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
+        <local:CustomPizzaToVisibilityConverter x:Key="CustomPizzaToVisibilityConverter" />
+        <local:InverseCustomPizzaToVisibilityConverter x:Key="InverseCustomPizzaToVisibilityConverter" />
         <local:DoughConverter x:Key="DoughConverter" />
         <local:CurrentDoughToBoolConverter x:Key="CurrentDoughToBoolConverter" />
         <local:SizeConverter x:Key="SizeConverter" />
         <local:CurrentSizeToBoolConverter x:Key="CurrentSizeToBoolConverter" />
         <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
     </UserControl.Resources>
-    <!-- Меню изменения части заказа -->
-    <!-- Visibility="{Binding Path=SelectedOrderPart, Converter={StaticResource ObjectToVisibilityConverter}}"-->
     <materialDesign:Card Visibility="{Binding Path=Visibility, RelativeSource={RelativeSource Self}}">
-        <Grid Width="600" Height="600">
+        <Grid Width="700" Height="600">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="2*"/>
@@ -33,43 +33,68 @@
             </Grid.ColumnDefinitions>
 
             <!-- Пицца -->
-            <Grid Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Width="300" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="200" />
                 </Grid.RowDefinitions>
-                <Label Content="{Binding Path=SelectedOrderPart.Pizza.Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
-                <Image Grid.Row="1" Source="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" Width="195" Height="195" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                <Label Content="{Binding Path=SelectedOrderPart.Pizza.Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" Foreground="OrangeRed" />
+                
+                <Image Grid.Row="1" Source="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" Height="195" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>
 
             <!-- Ингредиенты -->
-            <Grid Grid.Column="1" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Grid.Column="1" Width="300" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
                     <RowDefinition />
-                    <RowDefinition Height="200" />
                 </Grid.RowDefinitions>
 
-                <Label Content="Состав" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" />
+                <Label Content="Состав" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" Foreground="OrangeRed" />
 
-                <ScrollViewer Grid.Row="1" Width="200" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ItemsControl ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel>
-                                </StackPanel>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <BulletDecorator>
-                                    <BulletDecorator.Bullet>
-                                        <Ellipse Width="6" Height="6" Fill="Black" />
-                                    </BulletDecorator.Bullet>
-                                    <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
-                                </BulletDecorator>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <ScrollViewer Grid.Row="1" Width="250" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid>
+                        <!-- Обычная пицца - неинтерактивный список ингредиентов -->
+                        <ItemsControl Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource InverseCustomPizzaToVisibilityConverter}}" ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel>
+                                    </StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <BulletDecorator>
+                                        <BulletDecorator.Bullet>
+                                            <Ellipse Width="6" Height="6" Fill="Black" />
+                                        </BulletDecorator.Bullet>
+                                        <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
+                                    </BulletDecorator>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!-- Кастомная пицца - интерактивный список ингредиентов -->
+                        <ListBox Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource CustomPizzaToVisibilityConverter}}" ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Selected}" Command="{Binding DataContext.UpdateCustomPizzaCostCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                                        <Grid Margin="7, 0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Content="{Binding Name}" FontSize="14" />
+
+                                            <Label Grid.Column="1" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" FontSize="14" />
+                                        </Grid>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
                 </ScrollViewer>
             </Grid>
 

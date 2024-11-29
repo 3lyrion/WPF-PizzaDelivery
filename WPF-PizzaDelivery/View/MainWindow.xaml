@@ -100,8 +100,11 @@
                                                                 <RowDefinition />
                                                                 <RowDefinition />
                                                             </Grid.RowDefinitions>
-                                                            <Image Source="{Binding Path=Name, Converter={StaticResource PizzaImagePathConverter}}" Width="145" Height="145" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            
+                                                            <Image Source="{Binding Path=Name, Converter={StaticResource PizzaImagePathConverter}}" Height="145" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            
                                                             <Label Grid.Row="1" Content="{Binding Path=Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                                            
                                                             <Label Grid.Row="2" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="от {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Grid>
                                                     </Button>
@@ -164,7 +167,7 @@
                                                     <materialDesign:Card Width="500" Height="150" Padding="10,10">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
-                                                                <RowDefinition MinHeight="100" />
+                                                                <RowDefinition />
                                                                 <RowDefinition />
                                                             </Grid.RowDefinitions>
                                                             <Grid>
@@ -173,7 +176,9 @@
                                                                     <ColumnDefinition />
                                                                     <ColumnDefinition Width="50" />
                                                                 </Grid.ColumnDefinitions>
-                                                                <Image Margin="7.5, 7.5" Source="{Binding Path=Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                
+                                                                <Image Margin="7.5" Source="{Binding Path=Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                
                                                                 <Grid Grid.Column="1">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="40" />
@@ -191,6 +196,7 @@
                                                                         </Label.Content>
                                                                     </Label>
                                                                 </Grid>
+                                                                
                                                                 <Button Padding="0" Grid.Column="2" Command="{Binding DataContext.RemoveOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
                                                                     <materialDesign:PackIcon Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
                                                                 </Button>
@@ -386,7 +392,6 @@
                                     
                                     <materialDesign:Card Width="600" Height="375" Padding="20, 0, 20, 20" Margin="250,125">
                                         <Grid>
-                                            <!--<Button Content="{materialDesign:PackIcon Kind=CloseBox, Size=48}" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" Width="48" Height="48" Margin="0,7.5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top"/>-->
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="60"/>

@@ -38,6 +38,17 @@ namespace PizzaDelivery.ViewModel
         List<DTO.PizzaSize> allPizzaSizes;
         List<DTO.Recipe> allRecipes;
 
+        bool customPizzaEditorVisible = false;
+        public bool CustomPizzaEditorVisible
+        {
+            get { return customPizzaEditorVisible; }
+            set
+            {
+                customPizzaEditorVisible = value;
+                OnPropertyChanged("CustomPizzaEditorVisible");
+            }
+        }
+
         bool profileMenuVisible = false;
         public bool ProfileMenuVisible
         {
@@ -104,6 +115,21 @@ namespace PizzaDelivery.ViewModel
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
         public ObservableCollection<Model.Order> ActualOrders { get; set; }
+
+        RelayCommand updateCustomPizzaCostCommand;
+        public RelayCommand UpdateCustomPizzaCostCommand
+        {
+            get
+            {
+                return updateCustomPizzaCostCommand ??
+                    (updateCustomPizzaCostCommand = new RelayCommand(obj =>
+                    {
+                        // Триггерю обновление цены
+                        SelectedOrderPart.Quantity = SelectedOrderPart.Quantity;
+
+                    }));
+            }
+        }
 
         RelayCommand gotoLoginMenuCommand;
         public RelayCommand GoToLoginMenuCommand
@@ -295,6 +321,20 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
+        RelayCommand createCustomPizzaCommand;
+        public RelayCommand CreateCustomPizzaCommand
+        {
+            get
+            {
+                return createCustomPizzaCommand ??
+                    (createCustomPizzaCommand = new RelayCommand(obj =>
+                    {
+                        CustomPizzaEditorVisible = true;
+
+                    }));
+            }
+        }
+
         RelayCommand editOrderPartCommand;
         public RelayCommand EditOrderPartCommand
         {
@@ -310,6 +350,8 @@ namespace PizzaDelivery.ViewModel
                         if (objects[0] is Model.Pizza)
                         {
                             var pizza = objects[0] as Model.Pizza;
+
+                            if (pizza.Name == "Создать свою") pizza.Name = "Своя";
 
                             SelectedOrderPart = createOrderPart();
 
@@ -498,7 +540,8 @@ namespace PizzaDelivery.ViewModel
                 {
                     if (orderPart.Pizza == null) return;
 
-                    orderPart.Cost = orderPart.Pizza.Cost * orderPart.Quantity * (decimal)orderPart.PizzaSize.CostMult;
+                    orderPart.Cost = (orderPart.Pizza.Cost + orderPart.Pizza.Ingredients.Where(e => e.Selected).Sum(e => e.Cost))
+                        * orderPart.Quantity * (decimal)orderPart.PizzaSize.CostMult;
 
                     updateOrderCost();
                 }
@@ -612,6 +655,32 @@ namespace PizzaDelivery.ViewModel
 
                 Pizzas.Add(pizza);
             }
+
+            // Кастомная пицца
+            var pc = new Model.Pizza
+            {
+                Cost = 289.0m,
+                Ingredients = new List<Model.Ingredient>(),
+                Name = "Создать свою"
+            };
+
+            pc.Ingredients.Add(new Model.Ingredient
+            {
+                Name = "Томаты",
+                Quantity = 1,
+                Cost = 100.0m,
+                Weight = 100
+            });
+
+            pc.Ingredients.Add(new Model.Ingredient
+            {
+                Name = "Моцарелла",
+                Quantity = 1,
+                Cost = 50.0m,
+                Weight = 50
+            });
+
+            Pizzas.Add(pc);
             
             OrderParts = new ObservableCollection<Model.OrderPart>();
         }

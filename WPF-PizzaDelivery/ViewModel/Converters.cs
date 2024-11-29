@@ -81,6 +81,48 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
+    public class CustomPizzaToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string)
+            {
+                if ((string)value == "Своя")
+                    return Visibility.Visible;
+
+                return Visibility.Hidden;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class InverseCustomPizzaToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string)
+            {
+                if ((string)value == "Своя")
+                    return Visibility.Hidden;
+
+                return Visibility.Visible;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class SubmitOrderTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

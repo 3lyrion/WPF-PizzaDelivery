@@ -16,11 +16,22 @@ namespace PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        bool selected = false;
         string name;
         decimal cost;
         bool inStock;
         int quantity;
         int weight;
+
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                selected = value;
+                OnPropertyChanged("Selected");
+            }
+        }
 
         public string Name
         {

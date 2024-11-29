@@ -15,7 +15,9 @@ namespace PizzaDelivery.Util
             { "Песто", "Pesto" },
             { "Гавайская", "Hawaiian" },
             { "Двойной цыплёнок", "DoubleChicken" },
-            { "Ветчина и сыр", "HamNCheese" }
+            { "Ветчина и сыр", "HamNCheese" },
+            { "Создать свою", "Custom" },
+            { "Своя", "Custom" }
         };
     }
 }
