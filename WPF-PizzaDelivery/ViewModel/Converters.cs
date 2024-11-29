@@ -9,6 +9,45 @@ using DTO = Interfaces.DTO;
 
 namespace PizzaDelivery.ViewModel
 {
+    public class InvertVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility)
+            {
+                var visibility = (Visibility)value;
+
+                if (visibility == Visibility.Visible)
+                    return Visibility.Hidden;
+
+                return Visibility.Visible;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class VisibilityToBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility)
+                return (Visibility)value == Visibility.Visible;
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class PriceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -102,7 +141,7 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
-    public class InverseCustomPizzaToVisibilityConverter : IValueConverter
+    public class InvertCustomPizzaToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -238,7 +277,7 @@ namespace PizzaDelivery.ViewModel
         }
     }
 
-    public class InversePizzaQuantityToVisibilityConverter : IValueConverter
+    public class InvertPizzaQuantityToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

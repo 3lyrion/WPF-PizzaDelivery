@@ -29,7 +29,6 @@ namespace PizzaDelivery.ViewModel
         SV.IPizzaSize pizzaSizeService;
         SV.IRecipe recipeService;
 
-        List<DTO.Client> allClients;
         List<DTO.Dough> allDough;
         List<DTO.Ingredient> allIngredients;
         List<DTO.Order> allOrders;
@@ -109,7 +108,6 @@ namespace PizzaDelivery.ViewModel
         public Model.Order CurrentOrder { get; set; }
 
         public ObservableCollection<Model.Dough> Dough { get; set; }
-        public ObservableCollection<Model.Ingredient> Ingredients { get; set; }
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
@@ -173,7 +171,7 @@ namespace PizzaDelivery.ViewModel
 
                         try
                         {
-                            Account = allClients.First(e => e.PhoneNumber == phoneNumber && e.Password == password);
+                            Account = clientService.GetList().First(e => e.PhoneNumber == phoneNumber && e.Password == password);
                             gotoProfileMenu();
                         }
 
@@ -343,8 +341,6 @@ namespace PizzaDelivery.ViewModel
                 return editOrderPartCommand ??
                     (editOrderPartCommand = new RelayCommand(obj =>
                     {
-                        // Quantity = 1 для правильного расчёта цены
-
                         var objects = obj as object[];
 
                         if (objects[0] is Model.Pizza)
@@ -354,8 +350,6 @@ namespace PizzaDelivery.ViewModel
                             if (pizza.Name == "Создать свою") pizza.Name = "Своя";
 
                             SelectedOrderPart = createOrderPart();
-
-                            SelectedOrderPart.CopyTo(OriginalOrderPart);
 
                             SelectedOrderPart.Pizza = pizza;
                             SelectedOrderPart.Quantity = 1;
@@ -367,6 +361,7 @@ namespace PizzaDelivery.ViewModel
 
                             orderPart.CopyTo(OriginalOrderPart);
 
+                            // Quantity = 1 для расчёта цены за штуку
                             orderPart.Quantity = 1;
 
                             SelectedOrderPart = orderPart;
@@ -406,8 +401,6 @@ namespace PizzaDelivery.ViewModel
                 return submitOrderPartCommand ??
                     (submitOrderPartCommand = new RelayCommand(obj =>
                     {
-                        var editor = obj as View.Elements.OrderPartEditor;
-
                         // Изменение существующей части заказа
                         foreach (var orderPart in OrderParts)
                         {
@@ -439,9 +432,11 @@ namespace PizzaDelivery.ViewModel
 
                         SelectedOrderPart = null;
 
+                        var editor = obj as View.Elements.OrderPartEditor;
                         editor.Visibility = Visibility.Hidden;
 
-                    }, (obj) => (SelectedOrderPart != null && SelectedOrderPart.PizzaSize != null && SelectedOrderPart.Dough != null)));
+                    }, (obj) => (SelectedOrderPart != null && SelectedOrderPart.PizzaSize != null && SelectedOrderPart.Dough != null
+                    && (SelectedOrderPart.Pizza.Name != "Своя" || SelectedOrderPart.Pizza.Name == "Своя" && SelectedOrderPart.Pizza.Ingredients.Count(e => e.Selected) > 1))));
             }
         }
 
@@ -598,7 +593,6 @@ namespace PizzaDelivery.ViewModel
 
         void loadMembers()
         {
-            allClients = clientService.GetList();
             allDough = doughService.GetList();
             allIngredients = ingredientService.GetList();
             allOrders = orderService.GetList();
@@ -657,30 +651,24 @@ namespace PizzaDelivery.ViewModel
             }
 
             // Кастомная пицца
-            var pc = new Model.Pizza
+            var customPizza = new Model.Pizza
             {
                 Cost = 289.0m,
-                Ingredients = new List<Model.Ingredient>(),
+
+                Ingredients = allIngredients
+                .Where(e => e.HiddenFromClient == false)
+                .Select(e => new Model.Ingredient
+                {
+                    Name = e.Name,
+                    Cost = e.Cost,
+                    Quantity = 0
+                })
+                .ToList(),
+
                 Name = "Создать свою"
             };
-
-            pc.Ingredients.Add(new Model.Ingredient
-            {
-                Name = "Томаты",
-                Quantity = 1,
-                Cost = 100.0m,
-                Weight = 100
-            });
-
-            pc.Ingredients.Add(new Model.Ingredient
-            {
-                Name = "Моцарелла",
-                Quantity = 1,
-                Cost = 50.0m,
-                Weight = 50
-            });
-
-            Pizzas.Add(pc);
+            
+            Pizzas.Add(customPizza);
             
             OrderParts = new ObservableCollection<Model.OrderPart>();
         }

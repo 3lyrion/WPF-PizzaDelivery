@@ -8,19 +8,20 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <local:VisibilityToBooleanConverter x:Key="VisibilityToBooleanConverter" />
         <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
-        <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
+        <local:InvertPizzaQuantityToVisibilityConverter x:Key="InvertPizzaQuantityToVisibilityConverter" />
         <local:CustomPizzaToVisibilityConverter x:Key="CustomPizzaToVisibilityConverter" />
-        <local:InverseCustomPizzaToVisibilityConverter x:Key="InverseCustomPizzaToVisibilityConverter" />
+        <local:InvertCustomPizzaToVisibilityConverter x:Key="InvertCustomPizzaToVisibilityConverter" />
         <local:DoughConverter x:Key="DoughConverter" />
         <local:CurrentDoughToBoolConverter x:Key="CurrentDoughToBoolConverter" />
         <local:SizeConverter x:Key="SizeConverter" />
         <local:CurrentSizeToBoolConverter x:Key="CurrentSizeToBoolConverter" />
         <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
     </UserControl.Resources>
-    <materialDesign:Card Visibility="{Binding Path=Visibility, RelativeSource={RelativeSource Self}}">
+    <materialDesign:Card Margin="0, 5, 0, 0" Visibility="{Binding Path=Visibility, RelativeSource={RelativeSource Self}}">
         <Grid Width="700" Height="600">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
@@ -29,7 +30,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition MaxWidth="400" />
             </Grid.ColumnDefinitions>
 
             <!-- Пицца -->
@@ -53,14 +54,15 @@
 
                 <Label Content="Состав" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="24" Foreground="OrangeRed" />
 
-                <ScrollViewer Grid.Row="1" Width="250" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ScrollViewer Grid.Row="1" MaxWidth="350" Height="200" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Grid>
                         <!-- Обычная пицца - неинтерактивный список ингредиентов -->
-                        <ItemsControl Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource InverseCustomPizzaToVisibilityConverter}}" ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
+                        <ItemsControl Width="250" 
+                                      Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource InvertCustomPizzaToVisibilityConverter}}" 
+                                      ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel>
-                                    </StackPanel>
+                                    <StackPanel />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -76,19 +78,21 @@
                         </ItemsControl>
                         
                         <!-- Кастомная пицца - интерактивный список ингредиентов -->
-                        <ListBox Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource CustomPizzaToVisibilityConverter}}" ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
+                        <ListBox Width="350" 
+                                 Visibility="{Binding Path=SelectedOrderPart.Pizza.Name, Converter={StaticResource CustomPizzaToVisibilityConverter}}"
+                                 ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding Selected}" Command="{Binding DataContext.UpdateCustomPizzaCostCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                                        <Grid Margin="7, 0">
+                                        <Grid Width="275" Margin="7, 0">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="150" />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
 
                                             <Label Content="{Binding Name}" FontSize="14" />
 
-                                            <Label Grid.Column="1" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" FontSize="14" />
+                                            <Label Grid.Column="1" MinWidth="100" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" FontSize="14" HorizontalAlignment="Right" />
                                         </Grid>
                                     </CheckBox>
                                 </DataTemplate>
@@ -180,10 +184,10 @@
 
                 <Label Content="{Binding Path=SelectedOrderPart.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Цена: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                <Button Grid.Column="1" Command="{Binding SubmitOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Content="{Binding Path=OriginalOrderPart.Quantity, Converter={StaticResource SubmitOrderTextConverter}}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
-                <Button Grid.Column="2" Command="{Binding CancelOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
-                    Отмена
-                </Button>
+                <Button Grid.Column="1" Command="{Binding SubmitOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Content="{Binding Path=OriginalOrderPart.Quantity, Converter={StaticResource SubmitOrderTextConverter}}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center"
+                        ToolTipService.ShowOnDisabled="True" ToolTipService.ToolTip="Требуется не менее 2-х ингредиентов" ToolTipService.Placement="Top" />
+                
+                <Button Grid.Column="2" Command="{Binding CancelOrderPartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Content="Отмена" />
             </Grid>
         </Grid>
     </materialDesign:Card>

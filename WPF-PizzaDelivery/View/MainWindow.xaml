@@ -19,20 +19,12 @@
         TextOptions.TextRenderingMode="Auto" MinWidth="960" MinHeight="540" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <!-- Конвертеры -->
+        <local:InvertVisibilityConverter x:Key="InvertVisibilityConverter" />
         <local:PriceConverter x:Key="PriceConverter" />
-        <local:DateTimeConverter x:Key="DateTimeConverter" />
-        <local:OrderStatusConverter x:Key="OrderStatusConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
         <local:OrderHistoryPartBottomLabelConverter x:Key="OrderHistoryPartBottomLabelConverter" />
-        <local:PizzaQuantityToVisibilityConverter x:Key="PizzaQuantityToVisibilityConverter" />
-        <local:InversePizzaQuantityToVisibilityConverter x:Key="InversePizzaQuantityToVisibilityConverter" />
         <local:PizzaToQuantityConverter x:Key="PizzaToQuantityConverter" />
-        <local:DoughConverter x:Key="DoughConverter" />
-        <local:CurrentDoughToBoolConverter x:Key="CurrentDoughToBoolConverter" />
-        <local:SizeConverter x:Key="SizeConverter" />
-        <local:CurrentSizeToBoolConverter x:Key="CurrentSizeToBoolConverter" />
-        <local:SubmitOrderTextConverter x:Key="SubmitOrderTextConverter" />
         <local:LoginMenuVisibilityConverter x:Key="LoginMenuVisibilityConverter" />
         <local:RegistrationMenuVisibilityConverter x:Key="RegistrationMenuVisibilityConverter" />
         <local:CloneDataConverter x:Key="CloneDataConverter" />
@@ -149,7 +141,7 @@
                                     </Label>
                                 </materialDesign:Card>
                                 <Border Grid.Row="1" Padding="20,20">
-                                    <ScrollViewer Width="600" Visibility="Visible" VerticalScrollBarVisibility="Auto">
+                                    <ScrollViewer Width="600" VerticalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{Binding OrderParts}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -167,7 +159,7 @@
                                                     <materialDesign:Card Width="500" Height="150" Padding="10,10">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
-                                                                <RowDefinition />
+                                                                <RowDefinition MinHeight="100" />
                                                                 <RowDefinition />
                                                             </Grid.RowDefinitions>
                                                             <Grid>
@@ -243,9 +235,8 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
 
-                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenuCommand}" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250">
-                                        Оформить заказ
-                                    </Button>
+                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenuCommand}" Content="Оформить заказ" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250" 
+                                            ToolTipService.ShowOnDisabled="True" ToolTipService.ToolTip="Требуется авторизация" ToolTipService.Placement="Top" />
                                 </Grid>
 
                                 <!-- Меню изменения части заказа -->
