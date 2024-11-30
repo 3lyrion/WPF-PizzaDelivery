@@ -101,131 +101,6 @@ namespace PizzaDelivery_EM.ViewModel
         }
     }
 
-    public class SizeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is Model.PizzaSize)
-            {
-                var pizzaSize = value as Model.PizzaSize;
-
-                return $"{pizzaSize.Name} {pizzaSize.Size} см";
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class DoughConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is Model.Dough)
-            {
-                var dough = value as Model.Dough;
-
-                return dough.Name;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class CustomPizzaToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string)
-            {
-                if ((string)value == "Своя")
-                    return Visibility.Visible;
-
-                return Visibility.Hidden;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class InvertCustomPizzaToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string)
-            {
-                if ((string)value == "Своя")
-                    return Visibility.Hidden;
-
-                return Visibility.Visible;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class SubmitOrderTextConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return "Сохранить";
-
-                return "Добавить";
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class OrderPartBottomLabelConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value[0] is DTO.PizzaSize)
-            {
-                var pizzaSize = value[0] as DTO.PizzaSize;
-                var dough = value[1] as DTO.Dough;
-
-                return $"{pizzaSize.Name} {pizzaSize.Size} см, {dough.Name} тесто";
-            }
-
-            return value;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
     public class OrderHistoryPartBottomLabelConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -245,77 +120,6 @@ namespace PizzaDelivery_EM.ViewModel
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
-    public class PizzaToQuantityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value[0] is Model.Pizza)
-            {
-                var pizza = value[0] as Model.Pizza;
-                var orderParts = value[1] as ObservableCollection<Model.OrderPart>;
-
-                try
-                {
-                    return orderParts.First(e => e.Pizza == pizza).Quantity;
-                }
-
-                catch
-                {
-                    return 0;
-                }
-            }
-
-            return value;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
-    public class PizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Hidden;
-                return Visibility.Visible;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class InvertPizzaQuantityToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int)
-            {
-                var quantity = (int)value;
-
-                if (quantity > 0) return Visibility.Visible;
-                return Visibility.Hidden;
-            }
-
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 
@@ -368,16 +172,27 @@ namespace PizzaDelivery_EM.ViewModel
         }
     }
 
-    public class CurrentDoughToBoolConverter : IMultiValueConverter
+    public class CurrentOrderStatusToBoolConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value[0] is Model.Dough)
+            if (value[0] is string)
             {
-                var dough = value[0] as Model.Dough;
-                var op = value[1] as Model.OrderPart;
+                var status = Misc.StringToOrderStatus((string)value[0]);
+                var order = value[1] as DTO.Order;
 
-                if (op != null && op.Dough != null && op.Dough.Name == dough.Name)
+                if (order != null && order.Status == status)
+                    return true;
+
+                return false;
+            }
+
+            if (value[0] is DTO.OrderStatus)
+            {
+                var status = (DTO.OrderStatus)value[0];
+                var order = value[1] as DTO.Order;
+
+                if (order != null && order.Status == status)
                     return true;
 
                 return false;
@@ -392,22 +207,11 @@ namespace PizzaDelivery_EM.ViewModel
         }
     }
 
-    public class CurrentSizeToBoolConverter : IMultiValueConverter
+    public class EqualValuesToBoolConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value[0] is Model.PizzaSize)
-            {
-                var pizzaSize = value[0] as Model.PizzaSize;
-                var op = value[1] as Model.OrderPart;
-
-                if (op != null && op.PizzaSize != null && op.PizzaSize.Size == pizzaSize.Size)
-                    return true;
-
-                return false;
-            }
-
-            return value;
+            return value[0] == value[1];
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
@@ -437,30 +241,6 @@ namespace PizzaDelivery_EM.ViewModel
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
-    public class RegistrationMenuVisibilityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value[0] is bool)
-            {
-                var regMenuVisible = (bool)value[0];
-                var account = value[1];
-
-                if (regMenuVisible && account == null)
-                    return Visibility.Visible;
-
-                return Visibility.Hidden;
-            }
-
-            return value;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
         }
     }
 

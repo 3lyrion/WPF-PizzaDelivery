@@ -83,6 +83,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Util\Media.cs" />
+    <Compile Include="Util\Misc.cs" />
     <Compile Include="Util\NinjectRegistrations.cs" />
     <Compile Include="Util\ReposModule.cs" />
     <Compile Include="ViewModel\App.cs" />

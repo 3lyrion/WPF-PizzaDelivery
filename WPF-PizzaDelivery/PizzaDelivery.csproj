@@ -109,6 +109,7 @@
     <Compile Include="Util\Media.cs" />
     <Compile Include="Util\NinjectRegistrations.cs" />
     <Compile Include="Util\ReposModule.cs" />
+    <Compile Include="ViewModel\Commands.cs" />
     <Compile Include="ViewModel\App.cs" />
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>

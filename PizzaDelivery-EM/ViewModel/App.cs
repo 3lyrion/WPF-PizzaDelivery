@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Timers;
+using PizzaDelivery_EM.Util;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -35,6 +36,8 @@ namespace PizzaDelivery_EM.ViewModel
         List<DTO.Pizza> allPizzas;
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
+
+        public DTO.OrderStatus OriginalOrderStatus { get; set; }
 
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
@@ -139,6 +142,22 @@ namespace PizzaDelivery_EM.ViewModel
             }
         }
 
+        RelayCommand selectOrderStatusCommand;
+        public RelayCommand SelectOrderStatusCommand
+        {
+            get
+            {
+                return selectOrderStatusCommand ??
+                    (selectOrderStatusCommand = new RelayCommand(obj =>
+                    {
+                        if (obj is string)
+                            CurrentOrder.Status = Misc.StringToOrderStatus((string)obj);
+                        
+
+                    }));
+            }
+        }
+
         public App(
             SV.ICook theCookService,
             SV.ICourier theCourierService,
@@ -221,6 +240,8 @@ namespace PizzaDelivery_EM.ViewModel
             foreach (var order in orders)
                 PastOrders.Add(order);
 
+            OriginalOrderStatus = CurrentOrder.Status;
+
             ProfileMenuVisible = true;
         }
 
@@ -294,6 +315,9 @@ namespace PizzaDelivery_EM.ViewModel
             };
 
             Pizzas.Add(customPizza);
+
+            Account = cookService.GetList().First();
+            gotoProfileMenu();
         }
     }
 }

@@ -23,11 +23,10 @@
         <local:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
         <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
-        <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
+        <local:EqualValuesToBoolConverter x:Key="EqualValuesToBoolConverter" />
+        <local:CurrentOrderStatusToBoolConverter x:Key="CurrentOrderStatusToBoolConverter" />
         <local:OrderHistoryPartBottomLabelConverter x:Key="OrderHistoryPartBottomLabelConverter" />
-        <local:PizzaToQuantityConverter x:Key="PizzaToQuantityConverter" />
         <local:LoginMenuVisibilityConverter x:Key="LoginMenuVisibilityConverter" />
-        <local:RegistrationMenuVisibilityConverter x:Key="RegistrationMenuVisibilityConverter" />
         <local:CloneDataConverter x:Key="CloneDataConverter" />
         
     </Window.Resources>
@@ -42,13 +41,19 @@
             
             <materialDesign:Card Padding="0.33,0.33">
                 
-                <TabControl TabStripPlacement="Left" Style="{StaticResource MaterialDesignNavigationRailTabControl}" Background="White">
+                <TabControl TabStripPlacement="Left" 
+                            Style="{StaticResource MaterialDesignNavigationRailTabControl}" 
+                            Background="White" 
+                            SelectedIndex="1">
 
                     <!-- Меню теущего заказа -->
-                    <TabItem Width="100" Height="100">
+                    <TabItem Width="100" Height="100"
+                             IsEnabled="{Binding ProfileMenuVisible}"
+                             ToolTipService.ShowOnDisabled="True" ToolTipService.ToolTip="Требуется авторизация" ToolTipService.Placement="Right">
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="PackageVariantClosed" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
+                        
                         <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -64,15 +69,17 @@
                                     </Label>
                                 </materialDesign:Card>
 
-                                <Grid Grid.Row="1" Width="600" Height="600">
+                                <Grid Grid.Row="1" Width="500" Height="600">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="50"/>
                                         <RowDefinition />
+                                        <RowDefinition />
                                     </Grid.RowDefinitions>
 
-                                    <Label Content="Статус заказа" FontSize="20" FontWeight="Bold" Foreground="OrangeRed" />
-
-                                    <ItemsControl ItemsSource="{Binding OrderStatuses}" Grid.Row="1" HorizontalAlignment="Center">
+                                    <Label Content="Статус заказа" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="OrangeRed" />
+                                    
+                                    <ItemsControl ItemsSource="{Binding OrderStatuses}"
+                                                  Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <UniformGrid>
@@ -86,17 +93,30 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <RadioButton Command="{Binding DataContext.SelectDoughCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{Binding Converter={StaticResource DoughConverter}}" GroupName="Dough">
+                                                <RadioButton Content="{Binding}" 
+                                                             Command="{Binding DataContext.SelectOrderStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                             CommandParameter="{Binding Path=.}" 
+                                                             GroupName="OrderStatus">
                                                     <RadioButton.IsChecked>
-                                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentDoughToBoolConverter}">
+                                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentOrderStatusToBoolConverter}">
                                                             <Binding Path="." />
-                                                            <Binding Path="DataContext.SelectedOrderPart" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                                            <Binding Path="DataContext.CurrentOrder" RelativeSource="{RelativeSource AncestorType=Window}" />
                                                         </MultiBinding>
                                                     </RadioButton.IsChecked>
                                                 </RadioButton>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+
+                                    <Button Grid.Row="2" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Content="Изменить">
+                                        <Button.IsEnabled>
+                                            <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentOrderStatusToBoolConverter}">
+                                                <Binding Path="OriginalOrderStatus" />
+                                                <Binding Path="CurrentOrder" />
+                                            </MultiBinding>
+                                        </Button.IsEnabled>
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </Border>

@@ -12,7 +12,6 @@
         <local:DateTimeConverter x:Key="DateTimeConverter" />
         <local:OrderStatusConverter x:Key="OrderStatusConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
-        <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
         <local:OrderHistoryPartBottomLabelConverter x:Key="OrderHistoryPartBottomLabelConverter" />
     </UserControl.Resources>
     <ScrollViewer Width="500" VerticalScrollBarVisibility="Auto">
