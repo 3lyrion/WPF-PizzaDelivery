@@ -13,6 +13,7 @@ namespace PizzaDelivery_EM.Util
         public override void Load()
         {
             Bind<IClient>().To<Client>();
+            Bind<ICook>().To<Cook>();
             Bind<ICourier>().To<Courier>();
             Bind<IDough>().To<Dough>();
             Bind<IIngredient>().To<Ingredient>();

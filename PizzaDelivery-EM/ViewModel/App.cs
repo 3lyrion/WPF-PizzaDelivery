@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Controls;
+using System.Timers;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -19,6 +19,8 @@ namespace PizzaDelivery_EM.ViewModel
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        Timer updateTimer;
 
         SV.ICourier courierService;
         SV.ICook cookService;
@@ -36,6 +38,8 @@ namespace PizzaDelivery_EM.ViewModel
 
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
+
+        public List<string> OrderStatuses { get; set; }
 
         bool profileMenuVisible = false;
         public bool ProfileMenuVisible
@@ -59,6 +63,17 @@ namespace PizzaDelivery_EM.ViewModel
             }
         }
 
+        DTO.Order currentOrder;
+        public DTO.Order CurrentOrder
+        {
+            get { return currentOrder; }
+            set
+            {
+                currentOrder = value;
+                OnPropertyChanged("CurrentOrder");
+            }
+        }
+
         DTO.Base.Employee account;
         public DTO.Base.Employee Account
         {
@@ -69,7 +84,6 @@ namespace PizzaDelivery_EM.ViewModel
                 OnPropertyChanged("Account");
             }
         }
-        public Model.Order CurrentOrder { get; set; }
 
         RelayCommand loginCommand;
         public RelayCommand LoginCommand
@@ -154,44 +168,58 @@ namespace PizzaDelivery_EM.ViewModel
             if (Account is DTO.Cook) cook = Account as DTO.Cook;
             else courier = Account as DTO.Courier;
 
+            IEnumerable<Model.Order> orders = null;
+
             if (cook != null)
             {
+                CurrentOrder = allOrders.First(e => e.CookId == Account.Id);
 
-            }
-
-            var orders = allOrders
-                .Where(e => e.ClientId == Account.Id)
-                .OrderByDescending(e => e.CreationDate)
-                .Select(o => new Model.Order
-                {
-                    Address = o.Address,
-                    Cost = o.Cost.Value,
-                    CreationDate = o.CreationDate,
-                    Status = o.Status,
-                    Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
+                orders = allOrders
+                    .Where(e => e.CookId == Account.Id)
+                    .OrderByDescending(e => e.CreationDate)
+                    .Select(o => new Model.Order
                     {
-                        //Cost = p.Cost.Value,
-                        Dough = allDough.Find(a => a.Id == p.DoughId),
+                        Address = o.Address,
+                        Cost = o.Cost.Value,
+                        CreationDate = o.CreationDate,
+                        Status = o.Status,
+                        Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
+                        {
+                            //Cost = p.Cost.Value,
+                            Dough = allDough.Find(a => a.Id == p.DoughId),
+                            Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
+                            PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
+                            Quantity = p.Quantity
 
-                        Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
-                        
-                        PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
+                        }).ToList()
+                    });
+            }
+            
+            else
+            {
+                orders = allOrders
+                    .Where(e => e.CourierId == Account.Id)
+                    .OrderByDescending(e => e.CreationDate)
+                    .Select(o => new Model.Order
+                    {
+                        Address = o.Address,
+                        Cost = o.Cost.Value,
+                        CreationDate = o.CreationDate,
+                        Status = o.Status,
+                        Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
+                        {
+                            //Cost = p.Cost.Value,
+                            Dough = allDough.Find(a => a.Id == p.DoughId),
+                            Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
+                            PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
+                            Quantity = p.Quantity
 
-                        Quantity = p.Quantity
-
-                    }).ToList()
-                }).ToList();
+                        }).ToList()
+                    });
+            }
 
             foreach (var order in orders)
-            {
-                if (order.Status == DTO.OrderStatus.Success ||
-                    order.Status == DTO.OrderStatus.Cancellation)
-                {
-                    PastOrders.Add(order);
-                }
-
-                else ActualOrders.Add(order);
-            }
+                PastOrders.Add(order);
 
             ProfileMenuVisible = true;
         }
@@ -203,15 +231,31 @@ namespace PizzaDelivery_EM.ViewModel
 
         void loadMembers()
         {
+            /*
+            updateTimer = new Timer(5000);
+            updateTimer.AutoReset = true;
+            updateTimer.Elapsed += (s, e) =>
+            {
+                
+            };
+            updateTimer.Start();
+            */
+
+            OrderStatuses = new List<string>
+            {
+                "Готовится",
+                "Доставляется",
+                "Доставлен",
+                "Отменён"
+            };
+
             allDough = doughService.GetList();
             allOrders = orderService.GetList();
             allPizzaOrders = pizzaOrderService.GetList();
             allPizzas = pizzaService.GetList();
             allPizzaSizes = pizzaSizeService.GetList();
 
-            CurrentOrder = new Model.Order();
 
-            ActualOrders = new ObservableCollection<Model.Order>();
             PastOrders = new ObservableCollection<Model.Order>();
             /*
             Dough = new ObservableCollection<Model.Dough>();

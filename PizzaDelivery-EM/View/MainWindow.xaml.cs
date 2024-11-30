@@ -30,25 +30,23 @@ namespace PizzaDelivery_EM.View
         {
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
-            SV.IClient clientService = kernel.Get<SV.IClient>();
+            SV.ICook cookService = kernel.Get<SV.ICook>();
+            SV.ICourier courierService = kernel.Get<SV.ICourier>();
             SV.IDough doughService = kernel.Get<SV.IDough>();
-            SV.IIngredient ingredientService = kernel.Get<SV.IIngredient>();
             SV.IOrder orderService = kernel.Get<SV.IOrder>();
             SV.IPizza pizzaService = kernel.Get<SV.IPizza>();
             SV.IPizzaOrder pizzaOrderService = kernel.Get<SV.IPizzaOrder>();
             SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
-            SV.IRecipe recipeService = kernel.Get<SV.IRecipe>();
 
             DataContext = new ViewModel.App
             (
-                clientService,
+                cookService,
+                courierService,
                 doughService,
-                ingredientService,
                 orderService,
                 pizzaService,
                 pizzaOrderService,
-                pizzaSizeService,
-                recipeService
+                pizzaSizeService
             );
 
             InitializeComponent();

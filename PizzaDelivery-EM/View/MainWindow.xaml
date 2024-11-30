@@ -20,6 +20,7 @@
     <Window.Resources>
         <!-- Конвертеры -->
         <local:InvertVisibilityConverter x:Key="InvertVisibilityConverter" />
+        <local:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
         <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
@@ -28,16 +29,6 @@
         <local:LoginMenuVisibilityConverter x:Key="LoginMenuVisibilityConverter" />
         <local:RegistrationMenuVisibilityConverter x:Key="RegistrationMenuVisibilityConverter" />
         <local:CloneDataConverter x:Key="CloneDataConverter" />
-        
-        <!-- Шаблоны стиля -->
-        <Style x:Key="ErrorPasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="BorderBrush" Value="Black" />
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="BorderBrush" Value="Red" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
         
     </Window.Resources>
     <Border Padding="10,10">
@@ -53,254 +44,60 @@
                 
                 <TabControl TabStripPlacement="Left" Style="{StaticResource MaterialDesignNavigationRailTabControl}" Background="White">
 
-                    <!-- Меню с пиццами -->
+                    <!-- Меню теущего заказа -->
                     <TabItem Width="100" Height="100">
                         <TabItem.Header>
-                            <materialDesign:PackIcon Kind="Pizza" Width="70" Height="70" FontWeight="Normal" />
+                            <materialDesign:PackIcon Kind="PackageVariantClosed" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
                         <Border Padding="10,10,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
-                                    <RowDefinition MinHeight="300" Height="100*"/>
+                                    <RowDefinition MinHeight="300"/>
                                 </Grid.RowDefinitions>
+                                
                                 <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                                    <Label Padding="0, 0, 0, 5" Content="Меню" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                    <Label Padding="0, 0, 0, 5" Content="Текущий заказ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
                                             <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding Pizzas}">
+
+                                <Grid Grid.Row="1" Width="600" Height="600">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <Label Content="Статус заказа" FontSize="20" FontWeight="Bold" Foreground="OrangeRed" />
+
+                                    <ItemsControl ItemsSource="{Binding OrderStatuses}" Grid.Row="1" HorizontalAlignment="Center">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <UniformGrid Columns="3">
-
+                                                <UniformGrid>
+                                                    <UniformGrid.Resources>
+                                                        <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
+                                                            <Setter Property="Margin" Value="5" />
+                                                        </Style>
+                                                    </UniformGrid.Resources>
                                                 </UniformGrid>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Width="200" Height="250">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="200" />
-                                                        <RowDefinition />
-                                                    </Grid.RowDefinitions>
-                                                    
-                                                    <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
-                                                        <Button.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource CloneDataConverter}">
-                                                                <Binding Path="." />
-                                                                <Binding ElementName="Menu_OPE" />
-                                                            </MultiBinding>
-                                                        </Button.CommandParameter>
-
-                                                        <Grid Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="150" />
-                                                                <RowDefinition />
-                                                                <RowDefinition />
-                                                            </Grid.RowDefinitions>
-                                                            
-                                                            <Image Source="{Binding Path=Name, Converter={StaticResource PizzaImagePathConverter}}" Height="145" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                            
-                                                            <Label Grid.Row="1" Content="{Binding Path=Name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" />
-                                                            
-                                                            <Label Grid.Row="2" Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="от {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                        </Grid>
-                                                    </Button>
-
-                                                    <Button Grid.Row="1" Content="Выбрать" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                                                        <Button.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource CloneDataConverter}">
-                                                                <Binding Path="." />
-                                                                <Binding ElementName="Menu_OPE" />
-                                                            </MultiBinding>
-                                                        </Button.CommandParameter>
-                                                    </Button>
-                                                </Grid>
+                                                <RadioButton Command="{Binding DataContext.SelectDoughCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{Binding Converter={StaticResource DoughConverter}}" GroupName="Dough">
+                                                    <RadioButton.IsChecked>
+                                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentDoughToBoolConverter}">
+                                                            <Binding Path="." />
+                                                            <Binding Path="DataContext.SelectedOrderPart" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                                        </MultiBinding>
+                                                    </RadioButton.IsChecked>
+                                                </RadioButton>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                </ScrollViewer>
-                                
-                                <uc:OrderPartEditor Grid.Row="1" x:Name="Menu_OPE" Visibility="Hidden" />
-                                
-                            </Grid>
-                        </Border>
-                    </TabItem>
-
-                    <!-- Корзина с заказами -->
-                    <TabItem Width="100" Height="100">
-                        <TabItem.Header>
-                            <materialDesign:PackIcon Kind="CartOutline" Width="70" Height="70" />
-                        </TabItem.Header>
-                        <Border Padding="10,10,10,10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="7*"/>
-                                    <RowDefinition Height="1*"/>
-                                </Grid.RowDefinitions>
-                                <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                                    <Label Padding="0, 0, 0, 5" Content="Корзина" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                        <Label.Effect>
-                                            <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
-                                        </Label.Effect>
-                                    </Label>
-                                </materialDesign:Card>
-                                <Border Grid.Row="1" Padding="20,20">
-                                    <ScrollViewer Width="600" VerticalScrollBarVisibility="Auto">
-                                        <ItemsControl ItemsSource="{Binding OrderParts}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel>
-                                                        <StackPanel.Resources>
-                                                            <Style TargetType="materialDesign:Card">
-                                                                <Setter Property="Margin" Value="0, 0, 0, 10" />
-                                                            </Style>
-                                                        </StackPanel.Resources>
-                                                    </StackPanel>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <materialDesign:Card Width="500" Height="150" Padding="10,10">
-                                                        <Grid>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition MinHeight="100" />
-                                                                <RowDefinition />
-                                                            </Grid.RowDefinitions>
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="100" />
-                                                                    <ColumnDefinition />
-                                                                    <ColumnDefinition Width="50" />
-                                                                </Grid.ColumnDefinitions>
-                                                                
-                                                                <Image Margin="7.5" Source="{Binding Path=Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                                
-                                                                <Grid Grid.Column="1">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="40" />
-                                                                        <RowDefinition />
-                                                                    </Grid.RowDefinitions>
-                                                                    
-                                                                    <Label Content="{Binding Pizza.Name}" FontWeight="Bold" FontSize="20" />
-
-                                                                    <Label Grid.Row="1" FontSize="13" FontWeight="Bold" Foreground="Gray">
-                                                                        <Label.Content>
-                                                                            <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource OrderPartBottomLabelConverter}">
-                                                                                <Binding Path="PizzaSize" />
-                                                                                <Binding Path="Dough" />
-                                                                            </MultiBinding>
-                                                                        </Label.Content>
-                                                                    </Label>
-                                                                </Grid>
-                                                                
-                                                                <Button Padding="0" Grid.Column="2" Command="{Binding DataContext.RemoveOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,45" Width="32" Height="32" Foreground="Black">
-                                                                    <materialDesign:PackIcon Kind="Close" Height="30" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="30" MinHeight="30" />
-                                                                </Button>
-                                                            </Grid>
-                                                            <Grid Grid.Row="1">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="260" />
-                                                                    <ColumnDefinition />
-                                                                    <ColumnDefinition />
-                                                                </Grid.ColumnDefinitions>
-                                                                <Label Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" />
-                                                                <Button Grid.Column="1" Content="Изменить" Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource MaterialDesignFlatButton}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                                    <Button.CommandParameter>
-                                                                        <MultiBinding Converter="{StaticResource CloneDataConverter}">
-                                                                            <Binding Path="." />
-                                                                            <Binding ElementName="Cart_OPE" />
-                                                                        </MultiBinding>
-                                                                    </Button.CommandParameter>
-                                                                </Button>
-                                                                <Grid Grid.Column="2">
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition />
-                                                                        <ColumnDefinition />
-                                                                        <ColumnDefinition />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <Button Padding="0" Command="{Binding DataContext.DecreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{materialDesign:PackIcon Kind=Minus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" />
-
-                                                                    <Label Grid.Column="1" Content="{Binding Quantity}" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
-
-                                                                    <Button Grid.Column="2" Command="{Binding DataContext.IncreasePizzaQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Padding="0" Content="{materialDesign:PackIcon Kind=Plus}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </materialDesign:Card>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </ScrollViewer>
-                                </Border>
-                                <Grid Grid.Row="2" Width="600">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="320" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Сумма заказа: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
-
-                                    <Button Grid.Column="2" Command="{Binding GoToCheckoutMenuCommand}" Content="Оформить заказ" Height="50" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" Width="250" 
-                                            ToolTipService.ShowOnDisabled="True" ToolTipService.ToolTip="Требуется авторизация" ToolTipService.Placement="Top" />
                                 </Grid>
-
-                                <!-- Меню изменения части заказа -->
-                                <uc:OrderPartEditor Grid.Row="1" Grid.RowSpan="2" x:Name="Cart_OPE" Visibility="Hidden" />
-
-                                <!-- Меню оформления заказа -->
-                                <materialDesign:Card Grid.Row="1" Grid.RowSpan="2" Visibility="{Binding Path=CheckoutMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <Grid Width="600">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="8*" />
-                                            <RowDefinition Height="2*"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Grid Margin="0, 150, 0, 0" Width="600" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="3.5*" />
-                                                <ColumnDefinition Width="6.5*" />
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <!-- Адрес -->
-                                            <Label Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Адрес" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
-                                            <TextBox Grid.Column="1" Text="{Binding CurrentOrder.Address}" Padding="10" Width="350" Height="100" TextWrapping="Wrap" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
-                                            
-                                            <!-- Имя получателя -->
-                                            <Label Grid.Row="1" Padding="0" Height="50" Margin="0, 20, 10, 0" Content="Имя получателя" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" />
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentOrder.RecipientName}" Padding="10" Width="350" Height="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="24" VerticalAlignment="Top" FontWeight="Bold" Margin="20,10,0,10" VerticalContentAlignment="Top"/>
-                                        </Grid>
-
-                                        <Grid Grid.ColumnSpan="2" Grid.Row="2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="1.5*" />
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <Label Content="{Binding Path=CurrentOrder.Cost, Converter={StaticResource PriceConverter}}" ContentStringFormat="Итого: {0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" />
-
-                                            <Button Grid.Column="1" Command="{Binding PayOrderCommand}" Content="Оплатить" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center" />
-                                            <Button Grid.Column="2" Command="{Binding CloseCheckoutMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0" VerticalAlignment="Center">
-                                                Отмена
-                                            </Button>
-                                        </Grid>
-
-                                    </Grid>
-                                </materialDesign:Card>
-
                             </Grid>
                         </Border>
                     </TabItem>
@@ -322,15 +119,9 @@
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                
-                                <Viewbox Grid.Row="1">
-                                    <Viewbox.Visibility>
-                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource LoginMenuVisibilityConverter}">
-                                            <Binding Path="RegistrationMenuVisible" />
-                                            <Binding Path="Account" />
-                                        </MultiBinding>
-                                    </Viewbox.Visibility>
-                                    
+
+                                <Viewbox Grid.Row="1"
+                                         Visibility="{Binding Path=ProfileMenuVisible, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
                                     <materialDesign:Card Padding="20, 0, 20, 20" Width="600" Height="375" Margin="300,100">
                                         <Grid>
                                             <Grid.RowDefinitions>
@@ -354,7 +145,7 @@
                                                         <ColumnDefinition />
                                                         <ColumnDefinition />
                                                     </Grid.ColumnDefinitions>
-                                                    
+
                                                     <Label Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
                                                     <TextBox Grid.Column="1" x:Name="Profile_TB_Login" MaxLength="12" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="0"/>
 
@@ -363,104 +154,21 @@
 
                                                     <Label Grid.Row="2" Grid.ColumnSpan="2" Margin="0,15,0,0" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFC80000"
                                                                Content="{Binding AuthErrorMessage}"/>
-                                                    
-                                                    <Grid Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                        </Grid.ColumnDefinitions>
-                                                        <Button Content="Войти" Command="{Binding LoginCommand}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                            <Button.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource CloneDataConverter}">
-                                                                    <Binding ElementName="Profile_TB_Login" />
-                                                                    <Binding ElementName="Profile_PB_Login" />
-                                                                </MultiBinding>
-                                                            </Button.CommandParameter>
-                                                        </Button>
-                                                        <Button Grid.Column="1" Command="{Binding GoToRegistrationMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                            Регистрация
-                                                        </Button>
-                                                    </Grid>
+
+                                                    <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Войти" Command="{Binding LoginCommand}" Width="250" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource CloneDataConverter}">
+                                                                <Binding ElementName="Profile_TB_Login" />
+                                                                <Binding ElementName="Profile_PB_Login" />
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
+                                                    </Button>
                                                 </Grid>
                                             </Border>
                                         </Grid>
                                     </materialDesign:Card>
                                 </Viewbox>
                                 
-                                <Viewbox Grid.Row="1" x:Name="Profile_VB_Registration">
-                                    <Viewbox.Visibility>
-                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource RegistrationMenuVisibilityConverter}">
-                                            <Binding Path="RegistrationMenuVisible" />
-                                            <Binding Path="Account" />
-                                        </MultiBinding>
-                                    </Viewbox.Visibility>
-                                    
-                                    <materialDesign:Card Width="600" Height="450" Padding="20, 0, 20, 20" Margin="250,125">
-                                        <Grid>
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="60"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Регистрация" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                                    <Label.Effect>
-                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="2.5" Color="LightGray"></DropShadowEffect>
-                                                    </Label.Effect>
-                                                </Label>
-                                                <Border Grid.Row="1" Padding="10, 10, 10, 10">
-                                                    <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition />
-                                                            <RowDefinition />
-                                                            <RowDefinition />
-                                                            <RowDefinition />
-                                                            <RowDefinition Height="1.5*" />
-                                                        </Grid.RowDefinitions>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <Label Padding="0" Content="Номер телефона" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <TextBox Grid.Column="1" x:Name="Profile_TB_Register" MaxLength="12" Padding="10" Style="{StaticResource MaterialDesignOutlinedTextBox}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250" TextChanged="Login_TB_PhoneNumber_onTextChanged" FontWeight="Bold" Margin="20,10,0,10"/>
-
-                                                        <Label Grid.Row="1" Padding="0" Content="Пароль" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <PasswordBox Grid.Row="1" Grid.Column="1" MaxLength="50" x:Name="Profile_PB_Register_1" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
-
-                                                        <Label Grid.Row="2" Padding="0" Content="Пароль повторно" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" />
-                                                        <PasswordBox Grid.Row="2" Grid.Column="1" MaxLength="50" x:Name="Profile_PB_Register_2" Padding="10" Width="250" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,10,0,10" />
-
-                                                        <Label Grid.Row="3" Grid.ColumnSpan="2" Margin="0,15,0,0" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFC80000"
-                                                               Content="{Binding AuthErrorMessage}"/>
-
-                                                        <Grid Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                                <Button.CommandParameter>
-                                                                    <MultiBinding Converter="{StaticResource CloneDataConverter}">
-                                                                        <Binding ElementName="Profile_TB_Register" />
-                                                                        <Binding ElementName="Profile_PB_Register_1" />
-                                                                        <Binding ElementName="Profile_PB_Register_2" />
-                                                                    </MultiBinding>
-                                                                </Button.CommandParameter>
-                                                            </Button>
-                                                            <Button Grid.Column="1" Command="{Binding GoToLoginMenuCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Width="235" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="0,10">
-                                                                Назад
-                                                            </Button>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Border>
-                                            </Grid>
-                                        </Grid>
-                                    </materialDesign:Card>
-                                </Viewbox>
-
                                 <!-- Данные аккаунта -->
                                 <Grid Grid.Row="1" Visibility="{Binding Path=ProfileMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Width="1000" Height="550">
                                     <Grid.RowDefinitions>
@@ -475,10 +183,6 @@
                                     <!-- Прошлые заказы -->
                                     <Label Content="Прошлые заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     <uc:OrdersList Grid.Row="1" Source="{Binding PastOrders}" />
-
-                                    <!-- Текущие заказы -->
-                                    <Label Grid.Column="1" Content="Текущие заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <uc:OrdersList Grid.Row="1" Grid.Column="1" Source="{Binding Path=ActualOrders}" />
                                 </Grid>
                                 
                             </Grid>
