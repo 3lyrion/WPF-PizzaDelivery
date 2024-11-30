@@ -81,6 +81,17 @@ namespace PizzaDelivery.ViewModel
             }
         }
 
+        string authErrorMessage;
+        public string AuthErrorMessage
+        {
+            get { return authErrorMessage; }
+            set
+            {
+                authErrorMessage = value;
+                OnPropertyChanged("AuthErrorMessage");
+            }
+        }
+
         Model.OrderPart selectedOrderPart;
         public Model.OrderPart SelectedOrderPart
         {
@@ -166,17 +177,37 @@ namespace PizzaDelivery.ViewModel
                     (loginCommand = new RelayCommand(obj =>
                     {
                         var objects = obj as object[];
-                        var phoneNumber = (objects[0] as TextBox).Text;
-                        var password = (objects[1] as PasswordBox).Password;
 
-                        try
+                        var phoneNumberTB = objects[0] as TextBox;
+                        var passwordTB = objects[1] as PasswordBox;
+
+                        var phoneNumber = phoneNumberTB.Text;
+                        var password = passwordTB.Password;
+
+                        if (phoneNumber.Length != phoneNumberTB.MaxLength)
+                            AuthErrorMessage = "Неверный номер телефона";
+
+                        else if (password.Length < 6)
+                            AuthErrorMessage = "Неверный пароль";
+
+                        else
                         {
-                            Account = clientService.GetList().First(e => e.PhoneNumber == phoneNumber && e.Password == password);
-                            gotoProfileMenu();
+                            var clients = clientService.GetList();
+                            var client = clients.Where(e => e.PhoneNumber == phoneNumber);
+
+                            if (client.Count() == 0)
+                                AuthErrorMessage = "Пользователя c таким номером не существует";
+
+                            else if (password != client.First().Password)
+                                AuthErrorMessage = "Неверный пароль";
+
+                            else
+                            {
+                                Account = client.First();
+
+                                gotoProfileMenu();
+                            }
                         }
-
-                        catch { }
-
                     }));
             }
         }
@@ -190,21 +221,42 @@ namespace PizzaDelivery.ViewModel
                     (regCommand = new RelayCommand(obj =>
                     {
                         var objects = obj as object[];
-                        var phoneNumber = (objects[0] as TextBox).Text;
-                        var password = (objects[1] as PasswordBox).Password;
-                        var passwordConfirmation = (objects[2] as PasswordBox).Password;
 
-                        if (phoneNumber != "" &&
-                            password != "" && passwordConfirmation == password)
+                        var phoneNumberTB = objects[0] as TextBox;
+                        var passwordTB = objects[1] as PasswordBox;
+                        var passwordConfirmationTB = objects[2] as PasswordBox;
+
+                        var phoneNumber = phoneNumberTB.Text;
+                        var password = passwordTB.Password;
+                        var passwordConfirmation = passwordConfirmationTB.Password;
+
+                        if (phoneNumber.Length != phoneNumberTB.MaxLength)
+                            AuthErrorMessage = "Неверный номер телефона";
+
+                        else if (password.Length < 6)
+                            AuthErrorMessage = "Слишкой короткий пароль";
+
+                        else if (passwordConfirmation != password)
+                            AuthErrorMessage = "Пароли не совпадают";
+
+                        else
                         {
-                            Account = new DTO.Client
-                            {
-                                Online = true,
-                                Password = password,
-                                PhoneNumber = phoneNumber
-                            };
+                            var clients = clientService.GetList();
 
-                            gotoProfileMenu();
+                            if (clients.Count(e => e.PhoneNumber == phoneNumber) != 0)
+                                AuthErrorMessage = "Пользователь с таким номером уже существует";
+
+                            else
+                            {
+                                Account = new DTO.Client
+                                {
+                                    Online = true,
+                                    Password = password,
+                                    PhoneNumber = phoneNumber
+                                };
+
+                                gotoProfileMenu();
+                            }
                         }
 
                     }));
@@ -346,8 +398,6 @@ namespace PizzaDelivery.ViewModel
                         if (objects[0] is Model.Pizza)
                         {
                             var pizza = objects[0] as Model.Pizza;
-
-                            if (pizza.Name == "Создать свою") pizza.Name = "Своя";
 
                             SelectedOrderPart = createOrderPart();
 
@@ -665,7 +715,7 @@ namespace PizzaDelivery.ViewModel
                 })
                 .ToList(),
 
-                Name = "Создать свою"
+                Name = "Своя"
             };
             
             Pizzas.Add(customPizza);
