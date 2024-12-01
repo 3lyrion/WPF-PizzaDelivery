@@ -140,8 +140,11 @@ namespace PizzaDelivery.ViewModel
                                 {
                                     Online = true,
                                     Password = password,
-                                    PhoneNumber = phoneNumber
+                                    PhoneNumber = phoneNumber,
+                                    OrdersIDs = new List<int>()
                                 };
+
+                                Account.Id = clientService.Create(Account);
 
                                 gotoProfileMenu();
                             }

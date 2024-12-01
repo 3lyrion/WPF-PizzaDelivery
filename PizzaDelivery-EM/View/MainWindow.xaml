@@ -19,6 +19,7 @@
         TextOptions.TextRenderingMode="Auto" MinWidth="960" MinHeight="540" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <!-- Конвертеры -->
+        <local:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter" />
         <local:InvertVisibilityConverter x:Key="InvertVisibilityConverter" />
         <local:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
         <local:DateTimeConverter x:Key="DateTimeConverter" />
@@ -70,7 +71,18 @@
                                     </Label>
                                 </materialDesign:Card>
 
-                                <Viewbox Grid.Row="1">
+                                <Viewbox Grid.Row="1"
+                                         Width="700"
+                                         Visibility="{Binding Path=Visibility, ElementName=Order_VB_Data, Converter={StaticResource InvertVisibilityConverter}}">
+                                    
+                                    <Label Content="Нет подходящего заказа"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="OrangeRed" />
+                                </Viewbox>
+
+                                <Viewbox Grid.Row="1"
+                                         x:Name="Order_VB_Data"
+                                         Width="950" Height="550"
+                                         Visibility="{Binding Path=CurrentOrder, Converter={StaticResource NotNullToVisibilityConverter}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />

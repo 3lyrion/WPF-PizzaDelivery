@@ -416,7 +416,6 @@ namespace Database
                         phone_number = "+79001234567",
                         password = "Qwerty1234",
                         online = true,
-                        busy = true
                     });
 
                     add(new DM.Courier
@@ -425,7 +424,6 @@ namespace Database
                         phone_number = "+79002345678",
                         password = "Asdfgh5678",
                         online = true,
-                        busy = true
                     });
 
                     add(new DM.Courier
@@ -465,7 +463,6 @@ namespace Database
                         phone_number = "+79021234567",
                         password = "CookMaster88!",
                         online = true,
-                        busy = true
                     });
 
                     add(new DM.Cook
@@ -474,7 +471,6 @@ namespace Database
                         phone_number = "+79022345678",
                         password = "SpiceLover77@",
                         online = true,
-                        busy = true
                     });
 
                     add(new DM.Cook
@@ -483,7 +479,6 @@ namespace Database
                         phone_number = "+79023456789",
                         password = "YummyDishes99#",
                         online = true,
-                        busy = true
                     });
 
                     add(new DM.Cook

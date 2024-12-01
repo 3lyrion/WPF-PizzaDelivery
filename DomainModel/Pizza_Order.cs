@@ -26,7 +26,6 @@ namespace DomainModel
         [Required]
         public virtual Pizza pizza { get; set; }
 
-        [Required]
         public virtual Order order { get; set; }
     }
 }

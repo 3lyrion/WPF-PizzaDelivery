@@ -178,7 +178,11 @@ namespace PizzaDelivery_EM.ViewModel
                     {
                         CurrentOrder.Status = SelectedOrderStatus;
 
-                    }, (obj) => (CurrentOrder.Status != SelectedOrderStatus)));
+                        
+
+                        CurrentOrder = null;
+
+                    }, (obj) => (CurrentOrder != null && CurrentOrder.Status != SelectedOrderStatus)));
             }
         }
 
@@ -216,22 +220,22 @@ namespace PizzaDelivery_EM.ViewModel
 
             if (cook != null)
             {
-                CurrentOrder = allOrders.First(e => e.CookId == Account.Id);
-                OrderData.Address = CurrentOrder.Address;
-                //                OrderData.Cost = CurrentOrder.Cost;
-                OrderData.RecipientName = "Иванов Иван Иванович";
-                OrderData.CreationDate = CurrentOrder.CreationDate;
-
                 filtered = allOrders.Where(e => e.CookId == Account.Id);
+                CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation);
             }
-            
+
             else
             {
                 filtered = allOrders.Where(e => e.CourierId == Account.Id);
+                CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery);
             }
+            
+            OrderData.Address = CurrentOrder.Address;
+            OrderData.RecipientName = CurrentOrder.RecipientName;
+            OrderData.CreationDate = CurrentOrder.CreationDate;
+            OrderData.Cost = CurrentOrder.Cost;
 
-            orders = allOrders
-                    .Where(e => e.CourierId == Account.Id)
+            orders = filtered
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order
                     {
@@ -241,7 +245,7 @@ namespace PizzaDelivery_EM.ViewModel
                         Status = o.Status,
                         Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
                         {
-                            //Cost = p.Cost.Value,
+                            Cost = p.Cost,
                             Dough = allDough.Find(a => a.Id == p.DoughId),
                             Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
                             PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
@@ -255,7 +259,7 @@ namespace PizzaDelivery_EM.ViewModel
             foreach (var poDto in pizzaOrders)
                 OrderData.Parts.Add(new Model.OrderPart
                 {
-                    //Cost = p.Cost.Value,
+                    Cost = poDto.Cost,
                     Dough = allDough.Find(a => a.Id == poDto.DoughId),
                     Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
                     PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
@@ -263,7 +267,8 @@ namespace PizzaDelivery_EM.ViewModel
                 });
 
             foreach (var order in orders)
-                PastOrders.Add(order);
+                if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
+                    PastOrders.Add(order);
 
             SelectedOrderStatus = CurrentOrder.Status;
 
@@ -307,23 +312,7 @@ namespace PizzaDelivery_EM.ViewModel
             };
 
             PastOrders = new ObservableCollection<Model.Order>();
-            /*
-            Dough = new ObservableCollection<Model.Dough>();
-            foreach (var doughDto in allDough)
-                Dough.Add(new Model.Dough
-                {
-                    Name = doughDto.Name
-                });
 
-            PizzaSizes = new ObservableCollection<Model.PizzaSize>();
-            foreach (var sizeDto in allPizzaSizes)
-                PizzaSizes.Add(new Model.PizzaSize
-                {
-                    CostMult = sizeDto.CostMult,
-                    Name = sizeDto.Name,
-                    Size = sizeDto.Size
-                });
-            */
             Pizzas = new ObservableCollection<Model.Pizza>();
             foreach (var pizzaDto in allPizzas)
             {

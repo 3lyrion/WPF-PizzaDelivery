@@ -21,7 +21,7 @@ namespace BLL.Service
         public int Create(DTO.Order orderDto)
         {
             var order = new DM.Order();
-            var poList = new List<DM.Pizza_Order>();
+            order.pizza_order = new List<DM.Pizza_Order>();
             var sum = 0.0m;
 
             foreach (var poId in orderDto.PizzaOrdersIds)
@@ -31,7 +31,7 @@ namespace BLL.Service
 
                 sum += po.cost;
 
-                poList.Add(po);
+                order.pizza_order.Add(po);
             }
 
             var cook = db.Cook.GetList().First(e => e.online && !e.busy);
@@ -41,7 +41,6 @@ namespace BLL.Service
             order.recipient_name = orderDto.RecipientName;
             order.client = db.Client.GetItem(orderDto.ClientId);
             order.cook = cook;
-            order.pizza_order = poList;
             if (orderDto.Cost != 0) order.cost = orderDto.Cost;
             else order.cost = sum;
 

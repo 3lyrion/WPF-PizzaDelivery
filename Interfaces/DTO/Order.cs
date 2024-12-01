@@ -23,6 +23,7 @@ namespace Interfaces.DTO
             CreationDate = order.creation_date;
             Cost = order.cost;
             Address = order.address;
+            RecipientName = order.recipient_name;
             ClientId = order.client.id;
             Status = (OrderStatus)order.status;
             if (order.cook != null) CookId = order.cook.id;

@@ -34,10 +34,10 @@ namespace BLL.Service
                 size = db.Pizza_Size.GetItem(pizzaOrderDto.SizeId)
             };
 
-            po.id = db.Pizza_Order.Create(po);
-
             if (pizzaOrderDto.OrderId.HasValue)
                 po.order = db.Order.GetItem(pizzaOrderDto.OrderId.Value);
+
+            po.id = db.Pizza_Order.Create(po);
 
             if (Save())
                 return po.id;
