@@ -22,14 +22,13 @@ namespace BLL.Service
         {
             var client = new DM.Client
             {
-                full_name = clientDto.FullName,
                 online = clientDto.Online,
                 order = db.Order.GetList().Where(e => clientDto.OrdersIDs.Contains(e.id)).ToList(),
                 password = clientDto.Password,
                 phone_number = clientDto.PhoneNumber
             };
 
-            db.Client.Create(client);
+            client.id = db.Client.Create(client);
 
             if (Save())
                 return client.id;

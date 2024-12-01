@@ -27,7 +27,7 @@ namespace BLL.Service
                 quantity = recipeDto.Quantity
             };
 
-            db.Recipe.Create(recipe);
+            recipe.id = db.Recipe.Create(recipe);
 
             if (Save())
                 return recipe.id;

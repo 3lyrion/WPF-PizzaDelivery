@@ -338,7 +338,6 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Иванов Иван Иванович",
                         phone_number = "+79123456789",
                         password = "qwerty123",
                         online = true
@@ -346,14 +345,12 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Петрова Мария Сергеевна",
                         phone_number = "+79112345678",
                         password = "password456"
                     });
 
                     add(new DM.Client
                     {
-                        full_name = "Смирнов Алексей Викторович",
                         phone_number = "+79039876543",
                         password = "mysecret789",
                         online = true
@@ -361,14 +358,12 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Кузнецова Анна Николаевна",
                         phone_number = "+79612345678",
                         password = "12345abc"
                     });
 
                     add(new DM.Client
                     {
-                        full_name = "Сидоров Тимур Ильич",
                         phone_number = "+79056781234",
                         password = "letmein10",
                         online = true
@@ -376,14 +371,12 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Ефимова Дарья Александровна",
                         phone_number = "+79012345678",
                         password = "Magic2023!"
                     });
 
                     add(new DM.Client
                     {
-                        full_name = "Тихонов Арсений Владимирович",
                         phone_number = "+79013456789",
                         password = "Sunshine!456",
                         online = true
@@ -391,7 +384,6 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Шапошникова Екатерина Сергеевна",
                         phone_number = "+79014567890",
                         password = "HappyDays22@",
                         online = true
@@ -399,14 +391,12 @@ namespace Database
 
                     add(new DM.Client
                     {
-                        full_name = "Лаптева Полина Андреевна",
                         phone_number = "+79016789012",
                         password = "StarLight3%"
                     });
 
                     add(new DM.Client
                     {
-                        full_name = "Снегирев Валентин Игоревич",
                         phone_number = "+79015678901",
                         password = "Dreamer!798",
                         online = true
@@ -515,25 +505,32 @@ namespace Database
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Рабфаковская, 34",
+                        recipient_name = "Иванов Иван Иванович",
                         creation_date = new DateTime(2024, 03, 15, 11, 30, 00),
-                        client = db.Client.Single(e => e.full_name == "Иванов Иван Иванович"),
+                        status = 2,
+                        client = db.Client.Single(e => e.id == 1),
                         cook = db.Cook.Single(e => e.id == 1),
-                        courier = db.Courier.Single(e => e.id == 2),
+                        courier = db.Courier.Single(e => e.id == 2)
                     });
 
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Парижской Коммуны, 13",
+                        recipient_name = "Иван",
                         creation_date = new DateTime(2024, 03, 15, 12, 38, 00),
-                        client = db.Client.Single(e => e.full_name == "Иванов Иван Иванович"),
-                        cook = db.Cook.Single(e => e.id == 1)
+                        status = -1,
+                        client = db.Client.Single(e => e.id == 1),
+                        cook = db.Cook.Single(e => e.id == 1),
+                        courier = db.Courier.Single(e => e.id == 1)
                     });
 
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Красных Зорь, 14",
+                        recipient_name = "Шапошникова Екатерина Сергеевна",
                         creation_date = new DateTime(2024, 03, 15, 11, 42, 00),
-                        client = db.Client.Single(e => e.full_name == "Шапошникова Екатерина Сергеевна"),
+                        status = 2,
+                        client = db.Client.Single(e => e.id == 2),
                         cook = db.Cook.Single(e => e.id == 2),
                         courier = db.Courier.Single(e => e.id == 1)
                     });
@@ -541,16 +538,23 @@ namespace Database
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. 10 Августа, 77",
+                        recipient_name = "Снегирев Валентин Игоревич",
                         creation_date = new DateTime(2024, 03, 15, 12, 01, 00),
-                        client = db.Client.Single(e => e.full_name == "Снегирев Валентин Игоревич"),
-                        cook = db.Cook.Single(e => e.id == 2)
+                        status = 2,
+                        client = db.Client.Single(e => e.id == 3),
+                        cook = db.Cook.Single(e => e.id == 2),
+                        courier = db.Courier.Single(e => e.id == 3)
                     });
 
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Громобоя, 4",
-                        client = db.Client.Single(e => e.full_name == "Сидоров Тимур Ильич"),
-                        cook = db.Cook.Single(e => e.id == 3)
+                        recipient_name = "Сидоров Тимур Ильич",
+                        creation_date = new DateTime(2024, 03, 17, 19, 25, 00),
+                        status = 2,
+                        client = db.Client.Single(e => e.id == 4),
+                        cook = db.Cook.Single(e => e.id == 3),
+                        courier = db.Courier.Single(e => e.id == 2)
                     });
 
                     db.SaveChanges();

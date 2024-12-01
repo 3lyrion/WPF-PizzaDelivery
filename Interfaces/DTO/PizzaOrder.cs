@@ -12,6 +12,7 @@ namespace Interfaces.DTO
         public PizzaOrder(DM.Pizza_Order pizza_order)
         {
             Id = pizza_order.id;
+            Cost = pizza_order.cost;
             Quantity = pizza_order.quantity;
             DoughId = pizza_order.dough.id;
             SizeId = pizza_order.size.id;
@@ -21,7 +22,7 @@ namespace Interfaces.DTO
 
         public int Id { get; set; }
 
-        public decimal? Cost { get; set; }
+        public decimal Cost { get; set; }
         
         public int Quantity { get; set; }
 

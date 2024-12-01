@@ -34,19 +34,18 @@ namespace BLL.Service
                 poList.Add(po);
             }
 
-//            var cook = db.Cook.GetList().First(e => e.online && !e.busy);
-//            cook.busy = true;
+            var cook = db.Cook.GetList().First(e => e.online && !e.busy);
+            cook.busy = true;
 
             order.address = orderDto.Address;
-            order.cost = sum;
+            order.recipient_name = orderDto.RecipientName;
             order.client = db.Client.GetItem(orderDto.ClientId);
-            // order.cook = cook;
+            order.cook = cook;
             order.pizza_order = poList;
+            if (orderDto.Cost != 0) order.cost = orderDto.Cost;
+            else order.cost = sum;
 
-            db.Order.Create(order);
-
-            //db.Cook.First(e => e.online && e.order != null).
-            //    order = order;
+            order.id = db.Order.Create(order);
 
             if (Save())
                 return order.id;

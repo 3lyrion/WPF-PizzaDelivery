@@ -12,7 +12,6 @@ namespace Interfaces.DTO
         public Client(DM.Client client)
         {
             Id = client.id;
-            FullName = client.full_name;
             Online = client.online;
             Password = client.password;
             PhoneNumber = client.phone_number;

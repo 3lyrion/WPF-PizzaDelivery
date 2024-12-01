@@ -161,30 +161,43 @@ namespace PizzaDelivery.ViewModel
                     {
                         CheckoutMenuVisible = false;
 
-                        allOrders.Add(new DTO.Order
+                        var orderDto = new DTO.Order
                         {
                             Address = CurrentOrder.Address,
-                            Cost = CurrentOrder.Cost
-                        });
+                            RecipientName = CurrentOrder.RecipientName,
+                            Cost = CurrentOrder.Cost,
+                            ClientId = Account.Id,
+                            PizzaOrdersIds = new List<int>()
+                        };
 
                         foreach (var op in OrderParts)
                         {
-                            allPizzaOrders.Add(new DTO.PizzaOrder
+                            var pizzaOrderDto = new DTO.PizzaOrder
                             {
                                 Cost = op.Cost,
+                                Quantity = op.Quantity,
                                 DoughId = allDough.Find(e => e.Name == op.Dough.Name).Id,
                                 PizzaId = allPizzas.Find(e => e.Name == op.Pizza.Name).Id,
-                                SizeId = allPizzaSizes.Find(e => e.Size == op.PizzaSize.Size).Id
-                            });
+                                SizeId = allPizzaSizes.Find(e => e.Size == op.PizzaSize.Size).Id,
+                            };
+
+                            pizzaOrderDto.Id = pizzaOrderService.Create(pizzaOrderDto);
+
+                            allPizzaOrders.Add(pizzaOrderDto);
+
+                            orderDto.PizzaOrdersIds.Add(pizzaOrderDto.Id);
                         }
+
+                        orderDto.Id = orderService.Create(orderDto);
+
+                        allOrders.Add(orderDto);
 
                         ActualOrders.Insert(0, new Model.Order
                         {
                             Address = CurrentOrder.Address,
                             Cost = CurrentOrder.Cost,
                             CreationDate = DateTime.Now,
-                            Parts = OrderParts.ToList(),
-                            Status = DTO.OrderStatus.Preparation
+                            Parts = OrderParts.ToList()
                         });
 
                         CurrentOrder.Clear();

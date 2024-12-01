@@ -1,11 +1,10 @@
-﻿namespace DomainModel.Base
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace DomainModel.Base
+{
     public abstract class User
     {
         protected User() { }
@@ -13,10 +12,6 @@
         public int id { get; set; }
 
         public bool online { get; set; } = false;
-
-        [Required]
-        [StringLength(100)]
-        public string full_name { get; set; }
 
         [Required]
         [Column(TypeName = "nchar")]

@@ -20,20 +20,21 @@ namespace BLL.Service
 
         public int Create(DTO.PizzaOrder pizzaOrderDto)
         {
-            pizzaOrderDto.Cost = db.Pizza.GetList()
-                .Where(e => e.id == pizzaOrderDto.PizzaId)
-                .Sum(e => e.cost) * (decimal)db.Pizza_Size.GetItem(pizzaOrderDto.SizeId).cost_mult;
+            if (pizzaOrderDto.Cost == 0)
+                pizzaOrderDto.Cost = db.Pizza.GetList()
+                    .Where(e => e.id == pizzaOrderDto.PizzaId)
+                    .Sum(e => e.cost) * (decimal)db.Pizza_Size.GetItem(pizzaOrderDto.SizeId).cost_mult * pizzaOrderDto.Quantity;
 
             var po = new DM.Pizza_Order
             {
-                cost = pizzaOrderDto.Cost.Value,
+                cost = pizzaOrderDto.Cost,
                 dough = db.Dough.GetItem(pizzaOrderDto.DoughId),
                 pizza = db.Pizza.GetItem(pizzaOrderDto.PizzaId),
                 quantity = pizzaOrderDto.Quantity,
                 size = db.Pizza_Size.GetItem(pizzaOrderDto.SizeId)
             };
 
-            db.Pizza_Order.Create(po);
+            po.id = db.Pizza_Order.Create(po);
 
             if (pizzaOrderDto.OrderId.HasValue)
                 po.order = db.Order.GetItem(pizzaOrderDto.OrderId.Value);

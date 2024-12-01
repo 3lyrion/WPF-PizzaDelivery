@@ -22,6 +22,10 @@ namespace DomainModel
         public decimal cost { get; set; }
 
         [Required]
+        [StringLength(50)]
+        public string recipient_name { get; set; }
+
+        [Required]
         [StringLength(150)]
         public string address { get; set; }
 

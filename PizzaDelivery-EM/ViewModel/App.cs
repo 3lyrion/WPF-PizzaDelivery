@@ -236,7 +236,7 @@ namespace PizzaDelivery_EM.ViewModel
                     .Select(o => new Model.Order
                     {
                         Address = o.Address,
-                        Cost = o.Cost.Value,
+                        Cost = o.Cost,
                         CreationDate = o.CreationDate,
                         Status = o.Status,
                         Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart

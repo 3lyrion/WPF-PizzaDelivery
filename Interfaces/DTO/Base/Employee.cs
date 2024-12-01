@@ -7,6 +7,8 @@ namespace Interfaces.DTO.Base
     {
         protected Employee() { }
 
+        public string FullName { get; set; }
+
         public bool Busy { get; set; } = false;
     }
 }

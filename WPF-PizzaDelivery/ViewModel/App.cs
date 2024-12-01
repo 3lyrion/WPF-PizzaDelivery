@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -182,12 +180,12 @@ namespace PizzaDelivery.ViewModel
                 .Select(o => new Model.Order
                 {
                     Address = o.Address,
-                    Cost = o.Cost.Value,
+                    Cost = o.Cost,
                     CreationDate = o.CreationDate,
                     Status = o.Status,
                     Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
                     {
-                        //Cost = p.Cost.Value,
+                        Cost = p.Cost,
                         Dough = allDough.Find(a => a.Id == p.DoughId),
                         Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
                         PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
