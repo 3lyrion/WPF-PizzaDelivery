@@ -21,10 +21,13 @@
         <!-- Конвертеры -->
         <local:InvertVisibilityConverter x:Key="InvertVisibilityConverter" />
         <local:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
+        <local:DateTimeConverter x:Key="DateTimeConverter" />
         <local:PriceConverter x:Key="PriceConverter" />
         <local:PizzaImagePathConverter x:Key="PizzaImagePathConverter" />
         <local:EqualValuesToBoolConverter x:Key="EqualValuesToBoolConverter" />
+        <local:EqualOrderStatusesToBoolConverter x:Key="EqualOrderStatusesToBoolConverter" />
         <local:CurrentOrderStatusToBoolConverter x:Key="CurrentOrderStatusToBoolConverter" />
+        <local:OrderPartBottomLabelConverter x:Key="OrderPartBottomLabelConverter" />
         <local:OrderHistoryPartBottomLabelConverter x:Key="OrderHistoryPartBottomLabelConverter" />
         <local:LoginMenuVisibilityConverter x:Key="LoginMenuVisibilityConverter" />
         <local:CloneDataConverter x:Key="CloneDataConverter" />
@@ -47,20 +50,18 @@
                             SelectedIndex="1">
 
                     <!-- Меню теущего заказа -->
-                    <TabItem Width="100" Height="100"
-                             IsEnabled="{Binding ProfileMenuVisible}"
-                             ToolTipService.ShowOnDisabled="True" ToolTipService.ToolTip="Требуется авторизация" ToolTipService.Placement="Right">
+                    <TabItem Width="100" Height="100">
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="PackageVariantClosed" Width="70" Height="70" FontWeight="Normal" />
                         </TabItem.Header>
-                        
-                        <Border Padding="10,10,10,10">
+
+                        <Border Padding="10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                     <RowDefinition MinHeight="300"/>
                                 </Grid.RowDefinitions>
-                                
+
                                 <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Padding="0, 0, 0, 5" Content="Текущий заказ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
@@ -69,55 +70,168 @@
                                     </Label>
                                 </materialDesign:Card>
 
-                                <Grid Grid.Row="1" Width="500" Height="600">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
+                                <Viewbox Grid.Row="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
-                                    <Label Content="Статус заказа" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="OrangeRed" />
-                                    
-                                    <ItemsControl ItemsSource="{Binding OrderStatuses}"
-                                                  Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <UniformGrid>
-                                                    <UniformGrid.Resources>
-                                                        <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
-                                                            <Setter Property="Margin" Value="5" />
-                                                        </Style>
-                                                    </UniformGrid.Resources>
-                                                </UniformGrid>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <RadioButton Content="{Binding}" 
-                                                             Command="{Binding DataContext.SelectOrderStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                                             CommandParameter="{Binding Path=.}" 
-                                                             GroupName="OrderStatus">
-                                                    <RadioButton.IsChecked>
-                                                        <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentOrderStatusToBoolConverter}">
-                                                            <Binding Path="." />
-                                                            <Binding Path="DataContext.CurrentOrder" RelativeSource="{RelativeSource AncestorType=Window}" />
-                                                        </MultiBinding>
-                                                    </RadioButton.IsChecked>
-                                                </RadioButton>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                        <!-- Данные заказа -->
+                                        <Grid Width="500" Height="500" Margin="0, 20, 0, 0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="100" />
+                                                <RowDefinition Height="40" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
 
-                                    <Button Grid.Row="2" Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                            Content="Изменить">
-                                        <Button.IsEnabled>
-                                            <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentOrderStatusToBoolConverter}">
-                                                <Binding Path="OriginalOrderStatus" />
-                                                <Binding Path="CurrentOrder" />
-                                            </MultiBinding>
-                                        </Button.IsEnabled>
-                                    </Button>
-                                </Grid>
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <BulletDecorator>
+                                                    <BulletDecorator.Bullet>
+                                                        <Ellipse Width="6" Height="6" Fill="Black" />
+                                                    </BulletDecorator.Bullet>
+
+                                                    <Label FontSize="16" Margin="6,0,0,0" 
+                                                            Content="{Binding OrderData.RecipientName}"
+                                                            ContentStringFormat="Получатель: {0}"/>
+                                                </BulletDecorator>
+
+                                                <BulletDecorator>
+                                                    <BulletDecorator.Bullet>
+                                                        <Ellipse Width="6" Height="6" Fill="Black" />
+                                                    </BulletDecorator.Bullet>
+
+                                                    <Label FontSize="16" Margin="6,0,0,0" 
+                                                            Content="{Binding OrderData.Address}"
+                                                            ContentStringFormat="Адрес: {0}"/>
+                                                </BulletDecorator>
+
+                                                <BulletDecorator>
+                                                    <BulletDecorator.Bullet>
+                                                        <Ellipse Width="6" Height="6" Fill="Black" />
+                                                    </BulletDecorator.Bullet>
+
+                                                    <Label FontSize="16" Margin="6,0,0,0" 
+                                                            Content="{Binding OrderData.CreationDate, Converter={StaticResource DateTimeConverter}}"
+                                                            ContentStringFormat="Дата создания: {0}"/>
+                                                </BulletDecorator>
+                                            </StackPanel>
+
+                                            <Label Grid.Row="1"
+                                                    Content="Пиццы" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="OrangeRed" />
+
+                                            <ScrollViewer Grid.Row="2" 
+                                                            Width="500" Margin="0, 5, 0, 0" VerticalScrollBarVisibility="Auto">
+
+                                                <ItemsControl ItemsSource="{Binding OrderData.Parts}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <materialDesign:Card Width="400" Height="125" Margin="0, 0, 0, 10" Padding="7.5">
+                                                                <Grid>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="75" />
+                                                                        <RowDefinition />
+                                                                    </Grid.RowDefinitions>
+
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="75" />
+                                                                            <ColumnDefinition />
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <Image Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                                Source="{Binding Path=Pizza.Name, Converter={StaticResource PizzaImagePathConverter}}" />
+
+                                                                        <Grid Grid.Column="1">
+                                                                            <Grid.RowDefinitions>
+                                                                                <RowDefinition Height="30" />
+                                                                                <RowDefinition />
+                                                                            </Grid.RowDefinitions>
+
+                                                                            <Label Content="{Binding Pizza.Name}"
+                                                                                    FontWeight="Bold" FontSize="16" />
+
+                                                                            <Label Grid.Row="1" FontSize="12" FontWeight="Bold" Foreground="Gray">
+                                                                                <Label.Content>
+                                                                                    <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource OrderPartBottomLabelConverter}">
+                                                                                        <Binding Path="PizzaSize" />
+                                                                                        <Binding Path="Dough" />
+                                                                                    </MultiBinding>
+                                                                                </Label.Content>
+                                                                            </Label>
+                                                                        </Grid>
+                                                                    </Grid>
+
+                                                                    <Grid Grid.Row="1">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="2*" />
+                                                                            <ColumnDefinition />
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <Label HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="15"
+                                                                                Content="{Binding Path=Cost, Converter={StaticResource PriceConverter}}" />
+
+                                                                        <Label Grid.Column="1" 
+                                                                                Margin="0, 0, 10, 0" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" FontSize="15"
+                                                                                Content="{Binding Path=Quantity}" ContentStringFormat="x {0}" />
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </materialDesign:Card>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </Grid>
+
+                                        <!-- Меню изменения статуса -->
+                                        <Grid Grid.Column="1"
+                                                Width="300" Height="400" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="40" />
+                                                <RowDefinition />
+                                                <RowDefinition Height="50" />
+                                            </Grid.RowDefinitions>
+
+                                            <Label Content="Статус" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="OrangeRed" />
+
+                                            <ItemsControl ItemsSource="{Binding OrderStatuses}"
+                                                        Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="1" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <RadioButton Margin="5" Height="50" Width="150" FontSize="14"
+                                                                    Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                                                                    Content="{Binding}" 
+                                                                    Command="{Binding DataContext.SelectOrderStatusCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                                    CommandParameter="{Binding Path=.}" 
+                                                                    GroupName="OrderStatus">
+                                                            <RadioButton.IsChecked>
+                                                                <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource EqualOrderStatusesToBoolConverter}">
+                                                                    <Binding Path="." />
+                                                                    <Binding Path="DataContext.SelectedOrderStatus" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                                                </MultiBinding>
+                                                            </RadioButton.IsChecked>
+                                                        </RadioButton>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <Button Grid.Row="2" Height="65" Width="175" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Content="Изменить"
+                                                Command="{Binding ChangeOrderStatusCommand}">
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Viewbox>
                             </Grid>
                         </Border>
                     </TabItem>
@@ -190,21 +304,22 @@
                                 </Viewbox>
                                 
                                 <!-- Данные аккаунта -->
-                                <Grid Grid.Row="1" Visibility="{Binding Path=ProfileMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Width="1000" Height="550">
+                                <Grid Grid.Row="1" 
+                                      Visibility="{Binding Path=ProfileMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                      Width="1000" Height="550" Margin="0, 50, 0, 0">
+                                    
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="100" />
+                                        <RowDefinition Height="50" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
 
                                     <!-- Прошлые заказы -->
-                                    <Label Content="Прошлые заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <uc:OrdersList Grid.Row="1" Source="{Binding PastOrders}" />
+                                    <Label Content="Прошлые заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    
+                                    <uc:OrdersList Grid.Row="1" 
+                                                   Source="{Binding PastOrders}"
+                                                   Margin="0, 15, 0, 0" />
                                 </Grid>
-                                
                             </Grid>
                         </Border>
                     </TabItem>

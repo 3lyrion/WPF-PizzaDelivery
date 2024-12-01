@@ -71,6 +71,7 @@
                                         <BulletDecorator.Bullet>
                                             <Ellipse Width="6" Height="6" Fill="Black" />
                                         </BulletDecorator.Bullet>
+                                        
                                         <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
                                     </BulletDecorator>
                                 </DataTemplate>
@@ -83,7 +84,9 @@
                                  ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding Selected}" Command="{Binding DataContext.UpdateCustomPizzaCostCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                                    <CheckBox IsChecked="{Binding Selected}"
+                                              Command="{Binding DataContext.UpdateCustomPizzaCostCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                                        
                                         <Grid Width="275" Margin="7, 0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="150" />

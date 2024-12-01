@@ -37,12 +37,12 @@ namespace PizzaDelivery_EM.ViewModel
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
 
-        public DTO.OrderStatus OriginalOrderStatus { get; set; }
-
         public ObservableCollection<Model.Pizza> Pizzas { get; set; }
         public ObservableCollection<Model.Order> PastOrders { get; set; }
 
         public List<string> OrderStatuses { get; set; }
+
+        public Model.Order OrderData { get; set; }
 
         bool profileMenuVisible = false;
         public bool ProfileMenuVisible
@@ -63,6 +63,17 @@ namespace PizzaDelivery_EM.ViewModel
             {
                 authErrorMessage = value;
                 OnPropertyChanged("AuthErrorMessage");
+            }
+        }
+
+        DTO.OrderStatus selectedOrderStatus;
+        public DTO.OrderStatus SelectedOrderStatus
+        {
+            get { return selectedOrderStatus; }
+            set
+            {
+                selectedOrderStatus = value;
+                OnPropertyChanged("SelectedOrderStatus");
             }
         }
 
@@ -151,10 +162,23 @@ namespace PizzaDelivery_EM.ViewModel
                     (selectOrderStatusCommand = new RelayCommand(obj =>
                     {
                         if (obj is string)
-                            CurrentOrder.Status = Misc.StringToOrderStatus((string)obj);
-                        
+                            SelectedOrderStatus = Misc.StringToOrderStatus((string)obj);
 
                     }));
+            }
+        }
+
+        RelayCommand changeOrderStatusCommand;
+        public RelayCommand ChangeOrderStatusCommand
+        {
+            get
+            {
+                return changeOrderStatusCommand ??
+                    (changeOrderStatusCommand = new RelayCommand(obj =>
+                    {
+                        CurrentOrder.Status = SelectedOrderStatus;
+
+                    }, (obj) => (CurrentOrder.Status != SelectedOrderStatus)));
             }
         }
 
@@ -187,36 +211,26 @@ namespace PizzaDelivery_EM.ViewModel
             if (Account is DTO.Cook) cook = Account as DTO.Cook;
             else courier = Account as DTO.Courier;
 
+            IEnumerable<DTO.Order> filtered = null;
             IEnumerable<Model.Order> orders = null;
 
             if (cook != null)
             {
                 CurrentOrder = allOrders.First(e => e.CookId == Account.Id);
+                OrderData.Address = CurrentOrder.Address;
+                //                OrderData.Cost = CurrentOrder.Cost;
+                OrderData.RecipientName = "Иванов Иван Иванович";
+                OrderData.CreationDate = CurrentOrder.CreationDate;
 
-                orders = allOrders
-                    .Where(e => e.CookId == Account.Id)
-                    .OrderByDescending(e => e.CreationDate)
-                    .Select(o => new Model.Order
-                    {
-                        Address = o.Address,
-                        Cost = o.Cost.Value,
-                        CreationDate = o.CreationDate,
-                        Status = o.Status,
-                        Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
-                        {
-                            //Cost = p.Cost.Value,
-                            Dough = allDough.Find(a => a.Id == p.DoughId),
-                            Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
-                            PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
-                            Quantity = p.Quantity
-
-                        }).ToList()
-                    });
+                filtered = allOrders.Where(e => e.CookId == Account.Id);
             }
             
             else
             {
-                orders = allOrders
+                filtered = allOrders.Where(e => e.CourierId == Account.Id);
+            }
+
+            orders = allOrders
                     .Where(e => e.CourierId == Account.Id)
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order
@@ -235,12 +249,23 @@ namespace PizzaDelivery_EM.ViewModel
 
                         }).ToList()
                     });
-            }
+
+            OrderData.Parts.Clear();
+            var pizzaOrders = allPizzaOrders.FindAll(e => e.OrderId == CurrentOrder.Id);
+            foreach (var poDto in pizzaOrders)
+                OrderData.Parts.Add(new Model.OrderPart
+                {
+                    //Cost = p.Cost.Value,
+                    Dough = allDough.Find(a => a.Id == poDto.DoughId),
+                    Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
+                    PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
+                    Quantity = poDto.Quantity
+                });
 
             foreach (var order in orders)
                 PastOrders.Add(order);
 
-            OriginalOrderStatus = CurrentOrder.Status;
+            SelectedOrderStatus = CurrentOrder.Status;
 
             ProfileMenuVisible = true;
         }
@@ -276,6 +301,10 @@ namespace PizzaDelivery_EM.ViewModel
             allPizzas = pizzaService.GetList();
             allPizzaSizes = pizzaSizeService.GetList();
 
+            OrderData = new Model.Order
+            {
+                Parts = new List<Model.OrderPart>()
+            };
 
             PastOrders = new ObservableCollection<Model.Order>();
             /*

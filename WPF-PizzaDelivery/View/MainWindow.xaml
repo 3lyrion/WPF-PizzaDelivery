@@ -29,16 +29,6 @@
         <local:RegistrationMenuVisibilityConverter x:Key="RegistrationMenuVisibilityConverter" />
         <local:CloneDataConverter x:Key="CloneDataConverter" />
         
-        <!-- Шаблоны стиля -->
-        <Style x:Key="ErrorPasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="BorderBrush" Value="Black" />
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="BorderBrush" Value="Red" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        
     </Window.Resources>
     <Border Padding="10,10">
         <Grid>
@@ -75,9 +65,7 @@
                                     <ItemsControl ItemsSource="{Binding Pizzas}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <UniformGrid Columns="3">
-
-                                                </UniformGrid>
+                                                <UniformGrid Columns="3" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>

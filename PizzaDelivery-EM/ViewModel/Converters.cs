@@ -101,6 +101,27 @@ namespace PizzaDelivery_EM.ViewModel
         }
     }
 
+    public class OrderPartBottomLabelConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value[0] is DTO.PizzaSize)
+            {
+                var pizzaSize = value[0] as DTO.PizzaSize;
+                var dough = value[1] as DTO.Dough;
+
+                return $"{pizzaSize.Name} {pizzaSize.Size} см, {dough.Name} тесто";
+            }
+
+            return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
     public class OrderHistoryPartBottomLabelConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -176,29 +197,39 @@ namespace PizzaDelivery_EM.ViewModel
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value[0] is string)
-            {
-                var status = Misc.StringToOrderStatus((string)value[0]);
-                var order = value[1] as DTO.Order;
-
-                if (order != null && order.Status == status)
-                    return true;
-
-                return false;
-            }
-
             if (value[0] is DTO.OrderStatus)
             {
                 var status = (DTO.OrderStatus)value[0];
                 var order = value[1] as DTO.Order;
 
-                if (order != null && order.Status == status)
-                    return true;
-
-                return false;
+                return order != null && status == order.Status;
             }
 
             return value;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
+        }
+    }
+
+    public class EqualOrderStatusesToBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            DTO.OrderStatus status = 0;
+
+            if (value[0] is string)
+                status = Misc.StringToOrderStatus((string)value[0]);
+
+            else if (value[0] is DTO.OrderStatus)
+                status = (DTO.OrderStatus)value[0];
+
+            if (status == (DTO.OrderStatus)value[1])
+                return true;
+
+            return false;
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
