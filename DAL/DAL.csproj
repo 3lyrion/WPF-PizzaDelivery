@@ -67,6 +67,7 @@
     <Compile Include="Repository\Pizza.cs" />
     <Compile Include="Repository\Pizza_Order.cs" />
     <Compile Include="Repository\PIzza_Size.cs" />
+    <Compile Include="Repository\Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

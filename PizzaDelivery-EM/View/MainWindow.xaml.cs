@@ -39,6 +39,7 @@ namespace PizzaDelivery_EM.View
             SV.IPizza pizzaService = kernel.Get<SV.IPizza>();
             SV.IPizzaOrder pizzaOrderService = kernel.Get<SV.IPizzaOrder>();
             SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
+            SV.ITransaction transactionService = kernel.Get<SV.ITransaction>();
 
             DataContext = new ViewModel.App
             (
@@ -48,7 +49,8 @@ namespace PizzaDelivery_EM.View
                 orderService,
                 pizzaService,
                 pizzaOrderService,
-                pizzaSizeService
+                pizzaSizeService,
+                transactionService
             );
 
             InitializeComponent();

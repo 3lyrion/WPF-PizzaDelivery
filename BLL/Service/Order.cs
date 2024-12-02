@@ -34,17 +34,15 @@ namespace BLL.Service
                 order.pizza_order.Add(po);
             }
 
-            var cook = db.Cook.GetList().First(e => e.online && !e.busy);
-            cook.busy = true;
-
             order.address = orderDto.Address;
             order.recipient_name = orderDto.RecipientName;
             order.client = db.Client.GetItem(orderDto.ClientId);
-            order.cook = cook;
             if (orderDto.Cost != 0) order.cost = orderDto.Cost;
             else order.cost = sum;
 
             order.id = db.Order.Create(order);
+
+            db.Transaction.PassOrderToCook(order.id);
 
             if (Save())
                 return order.id;

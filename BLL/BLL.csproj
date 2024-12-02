@@ -54,6 +54,7 @@
     <Compile Include="Service\PIzzaSize.cs" />
     <Compile Include="Service\Ingredient.cs" />
     <Compile Include="Service\Recipe.cs" />
+    <Compile Include="Service\Transaction.cs" />
     <Compile Include="Service\Report.cs" />
   </ItemGroup>
   <ItemGroup>

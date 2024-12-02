@@ -23,6 +23,7 @@ namespace PizzaDelivery_EM.Util
             Bind<IPizzaSize>().To<PizzaSize>();
             Bind<IRecipe>().To<Recipe>();
             Bind<IReport>().To<Report>();
+            Bind<ITransaction>().To<Transaction>();
         }
     }
 }

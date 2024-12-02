@@ -19,6 +19,7 @@ namespace DAL.Repository
         Pizza_Size pizzaSizeRep;
         Recipe recipeRep;
         Report reportRep;
+        Transaction transactionRep;
 
         public DbRepos()
         {
@@ -35,6 +36,7 @@ namespace DAL.Repository
             pizzaSizeRep = new Pizza_Size(db);
             recipeRep = new Recipe(db);
             reportRep = new Report(db);
+            transactionRep = new Transaction(db);
         }
 
         public R.IRepository<DM.Client> Client
@@ -122,6 +124,14 @@ namespace DAL.Repository
             get
             {
                 return reportRep;
+            }
+        }
+
+        public R.ITransactionRepository Transaction
+        {
+            get
+            {
+                return transactionRep;
             }
         }
 
