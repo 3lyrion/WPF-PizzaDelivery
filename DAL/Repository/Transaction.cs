@@ -15,20 +15,12 @@ namespace DAL.Repository
 
         public void PassOrderToCook(int orderId)
         {
-            /*
-            db.Database.SqlQuery<object>("EXEC dbo.pass_order_to_cook @order_id",
+            db.Database.ExecuteSqlCommand("pass_order_to_cook @order_id",
                 new[]
                 {
                     new SqlParameter("@order_id", orderId)
                 }
             );
-            */
-
-            db.Database.ExecuteSqlCommand("pass_order_to_cook @order_id",
-                    new SqlParameter("@order_id", orderId)
-            );
-
-            db.SaveChanges();
         }
 
         public void PassOrderToCourier(int orderId)

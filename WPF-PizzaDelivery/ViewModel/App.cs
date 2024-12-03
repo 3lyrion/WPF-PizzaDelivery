@@ -146,6 +146,14 @@ namespace PizzaDelivery.ViewModel
             load();
         }
 
+        public void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            if (Account == null) return;
+
+            Account.Online = false;
+            clientService.Update(Account);
+        }
+
         Model.OrderPart createOrderPart()
         {
             var orderPart = new Model.OrderPart();
@@ -210,10 +218,10 @@ namespace PizzaDelivery.ViewModel
 
         void load()
         {
-            loadMembers();
+            init();
         }
 
-        void loadMembers()
+        void init()
         {
             allDough = doughService.GetList();
             allIngredients = ingredientService.GetList();

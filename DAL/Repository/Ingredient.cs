@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Ingredient.Find(id);
         }
 
-        public int Create(DM.Ingredient entity)
+        public void Create(DM.Ingredient entity)
         {
-            return db.Ingredient.Add(entity).id;
+            db.Ingredient.Add(entity);
         }
 
         public void Update(DM.Ingredient entity)

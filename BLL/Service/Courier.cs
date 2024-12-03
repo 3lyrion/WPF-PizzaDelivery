@@ -29,7 +29,7 @@ namespace BLL.Service
                 phone_number = courierDto.PhoneNumber
             };
 
-            courier.id = db.Courier.Create(courier);
+            db.Courier.Create(courier);
 
             if (Save())
                 return courier.id;

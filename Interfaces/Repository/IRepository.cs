@@ -12,7 +12,7 @@ namespace Interfaces.Repository
 
         T GetItem(int id);
 
-        int Create(T item);
+        void Create(T item);
 
         void Update(T item);
 

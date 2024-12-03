@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Client.Find(id);
         }
 
-        public int Create(DM.Client entity)
+        public void Create(DM.Client entity)
         {
-            return db.Client.Add(entity).id;
+            db.Client.Add(entity);
         }
 
         public void Update(DM.Client entity)

@@ -28,7 +28,7 @@ namespace BLL.Service
                 phone_number = clientDto.PhoneNumber
             };
 
-            client.id = db.Client.Create(client);
+            db.Client.Create(client);
 
             if (Save())
                 return client.id;
@@ -36,9 +36,16 @@ namespace BLL.Service
             return 0;
         }
 
-        public List<DTO.Client> GetList()
+        public bool Update(DTO.Client clientDto)
         {
-            return db.Client.GetList().Select(i => new DTO.Client(i)).ToList();
+            var client = db.Client.GetItem(clientDto.Id);
+            client.online = clientDto.Online;
+            client.password = clientDto.Password;
+            client.phone_number = clientDto.PhoneNumber;
+
+            db.Client.Update(client);
+
+            return Save();
         }
 
         public bool Delete(int id)
@@ -52,6 +59,11 @@ namespace BLL.Service
         public bool Save()
         {
             return db.Save() > 0;
+        }
+
+        public List<DTO.Client> GetList()
+        {
+            return db.Client.GetList().Select(i => new DTO.Client(i)).ToList();
         }
     }
 }

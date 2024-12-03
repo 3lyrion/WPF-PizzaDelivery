@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Dough.Find(id);
         }
 
-        public int Create(DM.Dough entity)
+        public void Create(DM.Dough entity)
         {
-            return db.Dough.Add(entity).id;
+            db.Dough.Add(entity);
         }
 
         public void Update(DM.Dough entity)

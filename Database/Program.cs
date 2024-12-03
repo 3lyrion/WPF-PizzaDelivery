@@ -417,7 +417,7 @@ namespace Database
                         password = "Qwerty1234",
                         online = true,
                     });
-
+                    /*
                     add(new DM.Courier
                     {
                         full_name = "Коваленко Ольга Владимировна",
@@ -448,7 +448,7 @@ namespace Database
                         phone_number = "+79005678901",
                         password = "12345Abcdef"
                     });
-
+                    */
                     db.SaveChanges();
                 }
                 // Courier
@@ -464,7 +464,7 @@ namespace Database
                         password = "CookMaster88!",
                         online = true,
                     });
-
+                    /*
                     add(new DM.Cook
                     {
                         full_name = "Воробьев Максим Анатольевич",
@@ -487,7 +487,7 @@ namespace Database
                         phone_number = "+79024567890",
                         password = "ChefLife2023%"
                     });
-
+                    */
                     db.SaveChanges();
                 }
                 // Cook
@@ -495,8 +495,9 @@ namespace Database
                 // --------- Order ---------
                 
                 {
+                    /*
                     Func<DM.Order, DM.Order> add = db.Order.Add;
-
+                    
                     add(new DM.Order
                     {
                         address = "г. Иваново, ул. Рабфаковская, 34",
@@ -551,15 +552,17 @@ namespace Database
                         cook = db.Cook.Single(e => e.id == 3),
                         courier = db.Courier.Single(e => e.id == 2)
                     });
-
+                    
                     db.SaveChanges();
+                    */
                 }
-                
+
                 // Order
 
                 // --------- Pizza_Order ---------
-                
+
                 {
+                    /*
                     Action<DM.Pizza_Order> calcTotal = (po_) =>
                     {
                         po_.cost = po_.pizza.cost * po_.quantity * (decimal)po_.size.cost_mult;
@@ -676,8 +679,9 @@ namespace Database
                     };
                     calcTotal(po);
                     add(po);
-
+                    
                     db.SaveChanges();
+                    */
                 }
                 // Pizza_Order
             }

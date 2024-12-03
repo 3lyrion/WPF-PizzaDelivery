@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Order.Find(id);
         }
 
-        public int Create(DM.Order entity)
+        public void Create(DM.Order entity)
         {
-            return db.Order.Add(entity).id;
+            db.Order.Add(entity);
         }
 
         public void Update(DM.Order entity)

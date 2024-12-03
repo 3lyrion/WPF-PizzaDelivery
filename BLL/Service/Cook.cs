@@ -29,7 +29,7 @@ namespace BLL.Service
                 phone_number = cookDto.PhoneNumber
             };
 
-            cook.id = db.Cook.Create(cook);
+            db.Cook.Create(cook);
 
             if (Save())
                 return cook.id;

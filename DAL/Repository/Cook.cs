@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Cook.Find(id);
         }
 
-        public int Create(DM.Cook entity)
+        public void Create(DM.Cook entity)
         {
-            return db.Cook.Add(entity).id;
+            db.Cook.Add(entity);
         }
 
         public void Update(DM.Cook entity)

@@ -145,6 +145,7 @@ namespace PizzaDelivery_EM.ViewModel
                                 else
                                 {
                                     Account = employee;
+                                    Account.Online = true;
 
                                     gotoProfileMenu();
                                 }
@@ -214,6 +215,16 @@ namespace PizzaDelivery_EM.ViewModel
             load();
         }
 
+        public void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            if (Account == null) return;
+
+            Account.Online = false;
+
+            if (Account is DTO.Cook) cookService.Update(Account as DTO.Cook);
+            else courierService.Update(Account as DTO.Courier);
+        }
+
         void gotoProfileMenu()
         {
             ProfileMenuVisible = true;
@@ -230,21 +241,52 @@ namespace PizzaDelivery_EM.ViewModel
             if (cook != null)
             {
                 filtered = allOrders.Where(e => e.CookId == Account.Id);
-                try { CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation); }
-                catch { return; }
+                try
+                {
+                    CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation);
+                    cook.Busy = true;
+                }
+                catch { }
+
+                cookService.Update(cook);
             }
 
             else
             {
                 filtered = allOrders.Where(e => e.CourierId == Account.Id);
-                try { CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery); }
-                catch { return; }
+                try
+                {
+                    CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery);
+                    courier.Busy = true;
+                }
+                catch { }
+
+                courierService.Update(courier);
             }
-            
-            OrderData.Address = CurrentOrder.Address;
-            OrderData.RecipientName = CurrentOrder.RecipientName;
-            OrderData.CreationDate = CurrentOrder.CreationDate;
-            OrderData.Cost = CurrentOrder.Cost;
+
+            if (CurrentOrder != null)
+            {
+                SelectedOrderStatus = CurrentOrder.Status;
+
+                OrderData.Address = CurrentOrder.Address;
+                OrderData.RecipientName = CurrentOrder.RecipientName;
+                OrderData.CreationDate = CurrentOrder.CreationDate;
+                OrderData.Cost = CurrentOrder.Cost;
+
+                var parts = new List<Model.OrderPart>();
+                var pizzaOrders = allPizzaOrders.FindAll(e => e.OrderId == CurrentOrder.Id);
+                foreach (var poDto in pizzaOrders)
+                    parts.Add(new Model.OrderPart
+                    {
+                        Cost = poDto.Cost,
+                        Dough = allDough.Find(a => a.Id == poDto.DoughId),
+                        Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
+                        PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
+                        Quantity = poDto.Quantity
+                    });
+
+                OrderData.Parts = parts;
+            }
 
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
@@ -265,31 +307,17 @@ namespace PizzaDelivery_EM.ViewModel
                         }).ToList()
                     });
 
-            OrderData.Parts.Clear();
-            var pizzaOrders = allPizzaOrders.FindAll(e => e.OrderId == CurrentOrder.Id);
-            foreach (var poDto in pizzaOrders)
-                OrderData.Parts.Add(new Model.OrderPart
-                {
-                    Cost = poDto.Cost,
-                    Dough = allDough.Find(a => a.Id == poDto.DoughId),
-                    Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
-                    PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
-                    Quantity = poDto.Quantity
-                });
-
             foreach (var order in orders)
-                if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
-                    PastOrders.Add(order);
-
-            SelectedOrderStatus = CurrentOrder.Status;
+            if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
+                PastOrders.Add(order);
         }
 
         void load()
         {
-            loadMembers();
+            init();
         }
 
-        void loadMembers()
+        void init()
         {
             updateTimer = new Timer(5000);
             updateTimer.AutoReset = true;
@@ -345,7 +373,7 @@ namespace PizzaDelivery_EM.ViewModel
             allOrders = orderService.GetList();
             allPizzaOrders = pizzaOrderService.GetList();
 
-            if (CurrentOrder != null) return;
+        //    if (CurrentOrder != null) return;
 
             DTO.Cook cook = null;
             DTO.Courier courier = null;
@@ -358,22 +386,59 @@ namespace PizzaDelivery_EM.ViewModel
 
             if (cook != null)
             {
+                var cookDto = cookService.GetList().Find(e => e.Id == cook.Id);
+                Account.Busy = cookDto.Busy;
+
                 filtered = allOrders.Where(e => e.CookId == Account.Id);
-                try { CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation); }
-                catch { return; }
+                try
+                {
+                    CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation);
+                    cook.Busy = true;
+                }
+                catch { }
+
+                cookService.Update(cook);
             }
 
             else
             {
+                var courierDto = courierService.GetList().Find(e => e.Id == courier.Id);
+                Account.Busy = courierDto.Busy;
+
                 filtered = allOrders.Where(e => e.CourierId == Account.Id);
-                try { CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery); }
-                catch { return; }
+                try
+                {
+                    CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery);
+                    courier.Busy = true;
+                }
+                catch { }
+
+                courierService.Update(courier);
             }
 
-            OrderData.Address = CurrentOrder.Address;
-            OrderData.RecipientName = CurrentOrder.RecipientName;
-            OrderData.CreationDate = CurrentOrder.CreationDate;
-            OrderData.Cost = CurrentOrder.Cost;
+            if (CurrentOrder != null)
+            {
+            //    SelectedOrderStatus = CurrentOrder.Status;
+
+                OrderData.Address = CurrentOrder.Address;
+                OrderData.RecipientName = CurrentOrder.RecipientName;
+                OrderData.CreationDate = CurrentOrder.CreationDate;
+                OrderData.Cost = CurrentOrder.Cost;
+
+                var parts = new List<Model.OrderPart>();
+                var pizzaOrders = allPizzaOrders.FindAll(e => e.OrderId == CurrentOrder.Id);
+                foreach (var poDto in pizzaOrders)
+                    parts.Add(new Model.OrderPart
+                    {
+                        Cost = poDto.Cost,
+                        Dough = allDough.Find(a => a.Id == poDto.DoughId),
+                        Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
+                        PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
+                        Quantity = poDto.Quantity
+                    });
+
+                OrderData.Parts = parts;
+            }
 
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
@@ -394,24 +459,10 @@ namespace PizzaDelivery_EM.ViewModel
                         }).ToList()
                     });
 
-            OrderData.Parts.Clear();
-            var pizzaOrders = allPizzaOrders.FindAll(e => e.OrderId == CurrentOrder.Id);
-            foreach (var poDto in pizzaOrders)
-                OrderData.Parts.Add(new Model.OrderPart
-                {
-                    Cost = poDto.Cost,
-                    Dough = allDough.Find(a => a.Id == poDto.DoughId),
-                    Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == poDto.PizzaId).Name),
-                    PizzaSize = allPizzaSizes.Find(a => a.Id == poDto.SizeId),
-                    Quantity = poDto.Quantity
-                });
-
-            PastOrders = new 
+            if (PastOrders.Count > 0) PastOrders.Clear();
             foreach (var order in orders)
                 if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
                     PastOrders.Add(order);
-
-            SelectedOrderStatus = CurrentOrder.Status;
         }
     }
 }

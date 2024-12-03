@@ -33,7 +33,7 @@ namespace BLL.Service
                 weight = recipes.Sum(e => e.quantity)
             };
 
-            pizza.id = db.Pizza.Create(pizza);
+            db.Pizza.Create(pizza);
 
             if (Save())
                 return pizza.id;

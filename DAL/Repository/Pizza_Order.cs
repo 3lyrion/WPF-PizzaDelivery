@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Pizza_Order.Find(id);
         }
 
-        public int Create(DM.Pizza_Order entity)
+        public void Create(DM.Pizza_Order entity)
         {
-            return db.Pizza_Order.Add(entity).id;
+            db.Pizza_Order.Add(entity);
         }
 
         public void Update(DM.Pizza_Order entity)

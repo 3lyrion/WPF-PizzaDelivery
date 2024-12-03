@@ -40,12 +40,14 @@ namespace BLL.Service
             if (orderDto.Cost != 0) order.cost = orderDto.Cost;
             else order.cost = sum;
 
-            order.id = db.Order.Create(order);
-
-            db.Transaction.PassOrderToCook(order.id);
+            db.Order.Create(order);
 
             if (Save())
+            {
+                db.Transaction.PassOrderToCook(order.id);
+
                 return order.id;
+            }
 
             return 0;
         }

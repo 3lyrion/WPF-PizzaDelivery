@@ -26,9 +26,9 @@ namespace DAL.Repository
             return db.Courier.Find(id);
         }
 
-        public int Create(DM.Courier entity)
+        public void Create(DM.Courier entity)
         {
-            return db.Courier.Add(entity).id;
+            db.Courier.Add(entity);
         }
 
         public void Update(DM.Courier entity)

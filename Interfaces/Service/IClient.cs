@@ -7,10 +7,12 @@ namespace Interfaces.Service
     {
         int Create(DTO.Client clientDto);
 
-        List<DTO.Client> GetList();
+        bool Update(DTO.Client clientDto);
 
         bool Delete(int id);
 
         bool Save();
+
+        List<DTO.Client> GetList();
     }
 }

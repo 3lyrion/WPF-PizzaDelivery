@@ -43,7 +43,7 @@ namespace PizzaDelivery.View
             SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
             SV.IRecipe recipeService = kernel.Get<SV.IRecipe>();
 
-            DataContext = new ViewModel.App
+            var viewModel = new ViewModel.App
             (
                 clientService,
                 doughService,
@@ -54,6 +54,10 @@ namespace PizzaDelivery.View
                 pizzaSizeService,
                 recipeService
             );
+
+            Closing += viewModel.OnWindowClosing;
+
+            DataContext = viewModel;
 
             InitializeComponent();
         }
