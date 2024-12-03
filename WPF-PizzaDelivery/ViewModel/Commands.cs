@@ -180,9 +180,18 @@ namespace PizzaDelivery.ViewModel
                                 Cost = op.Cost,
                                 Quantity = op.Quantity,
                                 DoughId = allDough.Find(e => e.Name == op.Dough.Name).Id,
-                                PizzaId = allPizzas.Find(e => e.Name == op.Pizza.Name).Id,
                                 SizeId = allPizzaSizes.Find(e => e.Size == op.PizzaSize.Size).Id,
                             };
+
+                            if (op.CustomId != 0)
+                            {
+                                allPizzas = pizzaService.GetList();
+
+                                pizzaOrderDto.PizzaId = allPizzas.Find(e => e.Id == op.CustomId).Id;
+                            }
+
+                            else
+                                pizzaOrderDto.PizzaId = allPizzas.Find(e => e.Name == op.Pizza.Name).Id;
 
                             pizzaOrderDto.Id = pizzaOrderService.Create(pizzaOrderDto);
 
@@ -376,7 +385,33 @@ namespace PizzaDelivery.ViewModel
                                 goto Finally;
                             }
                         }
+                        
+                        var pizza = SelectedOrderPart.Pizza;
 
+                        if (pizza.Name == "Своя")
+                        {
+                            var pizzaId = pizzaService.Create(new DTO.Pizza
+                            {
+                                Cost = pizza.Cost,
+                                Custom = true,
+                                Name = pizza.Name
+                            });
+
+                            if (pizzaId != 0)
+                            {
+                                foreach (var ingredient in SelectedOrderPart.Pizza.Ingredients)
+                                {
+                                    recipeService.Create(new DTO.Recipe
+                                    {
+                                        IngredientId = allIngredients.Find(e => e.Name == ingredient.Name).Id,
+                                        PizzaId = pizzaId
+                                    });
+                                }
+                            }
+
+                            SelectedOrderPart.CustomId = pizzaId;
+                        }
+                        
                         // Сначала добавляю в список, а потом триггерю обновление цен
                         OrderParts.Add(SelectedOrderPart);
 

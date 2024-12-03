@@ -117,18 +117,17 @@
                 <ItemsControl ItemsSource="{Binding Dough}" Grid.Row="1" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid>
-                                <UniformGrid.Resources>
-                                    <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                </UniformGrid.Resources>
-                            </UniformGrid>
+                            <UniformGrid />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <RadioButton Command="{Binding DataContext.SelectDoughCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{Binding Converter={StaticResource DoughConverter}}" GroupName="Dough">
+                            <RadioButton Margin="5" 
+                                         Command="{Binding DataContext.SelectDoughCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                         CommandParameter="{Binding Path=.}" 
+                                         Content="{Binding Converter={StaticResource DoughConverter}}" 
+                                         GroupName="Dough">
+                                
                                 <RadioButton.IsChecked>
                                     <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentDoughToBoolConverter}">
                                         <Binding Path="." />
@@ -153,18 +152,17 @@
                 <ItemsControl ItemsSource="{Binding PizzaSizes}" Grid.Row="1" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid>
-                                <UniformGrid.Resources>
-                                    <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                </UniformGrid.Resources>
-                            </UniformGrid>
+                            <UniformGrid />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <RadioButton Command="{Binding DataContext.SelectPizzaSizeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Path=.}" Content="{Binding Converter={StaticResource SizeConverter}}" GroupName="PizzaSize">
+                            <RadioButton Margin="5" 
+                                         Command="{Binding DataContext.SelectPizzaSizeCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                         CommandParameter="{Binding Path=.}" 
+                                         Content="{Binding Converter={StaticResource SizeConverter}}" 
+                                         GroupName="PizzaSize">
+                                
                                 <RadioButton.IsChecked>
                                     <MultiBinding NotifyOnTargetUpdated="True" Converter="{StaticResource CurrentSizeToBoolConverter}">
                                         <Binding Path="." />

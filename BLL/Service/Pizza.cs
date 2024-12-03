@@ -20,18 +20,19 @@ namespace BLL.Service
 
         public int Create(DTO.Pizza pizzaDto)
         {
-            var recipes = db.Recipe.GetList().Where(e => pizzaDto.RecipesIds.Contains(e.id)).ToList();
-
             var pizza = new DM.Pizza
             {
                 name = pizzaDto.Name,
                 cost = pizzaDto.Cost,
                 custom = pizzaDto.Custom,
-                pizza_order = db.Pizza_Order.GetList().Where(e => pizzaDto.PizzaOrdersIds.Contains(e.id)).ToList(),
-                recipe = recipes,
-                sales_hit = pizzaDto.SalesHit,
-                weight = recipes.Sum(e => e.quantity)
+                sales_hit = pizzaDto.SalesHit
             };
+
+            if (pizzaDto.RecipesIds != null)
+                pizza.recipe = db.Recipe.GetList().Where(e => pizzaDto.RecipesIds.Contains(e.id)).ToList();
+
+            if (pizzaDto.PizzaOrdersIds != null)
+                pizza.pizza_order = db.Pizza_Order.GetList().Where(e => pizzaDto.PizzaOrdersIds.Contains(e.id)).ToList();
 
             db.Pizza.Create(pizza);
 

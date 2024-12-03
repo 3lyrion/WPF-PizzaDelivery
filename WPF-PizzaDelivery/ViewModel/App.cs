@@ -257,6 +257,8 @@ namespace PizzaDelivery.ViewModel
             Pizzas = new ObservableCollection<Model.Pizza>();
             foreach (var pizzaDto in allPizzas)
             {
+                if (pizzaDto.Custom) continue;
+
                 var pizza = new Model.Pizza
                 {
                     Name = pizzaDto.Name,

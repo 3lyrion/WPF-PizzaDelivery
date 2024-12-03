@@ -17,11 +17,22 @@ namespace PizzaDelivery.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        int customId;
         decimal cost;
         Model.Pizza pizza;
         DTO.Dough dough;
         DTO.PizzaSize pizzaSize;
         int quantity;
+
+        public int CustomId
+        {
+            get { return customId; }
+            set
+            {
+                customId = value;
+                OnPropertyChanged("CustomId");
+            }
+        }
 
         public decimal Cost
         {

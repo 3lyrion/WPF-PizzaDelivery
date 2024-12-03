@@ -439,7 +439,7 @@ namespace PizzaDelivery_EM.ViewModel
 
                 OrderData.Parts = parts;
             }
-
+            /*
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order
@@ -459,10 +459,11 @@ namespace PizzaDelivery_EM.ViewModel
                         }).ToList()
                     });
 
-            if (PastOrders.Count > 0) PastOrders.Clear();
+            if (PastOrders.Count > 0) PastOrders.;
             foreach (var order in orders)
                 if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
                     PastOrders.Add(order);
+            */
         }
     }
 }

@@ -76,7 +76,10 @@
                                                         <RowDefinition />
                                                     </Grid.RowDefinitions>
                                                     
-                                                    <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" Width="200" Height="200" Margin="0" Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                    <Button Command="{Binding DataContext.EditOrderPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                            Width="200" Height="200" Margin="0" 
+                                                            Style="{StaticResource MaterialDesignFlatLightButton}">
+                                                        
                                                         <Button.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CloneDataConverter}">
                                                                 <Binding Path="." />
@@ -131,6 +134,7 @@
                                     <RowDefinition Height="7*"/>
                                     <RowDefinition Height="1*"/>
                                 </Grid.RowDefinitions>
+                                
                                 <materialDesign:Card VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                                     <Label Padding="0, 0, 0, 5" Content="Корзина" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="OrangeRed" FontSize="36" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                         <Label.Effect>
@@ -138,23 +142,18 @@
                                         </Label.Effect>
                                     </Label>
                                 </materialDesign:Card>
-                                <Border Grid.Row="1" Padding="20,20">
+                                
+                                <Border Grid.Row="1" Padding="20">
                                     <ScrollViewer Width="600" VerticalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{Binding OrderParts}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <StackPanel>
-                                                        <StackPanel.Resources>
-                                                            <Style TargetType="materialDesign:Card">
-                                                                <Setter Property="Margin" Value="0, 0, 0, 10" />
-                                                            </Style>
-                                                        </StackPanel.Resources>
-                                                    </StackPanel>
+                                                    <StackPanel />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <materialDesign:Card Width="500" Height="150" Padding="10,10">
+                                                    <materialDesign:Card Width="500" Height="150" Padding="10" Margin="0, 0, 0, 10">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition MinHeight="100" />
