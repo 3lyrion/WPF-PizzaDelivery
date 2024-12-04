@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using DTO = Interfaces.DTO;
 
 namespace PizzaDelivery_EM.Model
 {
@@ -18,7 +19,7 @@ namespace PizzaDelivery_EM.Model
 
         string name;
         decimal cost;
-        List<Model.Ingredient> ingredients;
+        List<DTO.Ingredient> ingredients;
 
         public string Name
         {
@@ -40,7 +41,7 @@ namespace PizzaDelivery_EM.Model
             }
         }
 
-        public List<Model.Ingredient> Ingredients
+        public List<DTO.Ingredient> Ingredients
         {
             get { return ingredients; }
             set

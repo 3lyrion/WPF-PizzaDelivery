@@ -123,6 +123,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <RadioButton Margin="5" 
+                                         Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
                                          Command="{Binding DataContext.SelectDoughCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
                                          CommandParameter="{Binding Path=.}" 
                                          Content="{Binding Converter={StaticResource DoughConverter}}" 
@@ -158,6 +159,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <RadioButton Margin="5" 
+                                         Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
                                          Command="{Binding DataContext.SelectPizzaSizeCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
                                          CommandParameter="{Binding Path=.}" 
                                          Content="{Binding Converter={StaticResource SizeConverter}}" 

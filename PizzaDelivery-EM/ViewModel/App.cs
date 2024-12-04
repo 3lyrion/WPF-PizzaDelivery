@@ -26,20 +26,21 @@ namespace PizzaDelivery_EM.ViewModel
         SV.ICourier courierService;
         SV.ICook cookService;
         SV.IDough doughService;
+        SV.IIngredient ingredientService;
         SV.IOrder orderService;
         SV.IPizza pizzaService;
         SV.IPizzaOrder pizzaOrderService;
         SV.IPizzaSize pizzaSizeService;
+        SV.IRecipe recipeService;
         SV.ITransaction transactionService;
 
         List<DTO.Dough> allDough;
+        List<DTO.Ingredient> allIngredients;
         List<DTO.Order> allOrders;
         List<DTO.Pizza> allPizzas;
         List<DTO.PizzaOrder> allPizzaOrders;
         List<DTO.PizzaSize> allPizzaSizes;
-
-        public ObservableCollection<Model.Pizza> Pizzas { get; set; }
-        public ObservableCollection<Model.Order> PastOrders { get; set; }
+        List<DTO.Recipe> allRecipes;
 
         public List<string> OrderStatuses { get; set; }
 
@@ -64,6 +65,39 @@ namespace PizzaDelivery_EM.ViewModel
             {
                 authErrorMessage = value;
                 OnPropertyChanged("AuthErrorMessage");
+            }
+        }
+
+        List<Model.Pizza> __pizzas;
+        public List<Model.Pizza> Pizzas
+        {
+            get { return __pizzas; }
+            set
+            {
+                __pizzas = value;
+                OnPropertyChanged("Pizzas");
+            }
+        }
+
+        List<Model.Order> pastOrders;
+        public List<Model.Order> PastOrders
+        {
+            get { return pastOrders; }
+            set
+            {
+                pastOrders = value;
+                OnPropertyChanged("PastOrders");
+            }
+        }
+
+        List<DTO.Ingredient> selectedIngredients;
+        public List<DTO.Ingredient> SelectedIngredients
+        {
+            get { return selectedIngredients; }
+            set
+            {
+                selectedIngredients = value;
+                OnPropertyChanged("SelectedIngredients");
             }
         }
 
@@ -155,6 +189,35 @@ namespace PizzaDelivery_EM.ViewModel
             }
         }
 
+        RelayCommand showIngredientsMenuCommand;
+        public RelayCommand ShowIngredientsMenuCommand
+        {
+            get
+            {
+                return showIngredientsMenuCommand ??
+                    (showIngredientsMenuCommand = new RelayCommand(obj =>
+                    {
+                        if (obj is Model.OrderPart)
+                            SelectedIngredients = (obj as Model.OrderPart).Pizza.Ingredients;
+
+                    }));
+            }
+        }
+
+        RelayCommand closeIngredientsMenuCommand;
+        public RelayCommand CloseIngredientsMenuCommand
+        {
+            get
+            {
+                return closeIngredientsMenuCommand ??
+                    (closeIngredientsMenuCommand = new RelayCommand(obj =>
+                    {
+                        SelectedIngredients = null;
+
+                    }));
+            }
+        }
+
         RelayCommand selectOrderStatusCommand;
         public RelayCommand SelectOrderStatusCommand
         {
@@ -196,20 +259,24 @@ namespace PizzaDelivery_EM.ViewModel
             SV.ICook theCookService,
             SV.ICourier theCourierService,
             SV.IDough theDoughService,
+            SV.IIngredient theIngredientService,
             SV.IOrder theOrderService,
             SV.IPizza thePizzaService,
             SV.IPizzaOrder thePizzaOrderService,
             SV.IPizzaSize thePizzaSizeService,
+            SV.IRecipe theRecipeService,
             SV.ITransaction theTransactionService
         )
         {
             cookService = theCookService;
             courierService = theCourierService;
             doughService = theDoughService;
+            ingredientService = theIngredientService;
             orderService = theOrderService;
             pizzaService = thePizzaService;
             pizzaOrderService = thePizzaOrderService;
             pizzaSizeService = thePizzaSizeService;
+            recipeService = theRecipeService;
             transactionService = theTransactionService;
 
             load();
@@ -332,38 +399,36 @@ namespace PizzaDelivery_EM.ViewModel
             };
 
             allDough = doughService.GetList();
+            allIngredients = ingredientService.GetList();
             allOrders = orderService.GetList();
             allPizzaOrders = pizzaOrderService.GetList();
             allPizzas = pizzaService.GetList();
             allPizzaSizes = pizzaSizeService.GetList();
+            allRecipes = recipeService.GetList();
 
             OrderData = new Model.Order
             {
                 Parts = new List<Model.OrderPart>()
             };
 
-            PastOrders = new ObservableCollection<Model.Order>();
-
-            Pizzas = new ObservableCollection<Model.Pizza>();
+            var pizzas = new List<Model.Pizza>();
             foreach (var pizzaDto in allPizzas)
             {
                 var pizza = new Model.Pizza
                 {
                     Name = pizzaDto.Name,
-                    Cost = pizzaDto.Cost
+                    Cost = pizzaDto.Cost,
+                    Ingredients = new List<DTO.Ingredient>()
                 };
 
-                Pizzas.Add(pizza);
+                var recipes = allRecipes.FindAll(e => e.PizzaId == pizzaDto.Id);
+                
+                foreach (var recipe in recipes)
+                    pizza.Ingredients.Add(allIngredients.Find(e => e.Id == recipe.IngredientId));
+
+                pizzas.Add(pizza);
             }
-
-            // Кастомная пицца
-            var customPizza = new Model.Pizza
-            {
-                Cost = 289.0m,
-                Name = "Своя"
-            };
-
-            Pizzas.Add(customPizza);
+            Pizzas = pizzas;
         }
 
         void updateData()
@@ -372,6 +437,8 @@ namespace PizzaDelivery_EM.ViewModel
 
             allOrders = orderService.GetList();
             allPizzaOrders = pizzaOrderService.GetList();
+            allPizzas = pizzaService.GetList();
+            allRecipes = recipeService.GetList();
 
         //    if (CurrentOrder != null) return;
 
@@ -418,7 +485,26 @@ namespace PizzaDelivery_EM.ViewModel
 
             if (CurrentOrder != null)
             {
-            //    SelectedOrderStatus = CurrentOrder.Status;
+                //    SelectedOrderStatus = CurrentOrder.Status;
+
+                var pizzas = new List<Model.Pizza>();
+                foreach (var pizzaDto in allPizzas)
+                {
+                    var pizza = new Model.Pizza
+                    {
+                        Name = pizzaDto.Name,
+                        Cost = pizzaDto.Cost,
+                        Ingredients = new List<DTO.Ingredient>()
+                    };
+
+                    var recipes = allRecipes.FindAll(e => e.PizzaId == pizzaDto.Id);
+
+                    foreach (var recipe in recipes)
+                        pizza.Ingredients.Add(allIngredients.Find(e => e.Id == recipe.IngredientId));
+
+                    pizzas.Add(pizza);
+                }
+                Pizzas = pizzas;
 
                 OrderData.Address = CurrentOrder.Address;
                 OrderData.RecipientName = CurrentOrder.RecipientName;
@@ -439,7 +525,7 @@ namespace PizzaDelivery_EM.ViewModel
 
                 OrderData.Parts = parts;
             }
-            /*
+            
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order
@@ -459,11 +545,7 @@ namespace PizzaDelivery_EM.ViewModel
                         }).ToList()
                     });
 
-            if (PastOrders.Count > 0) PastOrders.;
-            foreach (var order in orders)
-                if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
-                    PastOrders.Add(order);
-            */
+            PastOrders = orders.Where(e => e.Status == DTO.OrderStatus.Cancellation || e.Status == DTO.OrderStatus.Success).ToList();
         }
     }
 }

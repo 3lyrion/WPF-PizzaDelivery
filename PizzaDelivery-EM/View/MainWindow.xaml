@@ -145,7 +145,9 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Button Width="350" Height="125" Margin="0, 0, 0, 10" Padding="0"
-                                                                    Style="{StaticResource MaterialDesignPaperLightButton}">
+                                                                    Style="{StaticResource MaterialDesignPaperLightButton}"
+                                                                    Command="{Binding DataContext.ShowIngredientsMenuCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding Path=.}">
 
                                                                 <!--<materialDesign:Card Width="400" Height="125" Padding="7.5">-->
                                                                 <Grid>
@@ -249,37 +251,48 @@
                                             </Button>
                                         </Grid>
 
-                                        <!-- Список ингредиентов -->
-                                        <materialDesign:Card Grid.ColumnSpan="2">
+                                        <!-- Меню ингредиентов -->
+                                        <materialDesign:Card Grid.ColumnSpan="2" 
+                                                             Width="400" Height="500" Padding="10"
+                                                             Visibility="{Binding Path=SelectedIngredients, Converter={StaticResource NotNullToVisibilityConverter}}">
+
                                             <Grid>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="40" />
+                                                    <RowDefinition Height="50" />
                                                     <RowDefinition />
                                                     <RowDefinition Height="50" />
                                                 </Grid.RowDefinitions>
 
                                                 <Label Content="Ингредиенты" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="OrangeRed" />
-                                            
-                                                <ItemsControl Grid.Row="1"
-                                                              Width="250"
-                                                              ItemsSource="{Binding SelectedOrderPart.Pizza.Ingredients}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <StackPanel />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <BulletDecorator>
-                                                                <BulletDecorator.Bullet>
-                                                                    <Ellipse Width="6" Height="6" Fill="Black" />
-                                                                </BulletDecorator.Bullet>
 
-                                                                <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
-                                                            </BulletDecorator>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
+                                                <ScrollViewer Grid.Row="1"
+                                                              Margin="0, 15, 0, 0" VerticalScrollBarVisibility="Auto">
+                                                    
+                                                    <ItemsControl ItemsSource="{Binding SelectedIngredients}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <BulletDecorator Margin="20, 0, 0, 0">
+                                                                    <BulletDecorator.Bullet>
+                                                                        <Ellipse Width="6" Height="6" Fill="Black" />
+                                                                    </BulletDecorator.Bullet>
+
+                                                                    <Label Content="{Binding Name}" FontSize="16" Margin="6,0,0,0" />
+                                                                </BulletDecorator>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+
+                                                <Button Grid.Row="2" 
+                                                        Command="{Binding CloseIngredientsMenuCommand}" 
+                                                        Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                                        Height="50" Width="150" FontSize="20" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="Закрыть" />
+
                                             </Grid>
                                         </materialDesign:Card>
                                     </Grid>
@@ -291,7 +304,7 @@
                         <TabItem.Header>
                             <materialDesign:PackIcon Kind="AccountCircle" Width="70" Height="70" FontSize="36" />
                         </TabItem.Header>
-                        <Border Padding="10,10,10,10">
+                        <Border Padding="10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>

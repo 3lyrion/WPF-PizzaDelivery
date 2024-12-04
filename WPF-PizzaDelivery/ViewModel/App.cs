@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Timers;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -17,6 +18,8 @@ namespace PizzaDelivery.ViewModel
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        Timer updateTimer;
 
         SV.IClient clientService;
         SV.IDough doughService;
@@ -116,12 +119,62 @@ namespace PizzaDelivery.ViewModel
 
         public Model.Order CurrentOrder { get; set; }
 
-        public ObservableCollection<Model.Dough> Dough { get; set; }
-        public ObservableCollection<Model.Pizza> Pizzas { get; set; }
-        public ObservableCollection<Model.PizzaSize> PizzaSizes { get; set; }
         public ObservableCollection<Model.OrderPart> OrderParts { get; set; }
-        public ObservableCollection<Model.Order> PastOrders { get; set; }
-        public ObservableCollection<Model.Order> ActualOrders { get; set; }
+
+        List<Model.Order> __pastOrders;
+        public List<Model.Order> PastOrders
+        {
+            get { return __pastOrders; }
+            set
+            {
+                __pastOrders = value;
+                OnPropertyChanged("PastOrders");
+            }
+        }
+
+        List<Model.Order> __actualOrders;
+        public List<Model.Order> ActualOrders
+        {
+            get { return __actualOrders; }
+            set
+            {
+                __actualOrders = value;
+                OnPropertyChanged("ActualOrders");
+            }
+        }
+
+        List<Model.Dough> __dough;
+        public List<Model.Dough> Dough
+        {
+            get { return __dough; }
+            set
+            {
+                __dough = value;
+                OnPropertyChanged("Dough");
+            }
+        }
+
+        List<Model.Pizza> __pizzas;
+        public List<Model.Pizza> Pizzas
+        {
+            get { return __pizzas; }
+            set
+            {
+                __pizzas = value;
+                OnPropertyChanged("Pizzas");
+            }
+        }
+
+        List<Model.PizzaSize> __pizzaSizes;
+        public List<Model.PizzaSize> PizzaSizes
+        {
+            get { return __pizzaSizes; }
+            set
+            {
+                __pizzaSizes = value;
+                OnPropertyChanged("PizzaSizes");
+            }
+        }
 
         public App(
             SV.IClient theClientService,
@@ -182,6 +235,8 @@ namespace PizzaDelivery.ViewModel
 
         void gotoProfileMenu()
         {
+            ProfileMenuVisible = true;
+
             var orders = allOrders
                 .Where(e => e.ClientId == Account.Id)
                 .OrderByDescending(e => e.CreationDate)
@@ -202,18 +257,20 @@ namespace PizzaDelivery.ViewModel
                     }).ToList()
                 }).ToList();
 
+            var pastOrders = new List<Model.Order>();
+            var actualOrders = new List<Model.Order>();
             foreach (var order in orders)
             {
                 if (order.Status == DTO.OrderStatus.Success ||
                     order.Status == DTO.OrderStatus.Cancellation)
                 {
-                    PastOrders.Add(order);
+                    pastOrders.Add(order);
                 }
 
-                else ActualOrders.Add(order);
+                else actualOrders.Add(order);
             }
-
-            ProfileMenuVisible = true;
+            PastOrders = pastOrders;
+            ActualOrders = actualOrders;
         }
 
         void load()
@@ -223,6 +280,10 @@ namespace PizzaDelivery.ViewModel
 
         void init()
         {
+            updateTimer = new Timer(5000);
+            updateTimer.Elapsed += (s, e) => updateData();
+            updateTimer.AutoReset = true;
+
             allDough = doughService.GetList();
             allIngredients = ingredientService.GetList();
             allOrders = orderService.GetList();
@@ -235,26 +296,21 @@ namespace PizzaDelivery.ViewModel
 
             CurrentOrder = new Model.Order();
 
-            ActualOrders = new ObservableCollection<Model.Order>();
-            PastOrders = new ObservableCollection<Model.Order>();
+            Dough = allDough.Select(e => new Model.Dough
+            {
+                Name = e.Name
 
-            Dough = new ObservableCollection<Model.Dough>();
-            foreach (var doughDto in allDough)
-                Dough.Add(new Model.Dough
-                {
-                    Name = doughDto.Name
-                });
+            }).ToList();
 
-            PizzaSizes = new ObservableCollection<Model.PizzaSize>();
-            foreach (var sizeDto in allPizzaSizes)
-                PizzaSizes.Add(new Model.PizzaSize
-                {
-                    CostMult = sizeDto.CostMult,
-                    Name = sizeDto.Name,
-                    Size = sizeDto.Size
-                });
+            PizzaSizes = allPizzaSizes.Select(e => new Model.PizzaSize
+            {
+                CostMult = e.CostMult,
+                Name = e.Name,
+                Size = e.Size
 
-            Pizzas = new ObservableCollection<Model.Pizza>();
+            }).ToList();
+
+            var pizzas = new List<Model.Pizza>();
             foreach (var pizzaDto in allPizzas)
             {
                 if (pizzaDto.Custom) continue;
@@ -279,7 +335,7 @@ namespace PizzaDelivery.ViewModel
                 })
                 .ToList();
 
-                Pizzas.Add(pizza);
+                pizzas.Add(pizza);
             }
 
             // Кастомная пицца
@@ -300,9 +356,53 @@ namespace PizzaDelivery.ViewModel
                 Name = "Своя"
             };
             
-            Pizzas.Add(customPizza);
-            
+            pizzas.Add(customPizza);
+
+            Pizzas = pizzas;
+
             OrderParts = new ObservableCollection<Model.OrderPart>();
+        }
+
+        void updateData()
+        {
+            if (Account == null) return;
+
+            allOrders = orderService.GetList();
+
+            var orders = allOrders
+                .Where(e => e.ClientId == Account.Id)
+                .OrderByDescending(e => e.CreationDate)
+                .Select(o => new Model.Order
+                {
+                    Address = o.Address,
+                    Cost = o.Cost,
+                    CreationDate = o.CreationDate,
+                    Status = o.Status,
+                    Parts = allPizzaOrders.Where(po => po.OrderId == o.Id).Select(p => new Model.OrderPart
+                    {
+                        Cost = p.Cost,
+                        Dough = allDough.Find(a => a.Id == p.DoughId),
+                        Pizza = Pizzas.First(a => a.Name == allPizzas.Find(b => b.Id == p.PizzaId).Name),
+                        PizzaSize = allPizzaSizes.Find(a => a.Id == p.SizeId),
+                        Quantity = p.Quantity
+
+                    }).ToList()
+                }).ToList();
+
+            var pastOrders = new List<Model.Order>();
+            var actualOrders = new List<Model.Order>();
+            foreach (var order in orders)
+            {
+                if (order.Status == DTO.OrderStatus.Success ||
+                    order.Status == DTO.OrderStatus.Cancellation)
+                {
+                    pastOrders.Add(order);
+                }
+
+                else actualOrders.Add(order);
+            }
+            PastOrders = pastOrders;
+            ActualOrders = actualOrders;
         }
     }
 }
