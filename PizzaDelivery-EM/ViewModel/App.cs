@@ -32,7 +32,6 @@ namespace PizzaDelivery_EM.ViewModel
         SV.IPizzaOrder pizzaOrderService;
         SV.IPizzaSize pizzaSizeService;
         SV.IRecipe recipeService;
-        SV.ITransaction transactionService;
 
         List<DTO.Dough> allDough;
         List<DTO.Ingredient> allIngredients;
@@ -244,10 +243,10 @@ namespace PizzaDelivery_EM.ViewModel
                         CurrentOrder.Status = SelectedOrderStatus;
 
                         if (Account is DTO.Cook && CurrentOrder.Status == DTO.OrderStatus.Delivery)
-                            transactionService.PassOrderToCourier(CurrentOrder.Id);
+                            orderService.PassOrderToCourier(CurrentOrder.Id);
 
                         else
-                            transactionService.CloseOrder(CurrentOrder.Id, (int)SelectedOrderStatus);
+                            orderService.CloseOrder(CurrentOrder.Id, (int)SelectedOrderStatus, Account is DTO.Courier);
 
                         CurrentOrder = null;
 
@@ -264,8 +263,7 @@ namespace PizzaDelivery_EM.ViewModel
             SV.IPizza thePizzaService,
             SV.IPizzaOrder thePizzaOrderService,
             SV.IPizzaSize thePizzaSizeService,
-            SV.IRecipe theRecipeService,
-            SV.ITransaction theTransactionService
+            SV.IRecipe theRecipeService
         )
         {
             cookService = theCookService;
@@ -277,7 +275,6 @@ namespace PizzaDelivery_EM.ViewModel
             pizzaOrderService = thePizzaOrderService;
             pizzaSizeService = thePizzaSizeService;
             recipeService = theRecipeService;
-            transactionService = theTransactionService;
 
             load();
         }
@@ -307,28 +304,26 @@ namespace PizzaDelivery_EM.ViewModel
 
             if (cook != null)
             {
+                cookService.Update(cook);
+
                 filtered = allOrders.Where(e => e.CookId == Account.Id);
                 try
                 {
                     CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation);
-                    cook.Busy = true;
                 }
                 catch { }
-
-                cookService.Update(cook);
             }
 
             else
             {
+                courierService.Update(courier);
+
                 filtered = allOrders.Where(e => e.CourierId == Account.Id);
                 try
                 {
                     CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery);
-                    courier.Busy = true;
                 }
                 catch { }
-
-                courierService.Update(courier);
             }
 
             if (CurrentOrder != null)
@@ -355,6 +350,8 @@ namespace PizzaDelivery_EM.ViewModel
                 OrderData.Parts = parts;
             }
 
+            else Account.Busy = false;
+
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order
@@ -374,9 +371,8 @@ namespace PizzaDelivery_EM.ViewModel
                         }).ToList()
                     });
 
-            foreach (var order in orders)
-            if (order.Status == DTO.OrderStatus.Cancellation || order.Status == DTO.OrderStatus.Success)
-                PastOrders.Add(order);
+            var pastOrders = orders.Where(e => e.Status == DTO.OrderStatus.Cancellation
+                || e.Status == DTO.OrderStatus.Success).ToList();
         }
 
         void load()
@@ -460,11 +456,8 @@ namespace PizzaDelivery_EM.ViewModel
                 try
                 {
                     CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Preparation);
-                    cook.Busy = true;
                 }
                 catch { }
-
-                cookService.Update(cook);
             }
 
             else
@@ -476,11 +469,8 @@ namespace PizzaDelivery_EM.ViewModel
                 try
                 {
                     CurrentOrder = filtered.First(e => e.Status == DTO.OrderStatus.Delivery);
-                    courier.Busy = true;
                 }
                 catch { }
-
-                courierService.Update(courier);
             }
 
             if (CurrentOrder != null)
@@ -525,7 +515,9 @@ namespace PizzaDelivery_EM.ViewModel
 
                 OrderData.Parts = parts;
             }
-            
+
+            else Account.Busy = false;
+
             orders = filtered
                     .OrderByDescending(e => e.CreationDate)
                     .Select(o => new Model.Order

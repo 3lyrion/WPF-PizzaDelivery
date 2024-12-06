@@ -32,8 +32,6 @@ namespace Interfaces.Repository
 
         IReportRepository Report { get; }
 
-        ITransactionRepository Transaction { get; }
-
         int Save();
     }
 }

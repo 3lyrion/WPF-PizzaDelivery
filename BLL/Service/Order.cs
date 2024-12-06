@@ -44,7 +44,7 @@ namespace BLL.Service
 
             if (Save())
             {
-                db.Transaction.PassOrderToCook(order.id);
+                PassOrderToCook(order.id);
 
                 return order.id;
             }
@@ -67,7 +67,72 @@ namespace BLL.Service
 
         public List<DTO.Order> GetList()
         {
-            return db.Order.GetList().Select(i => new DTO.Order(i)).ToList();
+            var list = db.Order.GetList();
+
+            return list.Select(i => new DTO.Order(i)).ToList();
+        }
+
+        public void PassOrderToCook(int orderId)
+        {
+            //db.Transaction.PassOrderToCook(orderId);
+
+            var cooks = db.Cook.GetList().Where(e => e.online && !e.busy).ToList();
+
+            var cook = cooks[new Random().Next(cooks.Count)];
+            cook.busy = true;
+            db.Cook.Update(cook);
+
+            var order = db.Order.GetItem(orderId);
+            order.status = 0;
+            order.cook = cook;
+            db.Order.Update(order);
+
+            db.Save();
+        }
+
+        public void PassOrderToCourier(int orderId)
+        {
+            var couriers = db.Courier.GetList().Where(e => e.online && !e.busy).ToList();
+
+            var courier = couriers[new Random().Next(couriers.Count)];
+            courier.busy = true;
+            db.Courier.Update(courier);
+
+            var order = db.Order.GetItem(orderId);
+            order.status = 1;
+            order.courier = courier;
+            db.Order.Update(order);
+
+            var cook = order.cook;
+            cook.busy = false;
+            db.Cook.Update(cook);
+
+            db.Save();
+
+            //db.Transaction.PassOrderToCourier(orderId);
+        }
+
+        public void CloseOrder(int orderId, int status, bool courier = true)
+        {
+            var order = db.Order.GetItem(orderId);
+            order.status = status;
+            db.Order.Update(order);
+
+            if (courier)
+            {
+                var courier_ = order.courier;
+                courier_.busy = false;
+                db.Courier.Update(courier_);
+            }
+
+            else
+            {
+                var cook = order.cook;
+                cook.busy = false;
+                db.Cook.Update(cook);
+            }
+
+            db.Save();
         }
     }
 }

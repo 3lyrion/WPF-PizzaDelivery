@@ -12,5 +12,11 @@ namespace Interfaces.Service
         bool Save();
 
         List<DTO.Order> GetList();
+
+        void PassOrderToCook(int orderId);
+
+        void PassOrderToCourier(int orderId);
+
+        void CloseOrder(int orderId, int status, bool courier = true);
     }
 }

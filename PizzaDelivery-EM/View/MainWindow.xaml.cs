@@ -41,7 +41,6 @@ namespace PizzaDelivery_EM.View
             SV.IPizzaOrder pizzaOrderService = kernel.Get<SV.IPizzaOrder>();
             SV.IPizzaSize pizzaSizeService = kernel.Get<SV.IPizzaSize>();
             SV.IRecipe recipeService = kernel.Get<SV.IRecipe>();
-            SV.ITransaction transactionService = kernel.Get<SV.ITransaction>();
 
             var viewModel = new ViewModel.App
             (
@@ -53,8 +52,7 @@ namespace PizzaDelivery_EM.View
                 pizzaService,
                 pizzaOrderService,
                 pizzaSizeService,
-                recipeService,
-                transactionService
+                recipeService
             );
 
             Closing += viewModel.OnWindowClosing;
