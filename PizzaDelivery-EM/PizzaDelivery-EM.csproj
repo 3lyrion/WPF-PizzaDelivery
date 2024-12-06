@@ -86,6 +86,7 @@
     <Compile Include="Util\Misc.cs" />
     <Compile Include="Util\NinjectRegistrations.cs" />
     <Compile Include="Util\ReposModule.cs" />
+    <Compile Include="ViewModel\Commands.cs" />
     <Compile Include="ViewModel\App.cs" />
     <Compile Include="ViewModel\Converters.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />

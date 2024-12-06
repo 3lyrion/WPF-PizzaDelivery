@@ -14,7 +14,6 @@ namespace Interfaces.DTO
             Id = ingredient.id;
             Name = ingredient.name;
             Cost = ingredient.cost;
-            HiddenFromClient = ingredient.hidden_from_client;
             InStock = ingredient.in_stock;
         }
 
@@ -23,8 +22,6 @@ namespace Interfaces.DTO
         public string Name { get; set; }
 
         public decimal Cost { get; set; }
-
-        public bool HiddenFromClient { get; set; } = false;
 
         public bool InStock { get; set; } = false;
     }

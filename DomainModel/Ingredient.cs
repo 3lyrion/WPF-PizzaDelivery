@@ -13,8 +13,6 @@ namespace DomainModel
             recipe = new HashSet<Recipe>();
         }
 
-        public bool hidden_from_client { get; set; } = false;
-
         public bool in_stock { get; set; } = false;
 
         public int id { get; set; }

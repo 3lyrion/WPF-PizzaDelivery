@@ -70,98 +70,49 @@ namespace Database
                     add(new DM.Ingredient
                     {
                         name = "Цыплёнок",
-                        cost = 1.20m
+                        cost = 79.0m
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Соус песто",
-                        cost = 0.20m
+                        cost = 20.0m
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Соус альфредо",
-                        cost = 0.10m
+                        cost = 20.0m
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Брынза",
-                        cost = 1.20m
+                        cost = 99.0m
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Моцарелла",
-                        cost = 1.00m 
+                        cost = 79.0m 
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Томаты",
-                        cost = 0.60m 
+                        cost = 59.0m 
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Ананасы",
-                        cost = 0.10m
+                        cost = 59.0m
                     });
 
                     add(new DM.Ingredient
                     {
                         name = "Ветчина",
-                        cost = 1.00m 
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Вода",
-                        cost = 0.00m,
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Мука",
-                        cost = 0.10m, // 1-3
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Яйца куриные",
-                        cost = 0.50m, // 0.5-0.7
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Соль",
-                        cost = 0.02m, // 0.02-0.05
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Сахар",
-                        cost = 0.03m, // 0.03-0.05
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Дрожжи",
-                        cost = 0.15m, // 0.15-0.30
-                        hidden_from_client = true
-                    });
-
-                    add(new DM.Ingredient
-                    {
-                        name = "Масло растительное",
-                        cost = 0.05m, // 0.05-0.10
-                        hidden_from_client = true
+                        cost = 79.0m 
                     });
 
                     db.SaveChanges();

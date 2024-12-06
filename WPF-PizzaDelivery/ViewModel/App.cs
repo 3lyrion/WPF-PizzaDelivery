@@ -344,7 +344,6 @@ namespace PizzaDelivery.ViewModel
                 Cost = 289.0m,
 
                 Ingredients = allIngredients
-                .Where(e => e.HiddenFromClient == false)
                 .Select(e => new Model.Ingredient
                 {
                     Name = e.Name,
