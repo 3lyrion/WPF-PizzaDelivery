@@ -67,9 +67,7 @@ namespace BLL.Service
 
         public List<DTO.Order> GetList()
         {
-            var list = db.Order.GetList();
-
-            return list.Select(i => new DTO.Order(i)).ToList();
+            return db.Order.GetList().Select(i => new DTO.Order(i)).ToList();
         }
 
         public void PassOrderToCook(int orderId)

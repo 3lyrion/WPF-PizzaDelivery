@@ -14,7 +14,5 @@ namespace Interfaces.Service
         bool Save();
 
         List<DTO.Pizza> GetList();
-
-        List<DTO.Recipe> GetRecipes();
     }
 }

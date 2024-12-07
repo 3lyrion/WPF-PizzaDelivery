@@ -8,6 +8,11 @@ namespace DomainModel
     [Table("dough")]
     public class Dough
     {
+        public Dough()
+        {
+            pizza_order = new HashSet<Pizza_Order>();
+        }
+
         public int id { get; set; }
 
         [Required]
@@ -16,5 +21,7 @@ namespace DomainModel
 
         [Required]
         public int weight { get; set; }
+
+        public virtual ICollection<Pizza_Order> pizza_order { get; set; }
     }
 }

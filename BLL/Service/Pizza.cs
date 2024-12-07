@@ -78,12 +78,5 @@ namespace BLL.Service
         {
             return db.Pizza.GetList().Select(i => new DTO.Pizza(i)).ToList();
         }
-
-        public List<DTO.Recipe> GetRecipes()
-        {
-            var recipes = db.Recipe.GetList();
-
-            return recipes.Select(i => new DTO.Recipe(i)).ToList();
-        }
     }
 }

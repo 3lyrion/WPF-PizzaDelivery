@@ -8,11 +8,6 @@ namespace DomainModel
     [Table("client")]
     public class Client : Base.User
     {
-        public Client()
-        {
-            order = new HashSet<Order>();
-        }
 
-        public ICollection<Order> order { get; set; }
     }
 }

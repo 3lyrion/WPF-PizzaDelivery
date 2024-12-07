@@ -196,7 +196,7 @@ namespace PizzaDelivery.ViewModel
             pizzaSizeService = thePizzaSizeService;
             recipeService = theRecipeService;
 
-            load();
+            init();
         }
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
@@ -271,11 +271,6 @@ namespace PizzaDelivery.ViewModel
             }
             PastOrders = pastOrders;
             ActualOrders = actualOrders;
-        }
-
-        void load()
-        {
-            init();
         }
 
         void init()

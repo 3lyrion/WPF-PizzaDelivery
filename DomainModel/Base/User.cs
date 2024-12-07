@@ -7,7 +7,10 @@ namespace DomainModel.Base
 {
     public abstract class User
     {
-        protected User() { }
+        protected User()
+        {
+            order = new HashSet<Order>();
+        }
 
         public int id { get; set; }
 
@@ -21,5 +24,7 @@ namespace DomainModel.Base
         [Required]
         [StringLength(50)]
         public string password { get; set; }
+
+        public virtual ICollection<Order> order { get; set; }
     }
 }
