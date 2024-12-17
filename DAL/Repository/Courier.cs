@@ -18,12 +18,18 @@ namespace DAL.Repository
 
         public List<DM.Courier> GetList()
         {
-            return db.Courier.ToList();
+            var list = db.Courier.ToList();
+            list.ForEach((e) => db.Entry(e).Reload());
+
+            return list;
         }
 
         public DM.Courier GetItem(int id)
         {
-            return db.Courier.Find(id);
+            var e = db.Courier.Find(id);
+            db.Entry(e).Reload();
+
+            return e;
         }
 
         public void Create(DM.Courier entity)

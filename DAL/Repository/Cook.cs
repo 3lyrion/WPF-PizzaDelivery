@@ -18,12 +18,18 @@ namespace DAL.Repository
 
         public List<DM.Cook> GetList()
         {
-            return db.Cook.ToList();
+            var list = db.Cook.ToList();
+            list.ForEach((e) => db.Entry(e).Reload());
+
+            return list;
         }
 
         public DM.Cook GetItem(int id)
         {
-            return db.Cook.Find(id);
+            var e = db.Cook.Find(id);
+            db.Entry(e).Reload();
+
+            return e;
         }
 
         public void Create(DM.Cook entity)

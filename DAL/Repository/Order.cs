@@ -18,12 +18,18 @@ namespace DAL.Repository
 
         public List<DM.Order> GetList()
         {
-            return db.Order.ToList();
+            var list = db.Order.ToList();
+            list.ForEach((e) => db.Entry(e).Reload());
+
+            return list;
         }
 
         public DM.Order GetItem(int id)
         {
-            return db.Order.Find(id);
+            var e = db.Order.Find(id);
+            db.Entry(e).Reload();
+
+            return e;
         }
 
         public void Create(DM.Order entity)

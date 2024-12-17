@@ -8,7 +8,8 @@ namespace Interfaces.DTO
     public enum OrderStatus
     {
         Cancellation = -1,
-        Preparation = 0,
+        Creation = 0,
+        Preparation,
         Delivery,
         Success,
     }

@@ -54,7 +54,7 @@ namespace PizzaDelivery.ViewModel
 
                     }));
             }
-        }
+        }   
 
         RelayCommand loginCommand;
         public RelayCommand LoginCommand
@@ -163,6 +163,9 @@ namespace PizzaDelivery.ViewModel
                     (payOrderCommand = new RelayCommand(obj =>
                     {
                         CheckoutMenuVisible = false;
+
+                        // Имитация платежа
+              //          if (!PaymentSystem.Pay()) return;
 
                         var orderDto = new DTO.Order
                         {

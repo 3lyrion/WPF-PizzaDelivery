@@ -72,16 +72,15 @@ namespace BLL.Service
 
         public void PassOrderToCook(int orderId)
         {
-            //db.Transaction.PassOrderToCook(orderId);
-
             var cooks = db.Cook.GetList().Where(e => e.online && !e.busy).ToList();
+            if (cooks.Count == 0) return;
 
             var cook = cooks[new Random().Next(cooks.Count)];
             cook.busy = true;
             db.Cook.Update(cook);
 
             var order = db.Order.GetItem(orderId);
-            order.status = 0;
+            order.status = 1;
             order.cook = cook;
             db.Order.Update(order);
 
@@ -91,13 +90,14 @@ namespace BLL.Service
         public void PassOrderToCourier(int orderId)
         {
             var couriers = db.Courier.GetList().Where(e => e.online && !e.busy).ToList();
+            if (couriers.Count == 0) return;
 
             var courier = couriers[new Random().Next(couriers.Count)];
             courier.busy = true;
             db.Courier.Update(courier);
 
             var order = db.Order.GetItem(orderId);
-            order.status = 1;
+            order.status = 2;
             order.courier = courier;
             db.Order.Update(order);
 
