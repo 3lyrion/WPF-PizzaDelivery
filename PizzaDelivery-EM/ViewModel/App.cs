@@ -261,7 +261,7 @@ namespace PizzaDelivery_EM.ViewModel
 
         void init()
         {
-            updateTimer = new Timer(5000);
+            updateTimer = new Timer(2500);
             updateTimer.AutoReset = true;
             updateTimer.Elapsed += (s, e) => updateData();
             updateTimer.Start();
@@ -393,6 +393,9 @@ namespace PizzaDelivery_EM.ViewModel
                     });
 
                 OrderData.Parts = parts;
+
+                // Прекращение обновления данных
+                updateTimer.Stop();
             }
 
             else Account.Busy = false;

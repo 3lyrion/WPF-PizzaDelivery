@@ -165,7 +165,7 @@ namespace PizzaDelivery.ViewModel
                         CheckoutMenuVisible = false;
 
                         // Имитация платежа
-              //          if (!PaymentSystem.Pay()) return;
+                        if (!PaymentSystem.Pay()) return;
 
                         var orderDto = new DTO.Order
                         {
@@ -198,27 +198,16 @@ namespace PizzaDelivery.ViewModel
 
                             pizzaOrderDto.Id = pizzaOrderService.Create(pizzaOrderDto);
 
-                            allPizzaOrders.Add(pizzaOrderDto);
-
                             orderDto.PizzaOrdersIds.Add(pizzaOrderDto.Id);
                         }
 
                         orderDto.Id = orderService.Create(orderDto);
 
-                        allOrders.Add(orderDto);
-
-                        ActualOrders.Insert(0, new Model.Order
-                        {
-                            Address = CurrentOrder.Address,
-                            Cost = CurrentOrder.Cost,
-                            CreationDate = DateTime.Now,
-                            Parts = OrderParts.ToList()
-                        });
-
                         CurrentOrder.Clear();
 
                         OrderParts.Clear();
 
+                        updateData();
                     }));
             }
         }

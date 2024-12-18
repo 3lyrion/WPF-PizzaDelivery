@@ -18,12 +18,18 @@ namespace DAL.Repository
 
         public List<DM.Client> GetList()
         {
-            return db.Client.ToList();
+            var list = db.Client.ToList();
+            list.ForEach((e) => db.Entry(e).Reload());
+
+            return list;
         }
 
         public DM.Client GetItem(int id)
         {
-            return db.Client.Find(id);
+            var e = db.Client.Find(id);
+            db.Entry(e).Reload();
+
+            return e;
         }
 
         public void Create(DM.Client entity)

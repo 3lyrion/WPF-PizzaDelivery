@@ -132,6 +132,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\Converters.cs" />
+    <Compile Include="ViewModel\PaymentSystem.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="View\Elements\OrderPartEditor.xaml.cs">
       <DependentUpon>OrderPartEditor.xaml</DependentUpon>

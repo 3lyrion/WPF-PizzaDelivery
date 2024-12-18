@@ -9,7 +9,7 @@ namespace DAL
     public class PizzaDeliveryDB : DbContext
     {
         public PizzaDeliveryDB()
-            : base("name=PizzaDeliveryDB")
+            : base("PizzaDeliveryDB")
         {
         }
 

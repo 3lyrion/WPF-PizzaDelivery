@@ -12,8 +12,8 @@ namespace PizzaDelivery_Server
 {
     struct StuckedOrder
     {
-        public DTO.OrderStatus Status;
-        public int Id;
+        public DTO.OrderStatus NextStatus { get; set; }
+        public int Id { get; set; }
     }
 
     public class App
@@ -30,7 +30,7 @@ namespace PizzaDelivery_Server
 
             stuckedOrders = new List<StuckedOrder>();
 
-            updateTimer = new Timer(5000);
+            updateTimer = new Timer(2500);
             updateTimer.AutoReset = true;
             updateTimer.Elapsed += (s, e) => dispatchOrders();
             updateTimer.Start();
@@ -47,40 +47,36 @@ namespace PizzaDelivery_Server
 
             foreach (var order in allOrders)
             {
-                Console.WriteLine(order.Id);
-
-                if (order.Status == DTO.OrderStatus.Creation && order.CookId == 0
-                    || order.Status == DTO.OrderStatus.Preparation && order.CourierId == 0)
+                if (order.Status == DTO.OrderStatus.Stucked)
                 {
                     try
                     {
-                        stuckedOrders.Find(e => e.Id == order.Id);
-                        stuckedOrders.Add(new StuckedOrder { Status = order.Status, Id = order.Id });
+                        stuckedOrders.First(e => e.Id == order.Id);
                     }
-                    catch { }
+                    catch
+                    {
+                        if (order.CookId == 0)
+                            stuckedOrders.Add(new StuckedOrder { NextStatus = DTO.OrderStatus.Preparation, Id = order.Id });
+
+                        else if (order.CourierId == 0)
+                            stuckedOrders.Add(new StuckedOrder { NextStatus = DTO.OrderStatus.Delivery, Id = order.Id });
+
+                        Console.WriteLine($"Заказ #{order.Id}");
+                    }
                 }
             }
 
             var removed = new List<int>();
-            for (int i = 0; i < stuckedOrders.Count; i++)
+            foreach (var so in stuckedOrders)
             {
-                var so = stuckedOrders[i];
-
-                if (so.Status == DTO.OrderStatus.Creation)
-                {
+                if (so.NextStatus == DTO.OrderStatus.Preparation)
                     orderService.PassOrderToCook(so.Id);
 
-                    if (orderService.GetList().Find(e => e.Id == so.Id).Status == DTO.OrderStatus.Preparation)
-                        removed.Add(so.Id);
-                }
-
                 else
-                {
                     orderService.PassOrderToCourier(so.Id);
 
-                    if (orderService.GetList().Find(e => e.Id == so.Id).Status == DTO.OrderStatus.Delivery)
-                        removed.Add(so.Id);
-                }
+                if (orderService.GetList().Find(e => e.Id == so.Id).Status == so.NextStatus)
+                    removed.Add(so.Id);
             }
 
             if (removed.Count > 0)

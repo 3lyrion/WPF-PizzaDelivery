@@ -90,7 +90,15 @@ namespace BLL.Service
         public void PassOrderToCourier(int orderId)
         {
             var couriers = db.Courier.GetList().Where(e => e.online && !e.busy).ToList();
-            if (couriers.Count == 0) return;
+            if (couriers.Count == 0)
+            {
+                var _order = db.Order.GetItem(orderId);
+                _order.status = 0;
+                db.Order.Update(_order);
+                db.Save();
+
+                return;
+            }
 
             var courier = couriers[new Random().Next(couriers.Count)];
             courier.busy = true;
@@ -106,8 +114,6 @@ namespace BLL.Service
             db.Cook.Update(cook);
 
             db.Save();
-
-            //db.Transaction.PassOrderToCourier(orderId);
         }
 
         public void CloseOrder(int orderId, int status, bool courier = true)

@@ -261,6 +261,9 @@ namespace PizzaDelivery.ViewModel
             var actualOrders = new List<Model.Order>();
             foreach (var order in orders)
             {
+                if (order.Status == DTO.OrderStatus.Stucked)
+                    continue;
+
                 if (order.Status == DTO.OrderStatus.Success ||
                     order.Status == DTO.OrderStatus.Cancellation)
                 {
@@ -278,6 +281,7 @@ namespace PizzaDelivery.ViewModel
             updateTimer = new Timer(5000);
             updateTimer.Elapsed += (s, e) => updateData();
             updateTimer.AutoReset = true;
+            updateTimer.Start();
 
             allDough = doughService.GetList();
             allIngredients = ingredientService.GetList();
@@ -361,6 +365,7 @@ namespace PizzaDelivery.ViewModel
         {
             if (Account == null) return;
 
+            allPizzaOrders = pizzaOrderService.GetList();
             allOrders = orderService.GetList();
 
             var orders = allOrders
@@ -387,6 +392,9 @@ namespace PizzaDelivery.ViewModel
             var actualOrders = new List<Model.Order>();
             foreach (var order in orders)
             {
+                if (order.Status == DTO.OrderStatus.Stucked)
+                    continue;
+
                 if (order.Status == DTO.OrderStatus.Success ||
                     order.Status == DTO.OrderStatus.Cancellation)
                 {

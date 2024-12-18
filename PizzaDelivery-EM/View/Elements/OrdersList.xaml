@@ -29,7 +29,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <materialDesign:Card Width="400" Padding="10,10">
+                    <materialDesign:Card Width="420" Padding="10,10">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50" />

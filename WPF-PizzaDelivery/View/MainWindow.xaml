@@ -486,7 +486,7 @@
 
                                     <!-- Текущие заказы -->
                                     <Label Grid.Column="1" Content="Текущие заказы" Foreground="OrangeRed" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <uc:OrdersList Grid.Row="1" Grid.Column="1" Source="{Binding Path=ActualOrders}" />
+                                    <uc:OrdersList Grid.Row="1" Grid.Column="1" Source="{Binding ActualOrders}" />
                                 </Grid>
                                 
                             </Grid>
