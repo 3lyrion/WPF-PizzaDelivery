@@ -6,10 +6,6 @@ namespace Interfaces.Service
 {
     public interface IReport
     {
-        DataTable GetOnlineClientOrders();
-
-        DataTable GetOnlineCourierOrders();
-
-        List<DTO.ClientOrder> GetClientOrders(int clientId);
+        List<DTO.ClientOrder> GetClientsOrders();
     }
 }

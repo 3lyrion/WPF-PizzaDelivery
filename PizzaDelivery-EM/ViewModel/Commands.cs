@@ -122,10 +122,10 @@ namespace PizzaDelivery_EM.ViewModel
                     (changeOrderStatusCommand = new RelayCommand(obj =>
                     {
                         if (Account is DTO.Cook && SelectedOrderStatus == DTO.OrderStatus.Delivery)
-                            orderService.PassOrderToCourier(CurrentOrder.Id);
+                            orderService.PassToCourier(CurrentOrder.Id);
 
                         else
-                            orderService.CloseOrder(CurrentOrder.Id, (int)SelectedOrderStatus, Account is DTO.Courier);
+                            orderService.Close(CurrentOrder.Id, (int)SelectedOrderStatus, Account is DTO.Courier);
 
                         // Сброс и запуск таймера обновления данных
                         updateTimer.Interval = 2500;

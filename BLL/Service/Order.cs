@@ -44,7 +44,7 @@ namespace BLL.Service
 
             if (Save())
             {
-                PassOrderToCook(order.id);
+                PassToCook(order.id);
 
                 return order.id;
             }
@@ -70,7 +70,7 @@ namespace BLL.Service
             return db.Order.GetList().Select(i => new DTO.Order(i)).ToList();
         }
 
-        public void PassOrderToCook(int orderId)
+        public void PassToCook(int orderId)
         {
             var cooks = db.Cook.GetList().Where(e => e.online && !e.busy).ToList();
             if (cooks.Count == 0) return;
@@ -87,7 +87,7 @@ namespace BLL.Service
             db.Save();
         }
 
-        public void PassOrderToCourier(int orderId)
+        public void PassToCourier(int orderId)
         {
             var couriers = db.Courier.GetList().Where(e => e.online && !e.busy).ToList();
             if (couriers.Count == 0)
@@ -116,7 +116,7 @@ namespace BLL.Service
             db.Save();
         }
 
-        public void CloseOrder(int orderId, int status, bool courier = true)
+        public void Close(int orderId, int status, bool courier = true)
         {
             var order = db.Order.GetItem(orderId);
             order.status = status;

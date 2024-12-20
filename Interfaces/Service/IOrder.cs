@@ -13,10 +13,10 @@ namespace Interfaces.Service
 
         List<DTO.Order> GetList();
 
-        void PassOrderToCook(int orderId);
+        void PassToCook(int orderId);
 
-        void PassOrderToCourier(int orderId);
+        void PassToCourier(int orderId);
 
-        void CloseOrder(int orderId, int status, bool courier = true);
+        void Close(int orderId, int status, bool courier = true);
     }
 }

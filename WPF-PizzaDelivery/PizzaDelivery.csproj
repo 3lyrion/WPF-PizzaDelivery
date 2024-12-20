@@ -181,6 +181,10 @@
       <Project>{2ee21e3a-ae04-487e-a3ef-6104c08c07dc}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Database\Database.csproj">
+      <Project>{9e205d5a-7392-4a0c-a0e7-8a76f9784ef1}</Project>
+      <Name>Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{eb77f5a0-2abf-45f5-9edf-746af222508a}</Project>
       <Name>Interfaces</Name>

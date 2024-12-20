@@ -62,7 +62,6 @@
     <Compile Include="DTO\Reports.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IDbRepos.cs" />
-    <Compile Include="Repository\IReportRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Service\ICook.cs" />
     <Compile Include="Service\IIngredient.cs" />

@@ -30,8 +30,6 @@ namespace Interfaces.Repository
 
         IRepository<DM.Recipe> Recipe { get; }
 
-        IReportRepository Report { get; }
-
         int Save();
     }
 }

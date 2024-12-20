@@ -30,6 +30,8 @@ namespace PizzaDelivery_EM.View
 
         public MainWindow()
         {
+            Database.Creator.CreateIfNotExists();
+
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
             SV.ICook cookService = kernel.Get<SV.ICook>();

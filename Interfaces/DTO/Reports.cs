@@ -5,27 +5,15 @@ using DM = DomainModel;
 
 namespace Interfaces.DTO
 {
-    public class OnlineClientOrders
-    {
-        public int Id { get; set; }
-
-        public string FullName { get; set; }
-
-        public string OrdersIds { get; set; }
-    }
-
-    public class OnlineCourierOrder
-    {
-        public int Id { get; set; }
-
-        public string FullName { get; set; }
-
-        public int OrderId { get; set; }
-    }
-
     public class ClientOrder
     {
+        public int ClientId { get; set; }
+
         public int OrderId { get; set; }
+
+        public string Address { get; set; }
+
+        public string RecipientName { get; set; }
 
         public string DateTime { get; set; }
 

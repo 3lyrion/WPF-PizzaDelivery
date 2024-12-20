@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ninject;
 using SV = Interfaces.Service;
 
@@ -12,6 +8,8 @@ namespace PizzaDelivery_Server
     {
         static void Main(string[] args)
         {
+            Database.Creator.CreateIfNotExists();
+
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
             SV.IOrder orderService = kernel.Get<SV.IOrder>();

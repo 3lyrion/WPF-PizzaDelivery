@@ -32,6 +32,8 @@ namespace PizzaDelivery.View
 
         public MainWindow()
         {
+            Database.Creator.CreateIfNotExists();
+
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
             SV.IClient clientService = kernel.Get<SV.IClient>();
