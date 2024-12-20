@@ -13,6 +13,7 @@ namespace PizzaDelivery_Server.Util
         public override void Load()
         {
             Bind<IOrder>().To<Order>();
+            Bind<IReport>().To<Report>();
         }
     }
 }

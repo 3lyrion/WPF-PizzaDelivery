@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Collections.Generic;
+using System.Linq;
 using Interfaces.Repository;
 using SV = Interfaces.Service;
 using DTO = Interfaces.DTO;
@@ -34,24 +35,32 @@ namespace BLL.Service
                 {
                     var pos = allPizzaOrders.FindAll(e => e.order == order);
 
-                    foreach (var po in pos)
-                        pizzaOrders.Add(po);
-                }
-
-                foreach (var po in pizzaOrders)
-                    clientsOrders.Add(new DTO.ClientOrder
+                    var co = new DTO.ClientOrder
                     {
                         ClientId = client.id,
-                        OrderId = po.order.id,
-                        Address = po.order.address,
-                        RecipientName = po.order.recipient_name,
-                        DateTime = po.order.creation_date.ToString(),
-                        Pizza = po.pizza.name,
-                        Dough = po.dough.name,
-                        Size = $"{po.size.name}, {po.size.size} см",
-                        Quantity = po.quantity.ToString(),
-                        Total = string.Format("{0:C2}", po.cost)
-                    });
+                        OrderId = order.id,
+                        Address = order.address,
+                        RecipientName = order.recipient_name,
+                        DateTime = order.creation_date.ToString()
+                    };
+
+                    if (order.cost == 0.0m)
+                        co.Total = string.Format("{0:C2}", pos.Sum(e => e.cost));
+                    else
+                        co.Total = string.Format("{0:C2}", order.cost);
+
+                    foreach (var po in pos)
+                        co.OrderParts.Add(new DTO.OrderPart
+                        {
+                            Pizza = po.pizza.name,
+                            Dough = po.dough.name,
+                            Size = $"{po.size.name}, {po.size.size} см",
+                            Quantity = po.quantity.ToString(),
+                            Total = string.Format("{0:C2}", po.cost)
+                        });
+
+                    clientsOrders.Add(co);
+                }
             }
 
             return clientsOrders;

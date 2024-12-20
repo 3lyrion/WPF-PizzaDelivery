@@ -8,13 +8,15 @@ namespace PizzaDelivery_Server
     {
         static void Main(string[] args)
         {
-            Database.Creator.CreateIfNotExists();
+        //    Database.Creator.CreateIfNotExists();
+            Database.Creator.CreateMoke();
 
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
-            SV.IOrder orderService = kernel.Get<SV.IOrder>();
+            var orderService = kernel.Get<SV.IOrder>();
+            var reportService = kernel.Get<SV.IReport>();
 
-            var app = new App(orderService);
+            var app = new App(orderService, reportService);
             app.Start();
         }
     }

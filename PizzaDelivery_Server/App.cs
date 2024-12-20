@@ -28,10 +28,12 @@ namespace PizzaDelivery_Server
         List<StuckedOrder> stuckedOrders;
 
         SV.IOrder orderService;
+        SV.IReport reportService;
 
-        public App(SV.IOrder theOrderService)
+        public App(SV.IOrder theOrderService, SV.IReport theReportService)
         {
             orderService = theOrderService;
+            reportService = theReportService;
             /*
             stuckedOrders = new List<StuckedOrder>();
             
@@ -114,6 +116,16 @@ namespace PizzaDelivery_Server
         {
             var dt = DateTime.Now;
 
+            var month = dt.Month.ToString();
+            if (month.Length == 1) month = '0' + month;
+
+            var month = dt.Month.ToString();
+            if (month.Length == 1) month = '0' + month;
+
+            var hour = dt.
+
+            var fmt =  $"{dt.Day}.{month}.{dt.Year} {dt.Hour}:{dt.Minute}";
+
             using var document = new Document
             (
                 new PdfDocument
@@ -127,30 +139,58 @@ namespace PizzaDelivery_Server
             );
 
             var font = PdfFontFactory.CreateFont("C:/Windows/Fonts/Arial.ttf", PdfEncodings.IDENTITY_H);
+            
             var text = new Text("Клиенты - заказы");
             text.SetFont(font);
             text.SetFontSize(48);
             text.SimulateBold();
             document.Add(new Paragraph(text));
-
-            var table = new Table(10);
-            table.SetFont(font);
-            table.SetWidth(UnitValue.CreatePercentValue(98));
-            table.SetTextAlignment(TextAlignment.CENTER);
-
-            table.AddHeaderCell("ID Клиента");
-            table.AddHeaderCell("ID Заказа");
-            table.AddHeaderCell("Адрес");
-            table.AddHeaderCell("Получатель");
-            table.AddHeaderCell("Пицца");
-            table.AddHeaderCell("Тесто");
-            table.AddHeaderCell("Размер");
-            table.AddHeaderCell("Количество");
-            table.AddHeaderCell("Итог");
-
             
+            text = new Text($"cгенерировано {dt}");
+            text.SetFont(font);
+            text.SetFontSize(24);
+            text.SimulateBold();
+            document.Add(new Paragraph(text).SetMarginBottom(50));
 
-            document.Add(table);
+            foreach (var co in reportService.GetClientsOrders())
+            {
+                var table = new Table(10);
+                table.SetFont(font);
+                table.SetWidth(UnitValue.CreatePercentValue(98));
+                table.SetTextAlignment(TextAlignment.CENTER);
+                table.SetMarginBottom(50);
+                table.SetKeepTogether(true);
+
+                table.AddCell("ID Клиента");
+                table.AddCell("ID Заказа");
+                table.AddCell("Дата и время");
+                table.AddCell("Адрес");
+                table.AddCell("Получатель");
+                table.AddCell("Пицца");
+                table.AddCell("Тесто");
+                table.AddCell("Размер");
+                table.AddCell("Количество");
+                table.AddCell("Итог");
+
+                table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.ClientId.ToString())));
+                table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.OrderId.ToString())));
+                table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.DateTime)));
+                table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.Address)));
+                table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.RecipientName)));
+                
+                foreach (var op in co.OrderParts)
+                {
+                    table.AddCell(op.Pizza);
+                    table.AddCell(op.Dough);
+                    table.AddCell(op.Size);
+                    table.AddCell(op.Quantity);
+                    table.AddCell(op.Total);
+                }
+
+                table.AddCell(new Cell(1, 10).Add(new Paragraph($"Итоговая цена: {co.Total}")));
+                
+                document.Add(table);
+            }
         }
     }
 }
