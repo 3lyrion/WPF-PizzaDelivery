@@ -149,6 +149,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Misc.cs" />
     <Compile Include="Util\NinjectRegistrations.cs" />
     <Compile Include="Util\ReposModule.cs" />
   </ItemGroup>

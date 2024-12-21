@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
+using System.IO;
 using iText.Kernel.Pdf;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
@@ -9,6 +10,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using iText.IO.Font;
+using PizzaDelivery_Server.Util;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
@@ -22,6 +24,8 @@ namespace PizzaDelivery_Server
 
     public class App
     {
+        const string REPORTS_FOLDER = "Reports/";
+
         Timer updateTimer;
         Timer reportTimer;
 
@@ -34,7 +38,7 @@ namespace PizzaDelivery_Server
         {
             orderService = theOrderService;
             reportService = theReportService;
-            /*
+            
             stuckedOrders = new List<StuckedOrder>();
             
             updateTimer = new Timer(2500);
@@ -44,8 +48,11 @@ namespace PizzaDelivery_Server
 
             reportTimer = new Timer(30 * 60 * 1000); // Каждые 30 минут
             reportTimer.AutoReset = true;
-            reportTimer.Elapsed += (s, e) => ReportDB();
-            reportTimer.Start();*/
+            reportTimer.Elapsed += (s, e) => reportDB();
+            reportTimer.Start();
+
+            var file = new FileInfo(REPORTS_FOLDER);
+            file.Directory.Create();
 
             reportDB();
         }
@@ -73,14 +80,14 @@ namespace PizzaDelivery_Server
                         {
                             stuckedOrders.Add(new StuckedOrder { NextStatus = DTO.OrderStatus.Preparation, Id = order.Id });
 
-                            Console.WriteLine($"Заказ #{order.Id} ожидает свободного повара");
+                            Misc.Dump($"Заказ #{order.Id} ожидает свободного повара");
                         }
 
                         else if (order.CourierId == 0)
                         {
                             stuckedOrders.Add(new StuckedOrder { NextStatus = DTO.OrderStatus.Delivery, Id = order.Id });
 
-                            Console.WriteLine($"Заказ #{order.Id} ожидает свободного курьера");
+                            Misc.Dump($"Заказ #{order.Id} ожидает свободного курьера");
                         }
                     }
                 }
@@ -101,10 +108,10 @@ namespace PizzaDelivery_Server
                     removed.Add(so.Id);
 
                     if (so.NextStatus == DTO.OrderStatus.Preparation)
-                        Console.WriteLine($"Заказ #{so.Id} передан повару #{order.CookId}");
+                        Misc.Dump($"Заказ #{so.Id} передан повару #{order.CookId}");
 
                     else
-                        Console.WriteLine($"Заказ #{so.Id} передан курьеру #{order.CourierId}");
+                        Misc.Dump($"Заказ #{so.Id} передан курьеру #{order.CourierId}");
                 }
             }
 
@@ -116,23 +123,13 @@ namespace PizzaDelivery_Server
         {
             var dt = DateTime.Now;
 
-            var month = dt.Month.ToString();
-            if (month.Length == 1) month = '0' + month;
-
-            var month = dt.Month.ToString();
-            if (month.Length == 1) month = '0' + month;
-
-            var hour = dt.
-
-            var fmt =  $"{dt.Day}.{month}.{dt.Year} {dt.Hour}:{dt.Minute}";
-
             using var document = new Document
             (
                 new PdfDocument
                 (
                     new PdfWriter
                     (
-                        $"{dt.Day}_{dt.Month}_{dt.Year}_{dt.Hour}_{dt.Minute}_report_clients_orders.pdf"
+                        $"{REPORTS_FOLDER}{Misc.FormatDateTimeForFilename(dt)}_report_clients_orders.pdf"
                     )
                 ),
                 PageSize.A4.Rotate()
@@ -146,31 +143,43 @@ namespace PizzaDelivery_Server
             text.SimulateBold();
             document.Add(new Paragraph(text));
             
-            text = new Text($"cгенерировано {dt}");
+            text = new Text($"cгенерировано {Misc.FormatDateTimeForText(dt)}");
             text.SetFont(font);
             text.SetFontSize(24);
             text.SimulateBold();
             document.Add(new Paragraph(text).SetMarginBottom(50));
 
+            Table table = null;
+
+            Action<string> addHeader = (content) =>
+            {
+                table.AddCell(new Cell().Add(new Paragraph(content)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SimulateBold()
+                    )
+                );
+            };
+
             foreach (var co in reportService.GetClientsOrders())
             {
-                var table = new Table(10);
+                table = new Table(UnitValue.CreatePercentArray(new float[] { 5, 5, 10, 20, 10, 10, 10, 15, 5, 10 }));
                 table.SetFont(font);
-                table.SetWidth(UnitValue.CreatePercentValue(98));
+                table.UseAllAvailableWidth();
                 table.SetTextAlignment(TextAlignment.CENTER);
                 table.SetMarginBottom(50);
                 table.SetKeepTogether(true);
 
-                table.AddCell("ID Клиента");
-                table.AddCell("ID Заказа");
-                table.AddCell("Дата и время");
-                table.AddCell("Адрес");
-                table.AddCell("Получатель");
-                table.AddCell("Пицца");
-                table.AddCell("Тесто");
-                table.AddCell("Размер");
-                table.AddCell("Количество");
-                table.AddCell("Итог");
+                addHeader("ID Клиента");
+                addHeader("ID Заказа");
+                addHeader("Дата и время");
+                addHeader("Адрес");
+                addHeader("Получатель");
+                addHeader("Пицца");
+                addHeader("Тесто");
+                addHeader("Размер");
+                addHeader("Количество");
+                addHeader("Итог");
 
                 table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.ClientId.ToString())));
                 table.AddCell(new Cell(co.OrderParts.Count, 1).Add(new Paragraph(co.OrderId.ToString())));
@@ -187,10 +196,12 @@ namespace PizzaDelivery_Server
                     table.AddCell(op.Total);
                 }
 
-                table.AddCell(new Cell(1, 10).Add(new Paragraph($"Итоговая цена: {co.Total}")));
+                table.AddCell(new Cell(1, 10).Add(new Paragraph($"Итоговая цена: {co.Total}").SimulateBold()));
                 
                 document.Add(table);
             }
+
+            Misc.Dump("Сгенерирован отчёт");
         }
     }
 }
