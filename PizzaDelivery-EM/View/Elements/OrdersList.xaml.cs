@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PizzaDelivery_EM.View.Elements
+namespace PD_Employee.View.Elements
 {
     /// <summary>
     /// Interaction logic for OrdersList.xaml

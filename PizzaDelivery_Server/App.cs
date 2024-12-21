@@ -10,11 +10,11 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using iText.IO.Font;
-using PizzaDelivery_Server.Util;
+using PD_Server.Util;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
-namespace PizzaDelivery_Server
+namespace PD_Server
 {
     struct StuckedOrder
     {

@@ -8,7 +8,7 @@ using Interfaces.Service;
 using BLL.Service;
 using DAL.Repository;
 
-namespace PizzaDelivery_EM.Util
+namespace PD_Employee.Util
 {
     public class ReposModule : Ninject.Modules.NinjectModule
     {

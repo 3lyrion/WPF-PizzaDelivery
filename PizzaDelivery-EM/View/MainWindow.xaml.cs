@@ -22,7 +22,7 @@ using MD = MaterialDesignThemes.Wpf;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
-namespace PizzaDelivery_EM.View
+namespace PD_Employee.View
 {
     public partial class MainWindow : Window
     {

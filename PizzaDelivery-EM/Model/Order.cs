@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using DTO = Interfaces.DTO;
 
-namespace PizzaDelivery_EM.Model
+namespace PD_Employee.Model
 {
     public class Order : INotifyPropertyChanged
     {

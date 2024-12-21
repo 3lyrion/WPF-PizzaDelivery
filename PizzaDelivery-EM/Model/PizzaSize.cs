@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace PizzaDelivery_EM.Model
+namespace PD_Employee.Model
 {
     public class PizzaSize : INotifyPropertyChanged
     {

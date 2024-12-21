@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PizzaDelivery_EM.ViewModel
+namespace PD_Employee.ViewModel
 {
     public class RelayCommand : ICommand
     {

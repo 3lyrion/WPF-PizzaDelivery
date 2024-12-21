@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PizzaDelivery_EM
+namespace PD_Employee
 {
     /// <summary>
     /// Interaction logic for App.xaml

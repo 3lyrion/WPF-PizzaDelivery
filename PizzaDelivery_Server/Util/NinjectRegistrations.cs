@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Interfaces.Service;
 using BLL.Service;
 
-namespace PizzaDelivery_Server.Util
+namespace PD_Server.Util
 {
     public class NinjectRegistrations : Ninject.Modules.NinjectModule
     {

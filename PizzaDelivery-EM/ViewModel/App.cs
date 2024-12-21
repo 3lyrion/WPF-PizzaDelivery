@@ -6,11 +6,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Timers;
-using PizzaDelivery_EM.Util;
+using PD_Employee.Util;
 using DTO = Interfaces.DTO;
 using SV = Interfaces.Service;
 
-namespace PizzaDelivery_EM.ViewModel
+namespace PD_Employee.ViewModel
 {
     public partial class App : INotifyPropertyChanged
     {

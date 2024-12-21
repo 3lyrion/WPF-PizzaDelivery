@@ -2,7 +2,7 @@
 using Ninject;
 using SV = Interfaces.Service;
 
-namespace PizzaDelivery_Server
+namespace PD_Server
 {
     class Program
     {

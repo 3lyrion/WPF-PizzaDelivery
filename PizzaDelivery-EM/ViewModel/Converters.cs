@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using PizzaDelivery_EM.Util;
+using PD_Employee.Util;
 using DTO = Interfaces.DTO;
 
-namespace PizzaDelivery_EM.ViewModel
+namespace PD_Employee.ViewModel
 {
     public class NotNullToVisibilityConverter : IValueConverter
     {

@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{9E205D5A-7392-4A0C-A0E7-8A76F9784EF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-EM", "PizzaDelivery-EM\PizzaDelivery-EM.csproj", "{B9D34910-2EF2-4343-8A56-26D8966A91F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Employee", "PizzaDelivery-EM\PizzaDelivery-Employee.csproj", "{B9D34910-2EF2-4343-8A56-26D8966A91F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Server", "PizzaDelivery_Server\PizzaDelivery-Server.csproj", "{D5D20F2E-8379-4BA8-9A55-0182FFF035DE}"
 EndProject
