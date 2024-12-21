@@ -32,5 +32,10 @@ namespace DAL
         public virtual DbSet<DM.Pizza_Size> Pizza_Size { get; set; }
 
         public virtual DbSet<DM.Recipe> Recipe { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

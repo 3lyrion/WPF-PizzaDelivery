@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.35325.158
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery", "WPF-PizzaDelivery\PizzaDelivery.csproj", "{DA326CC4-BCBA-4996-A313-068049BEF084}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery", "PizzaDelivery\PizzaDelivery.csproj", "{DA326CC4-BCBA-4996-A313-068049BEF084}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{B6018738-C894-4ABF-8DAF-683E075632A0}"
 EndProject
@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{9E205D5A-7392-4A0C-A0E7-8A76F9784EF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Employee", "PizzaDelivery-EM\PizzaDelivery-Employee.csproj", "{B9D34910-2EF2-4343-8A56-26D8966A91F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Employee", "PizzaDelivery-Employee\PizzaDelivery-Employee.csproj", "{B9D34910-2EF2-4343-8A56-26D8966A91F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Server", "PizzaDelivery_Server\PizzaDelivery-Server.csproj", "{D5D20F2E-8379-4BA8-9A55-0182FFF035DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaDelivery-Server", "PizzaDelivery-Server\PizzaDelivery-Server.csproj", "{D5D20F2E-8379-4BA8-9A55-0182FFF035DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

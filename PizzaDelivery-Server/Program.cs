@@ -8,8 +8,8 @@ namespace PD_Server
     {
         static void Main(string[] args)
         {
-        //    Database.Creator.CreateIfNotExists();
-            Database.Creator.CreateMoke();
+            Database.Creator.CreateIfNotExists();
+        //    Database.Creator.CreateMoke();
 
             var kernel = new StandardKernel(new Util.NinjectRegistrations(), new Util.ReposModule("PizzaDeliveryDB"));
 
